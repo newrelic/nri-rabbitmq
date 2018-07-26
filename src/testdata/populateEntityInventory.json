@@ -1,0 +1,19 @@
+{
+    "arguments": {
+        "array-arg": [
+            "array-str-val",
+            4321,
+            false,
+            [
+                "this-is-nested"
+            ]
+        ],
+        "bool-arg": true,
+        "number-arg": 1234,
+        "string-arg": "string-val"
+    },
+    "auto_delete": true,
+    "durable": false,
+    "exclusive": false,
+    "type": "direct"
+}

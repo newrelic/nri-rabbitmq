@@ -1,0 +1,1 @@
+{"exchange":{"arguments.array-arg.1":"array-str-val","arguments.array-arg.2":4321,"arguments.array-arg.3":0,"arguments.array-arg.4.1":"this-is-nested","arguments.bool-arg":1,"arguments.number-arg":1234,"arguments.string-arg":"string-val","auto_delete":1,"durable":0,"type":"direct"}}

@@ -1,0 +1,7 @@
+{
+    "name": "test-name",
+    "vhost": "test-vhost",
+    "messages_ready_details": {
+        "rate": false
+    }
+}

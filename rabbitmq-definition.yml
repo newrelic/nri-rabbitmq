@@ -1,0 +1,20 @@
+name: com.newrelic.rabbitmq
+description: Reports status and metrics for rabbitmq service
+protocol_version: 1
+os: linux
+
+commands:
+  all:
+    command:
+      - ./bin/nr-rabbitmq
+      - -metrics
+      - -inventory
+    prefix: config/rabbitmq
+    interval: 15
+
+  inventory:
+    command:
+      - ./bin/nr-rabbitmq
+      - -inventory
+    prefix: config/rabbitmq
+    interval: 15
