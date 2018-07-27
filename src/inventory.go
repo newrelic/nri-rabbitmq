@@ -75,6 +75,7 @@ func setInventoryData(nodeEntity *integration.Entity, overviewData objx.Map) err
 			return nil
 		}
 		if err != nil {
+			logger.Errorf("Could not open the specified configuration file: %v", err)
 			return err
 		}
 		defer checkErr(file.Close)
