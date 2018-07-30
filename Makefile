@@ -1,6 +1,6 @@
 NATIVEOS	 := $(shell go version | awk -F '[ /]' '{print $$4}')
 NATIVEARCH	 := $(shell go version | awk -F '[ /]' '{print $$5}')
-INTEGRATION  := $(shell basename $(shell pwd))
+INTEGRATION  := rabbitmq
 BINARY_NAME   = nr-$(INTEGRATION)
 GO_PKGS      := $(shell go list ./... | grep -v "/vendor/")
 GO_FILES     := $(shell find src -type f -name "*.go")
@@ -44,11 +44,11 @@ validate-all: deps
 
 compile: deps
 	@echo "=== $(INTEGRATION) === [ compile ]: Building $(BINARY_NAME)..."
-	@GOARCH=amd64 GOOS=linux go build -o bin/$(BINARY_NAME) ./src
+	@go build -o bin/$(BINARY_NAME) ./src
 
 compile-only: deps-only
 	@echo "=== $(INTEGRATION) === [ compile ]: Building $(BINARY_NAME)..."
-	@GOARCH=amd64 GOOS=linux go build -o bin/$(BINARY_NAME) ./src
+	@go build -o bin/$(BINARY_NAME) ./src
 
 test: deps
 	@echo "=== $(INTEGRATION) === [ test ]: Running unit tests..."

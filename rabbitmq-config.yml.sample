@@ -8,8 +8,8 @@ instances:
       port: <management UI port>
       username: <management UI username>
       password: <management UI password>
-      c_a_bundle_file: <ca bundle file>
-      c_a_bundle_dir: <ca bundle directory>
+      ca_bundle_dir: <ca bundle directory>
+      ca_bundle_file: <ca bundle file>
       node_name_override: <local node name>
       config_path: </path/to/config/file>
       use_ssl: <bool>

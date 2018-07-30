@@ -7,8 +7,6 @@ commands:
   all:
     command:
       - ./bin/nr-rabbitmq
-      - -metrics
-      - -inventory
     prefix: config/rabbitmq
     interval: 15
 
