@@ -80,14 +80,11 @@ func collectEndpoint(client *http.Client, req *http.Request) (interface{}, error
 	if err != nil {
 		return nil, err
 	}
+	defer checkErr(resp.Body.Close)
 
 	var data interface{}
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
-		return nil, err
-	}
-
-	if err = resp.Body.Close(); err != nil {
 		return nil, err
 	}
 

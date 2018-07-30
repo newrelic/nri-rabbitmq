@@ -15,7 +15,7 @@ The RabbitMQ integration requires that the [RabbitMQ Management Plugin](https://
 
 ## Usage
 
-This is the description about how to run the NGINX Integration with New Relic Infrastructure agent, so it is required to have the agent installed (see [agent installation](https://docs.newrelic.com/docs/infrastructure/new-relic-infrastructure/installation/install-infrastructure-linux)).
+This is the description about how to run the RabbitMQ Integration with New Relic Infrastructure agent, so it is required to have the agent installed (see [agent installation](https://docs.newrelic.com/docs/infrastructure/new-relic-infrastructure/installation/install-infrastructure-linux)).
 
 In order to use the RabbitMQ Integration it is required to configure `rabbitmq-config.yml.sample` file. Firstly, rename the file to `rabbitmq-config.yml`. Then, depending on your needs, specify all instances that you want to monitor. Once this is done, restart the Infrastructure agent.
 
