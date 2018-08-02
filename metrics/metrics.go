@@ -1,9 +1,16 @@
-package main
+package metrics
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/newrelic/infra-integrations-sdk/data/metric"
+	"github.com/newrelic/infra-integrations-sdk/integration"
+	"github.com/newrelic/nri-rabbitmq/client"
+	"github.com/newrelic/nri-rabbitmq/inventory"
+	"github.com/newrelic/nri-rabbitmq/logger"
+	"github.com/newrelic/nri-rabbitmq/utils"
+	"github.com/newrelic/nri-rabbitmq/utils/consts"
 	"github.com/stretchr/objx"
 )
 
@@ -69,6 +76,56 @@ var metricDefinitions = map[string]map[string]struct {
 	},
 }
 
+var entityMappings = []struct {
+	entityType     string
+	entityEndpoint string
+}{
+	{consts.NodeType, client.NodesEndpoint},
+	{consts.VhostType, client.VhostsEndpoint},
+	{consts.QueueType, client.QueuesEndpoint},
+	{consts.ExchangeType, client.ExchangesEndpoint},
+}
+
+// CollectMetrics collects the metrics present in the apiResponses
+func CollectMetrics(rabbitmqIntegration *integration.Integration, apiResponses *objx.Map) {
+	connStats := collectConnectionStats(apiResponses.Get(client.ConnectionsEndpoint).ObjxMapSlice())
+	bindingStats := collectBindingStats(apiResponses.Get(client.BindingsEndpoint).ObjxMapSlice())
+
+	for _, mapping := range entityMappings {
+		responseObjects := apiResponses.Get(mapping.entityEndpoint).ObjxMapSlice()
+		for _, entityData := range responseObjects {
+			parseEntityResponse(rabbitmqIntegration, &entityData, mapping.entityType, connStats, bindingStats)
+		}
+	}
+}
+
+func parseEntityResponse(rabbitmqIntegration *integration.Integration, entityData *objx.Map, entityType string, connectionStats map[connKey]int, bindingStats map[bindingKey]int) {
+	entityName := entityData.Get("name").Str()
+	vhost := entityData.Get("vhost").Str()
+	entity, metricNamespace, err := utils.CreateEntity(rabbitmqIntegration, entityName, entityType, vhost)
+	if entity == nil {
+		logger.Infof("%v entity %v did not match filter - skipping", entityType, entityName)
+		return
+	}
+	if err != nil {
+		logger.Errorf("could not create entity [%v, %v, %v]: %v", entityName, entityType, vhost, err)
+		return
+	}
+	sampleName := fmt.Sprintf("Rabbitmq%vSample", strings.Title(entityType))
+	metricSet := entity.NewMetricSet(sampleName, metricNamespace...)
+
+	if entityType == consts.VhostType {
+		populateVhostMetrics(entityName, metricSet, connectionStats)
+	} else {
+		populateMetrics(metricSet, entityType, entityData)
+		inventory.PopulateEntityInventory(entity, entityType, entityData)
+
+		if entityType == consts.QueueType || entityType == consts.ExchangeType {
+			populateBindingMetric(entityName, vhost, entityType, metricSet, bindingStats)
+		}
+	}
+}
+
 func setMetric(metricSet *metric.Set, metricName string, metricValue interface{}, metricType metric.SourceType) {
 	if err := metricSet.SetMetric(metricName, metricValue, metricType); err != nil {
 		logger.Errorf("There was an error when trying to set metric value: %s", err)
@@ -92,7 +149,7 @@ func populateMetrics(metricSet *metric.Set, entityType string, response *objx.Ma
 }
 
 func populateVhostMetrics(vhostName string, metricSet *metric.Set, connStats map[connKey]int) {
-	for metricKey, metricInfo := range metricDefinitions[vhostType] {
+	for metricKey, metricInfo := range metricDefinitions[consts.VhostType] {
 		connKey := connKey{vhostName, metricInfo.name}
 		setMetric(metricSet, metricKey, connStats[connKey], metricInfo.metricType)
 	}
@@ -113,16 +170,8 @@ func parseJSON(jsonData *objx.Map, key string) (interface{}, error) {
 	if value.IsFloat64() {
 		return value.Float64(), nil
 	} else if value.IsBool() {
-		return convertBoolToInt(value.Bool()), nil
+		return utils.ConvertBoolToInt(value.Bool()), nil
 	}
 
 	return nil, fmt.Errorf("could not parse json value for key [%v], unexpected data type", key)
-}
-
-func convertBoolToInt(val bool) (returnval int) {
-	returnval = 0
-	if val {
-		returnval = 1
-	}
-	return
 }

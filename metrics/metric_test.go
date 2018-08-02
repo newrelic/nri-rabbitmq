@@ -1,24 +1,47 @@
-package main
+package metrics
 
 import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
+	"path/filepath"
 	"testing"
 
+	"github.com/newrelic/nri-rabbitmq/args"
+	"github.com/newrelic/nri-rabbitmq/client"
+	"github.com/newrelic/nri-rabbitmq/testutils"
+	"github.com/newrelic/nri-rabbitmq/utils/consts"
+
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 
 	"github.com/newrelic/infra-integrations-sdk/data/metric"
 	"github.com/newrelic/infra-integrations-sdk/integration"
-	"github.com/newrelic/infra-integrations-sdk/log"
 	"github.com/stretchr/objx"
-	"github.com/stretchr/testify/mock"
 )
 
+func TestCollectMetrics(t *testing.T) {
+	testutils.SetTestLogger(t)
+	apiResponses := objx.MSI(
+		client.VhostsEndpoint, []objx.Map{
+			objx.MSI("name", "vhost1"),
+		},
+		client.QueuesEndpoint, []objx.Map{
+			objx.MSI("name", "queue1"),
+		},
+	)
+	i := testutils.GetTestingIntegration(t)
+	CollectMetrics(i, &apiResponses)
+	assert.Equal(t, 2, len(i.Entities))
+}
+
 func TestSetMetric(t *testing.T) {
-	l := new(mockedLogger)
+	l := testutils.SetMockLogger()
+	defer func() {
+		testutils.SetTestLogger(t)
+	}()
+
 	i, _ := integration.New("name", "version", integration.Logger(l))
-	logger = l
 	l.On("Errorf", mock.Anything, mock.Anything).Once()
 
 	firstQueue, _ := i.Entity("first-queue", "/my-vhost/queue")
@@ -29,22 +52,25 @@ func TestSetMetric(t *testing.T) {
 }
 
 func TestPopulateMetrics(t *testing.T) {
-	logger = log.NewStdErr(true)
+	testutils.SetTestLogger(t)
+	args.GlobalArgs = args.RabbitMQArguments{}
 	actualMetricSet := metric.NewSet("testMetrics", nil)
 
-	responseString, _ := readFile("testdata/populateMetricsTest.json")
+	sourceFile := filepath.Join("testdata", "populateMetricsTest.json")
+	responseString, _ := readFile(sourceFile)
 	responseObject, _ := objx.FromJSON(responseString)
 
 	populateMetrics(actualMetricSet, "queue", &responseObject)
 
+	goldenFile := sourceFile + ".golden"
 	actual, _ := json.Marshal(actualMetricSet)
-	if *update {
-		ioutil.WriteFile("testdata/populateMetricsTest.json.golden", actual, 0644)
+	if *testutils.Update {
+		ioutil.WriteFile(goldenFile, actual, 0644)
 	}
-	expected, _ := ioutil.ReadFile("testdata/populateMetricsTest.json.golden")
+	expected, _ := ioutil.ReadFile(goldenFile)
 
 	if !bytes.Equal(expected, actual) {
-		t.Errorf("Actual JSON results do not match expected .golden file for %s", args.ConfigPath)
+		t.Errorf("Actual JSON results do not match expected .golden file for %s", goldenFile)
 	}
 }
 
@@ -57,7 +83,7 @@ func readFile(filename string) (string, error) {
 }
 
 func TestPopulateVhostMetrics(t *testing.T) {
-	logger = &testLogger{t.Logf}
+	testutils.SetTestLogger(t)
 	actualVhostMetricSet := metric.NewSet("testVhostMetrics", nil)
 
 	connKeyStruct := connKey{
@@ -75,71 +101,64 @@ func TestPopulateVhostMetrics(t *testing.T) {
 
 	populateVhostMetrics(connKeyStruct.Vhost, actualVhostMetricSet, connStats)
 
+	goldenFile := filepath.Join("testdata", "populateVhostMetricsTest.json.golden")
 	actual, _ := json.Marshal(actualVhostMetricSet)
-	if *update {
-		ioutil.WriteFile("testdata/populateVhostMetricsTest.json.golden", actual, 0644)
+	if *testutils.Update {
+		ioutil.WriteFile(goldenFile, actual, 0644)
 	}
-	expected, _ := ioutil.ReadFile("testdata/populateVhostMetricsTest.json.golden")
+	expected, _ := ioutil.ReadFile(goldenFile)
 
 	if !bytes.Equal(expected, actual) {
-		t.Errorf("Actual JSON results do not match expected .golden file for %s", args.ConfigPath)
+		t.Errorf("Actual JSON results do not match expected .golden file for %s", goldenFile)
 	}
 }
 
 func TestPopulateBindingMetrics(t *testing.T) {
-	logger = log.NewStdErr(true)
+	testutils.SetTestLogger(t)
 	actualBindingMetricSet := metric.NewSet("testBindingMetrics", nil)
 
 	bindingKeyStruct := bindingKey{
 		Vhost:      "/",
 		EntityName: "test-queue",
-		EntityType: queueType,
+		EntityType: consts.QueueType,
 	}
 	var bindingStats = map[bindingKey]int{}
 	bindingStats[bindingKeyStruct] = 7
 
 	populateBindingMetric(bindingKeyStruct.EntityName, bindingKeyStruct.Vhost, bindingKeyStruct.EntityType, actualBindingMetricSet, bindingStats)
 
+	goldenFile := filepath.Join("testdata", "populateBindingMetricTest.json.golden")
 	actual, _ := json.Marshal(actualBindingMetricSet)
-	if *update {
-		ioutil.WriteFile("testdata/populateBindingMetricTest.json.golden", actual, 0644)
+	if *testutils.Update {
+		ioutil.WriteFile(goldenFile, actual, 0644)
 	}
-	expected, _ := ioutil.ReadFile("testdata/populateBindingMetricTest.json.golden")
+	expected, _ := ioutil.ReadFile(goldenFile)
 
 	if !bytes.Equal(expected, actual) {
-		t.Errorf("Actual JSON results do not match expected .golden file for %s", args.ConfigPath)
+		t.Errorf("Actual JSON results do not match expected .golden file for %s", goldenFile)
 	}
 }
 
 func TestParseJsonFloat(t *testing.T) {
-	jsonString, _ := readFile("testdata/parseJsonTest.json")
+	testutils.SetTestLogger(t)
+	jsonString, _ := readFile(filepath.Join("testdata", "parseJsonTest.json"))
 	jsonObject, _ := objx.FromJSON(jsonString)
 	actual, _ := parseJSON(&jsonObject, "float-test")
 	assert.IsType(t, *new(float64), actual)
 }
 
 func TestParseJsonInt(t *testing.T) {
-	jsonString, _ := readFile("testdata/parseJsonTest.json")
+	testutils.SetTestLogger(t)
+	jsonString, _ := readFile(filepath.Join("testdata", "parseJsonTest.json"))
 	jsonObject, _ := objx.FromJSON(jsonString)
 	_, err := parseJSON(&jsonObject, "int-test")
 	assert.Error(t, err, "output should have an error")
 }
 
 func TestParseJsonBool(t *testing.T) {
-	jsonString, _ := readFile("testdata/parseJsonTest.json")
+	testutils.SetTestLogger(t)
+	jsonString, _ := readFile(filepath.Join("testdata", "parseJsonTest.json"))
 	jsonObject, _ := objx.FromJSON(jsonString)
 	actual, _ := parseJSON(&jsonObject, "bool-test")
 	assert.IsType(t, *new(int), actual)
-}
-
-func TestConvertBoolToIntTrue(t *testing.T) {
-	actual := convertBoolToInt(true)
-	expected := 1
-	assert.Equal(t, expected, actual)
-}
-
-func TestConvertBoolToIntFalse(t *testing.T) {
-	actual := convertBoolToInt(false)
-	expected := 0
-	assert.Equal(t, expected, actual)
 }
