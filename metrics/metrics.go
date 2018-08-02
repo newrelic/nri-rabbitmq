@@ -34,32 +34,32 @@ var metricDefinitions = map[string]map[string]struct {
 
 	"queue": {
 		"queue.consumers":                             {"consumers", metric.GAUGE},
-		"queue.consumerMessageUtilizationPerSecond":   {"consumer_utilisation", metric.RATE},
+		"queue.consumerMessageUtilizationPerSecond":   {"consumer_utilisation", metric.GAUGE},
 		"queue.countActiveConsumersReceiveMessages":   {"active_consumers", metric.GAUGE},
 		"queue.erlangBytesConsumedInBytes":            {"memory", metric.GAUGE},
 		"queue.totalMessages":                         {"messages", metric.GAUGE},
-		"queue.totalMessagesPerSecond":                {"messages_details.rate", metric.RATE},
+		"queue.totalMessagesPerSecond":                {"messages_details.rate", metric.GAUGE},
 		"queue.messagesReadyDeliveryClients":          {"messages_ready", metric.GAUGE},
-		"queue.messagesReadyDeliveryClientsPerSecond": {"messages_ready_details.rate", metric.RATE},
+		"queue.messagesReadyDeliveryClientsPerSecond": {"messages_ready_details.rate", metric.GAUGE},
 		"queue.messagesReadyUnacknowledged":           {"messages_unacknowledged", metric.GAUGE},
-		"queue.messagesReadyUnacknowledgedPerSecond":  {"messages_unacknowledged_details.rate", metric.RATE},
+		"queue.messagesReadyUnacknowledgedPerSecond":  {"messages_unacknowledged_details.rate", metric.GAUGE},
 		"queue.messagesAcknowledged":                  {"message_stats.ack", metric.GAUGE},
-		"queue.messagesAcknowledgedPerSecond":         {"message_stats.ack_details.rate", metric.RATE},
+		"queue.messagesAcknowledgedPerSecond":         {"message_stats.ack_details.rate", metric.GAUGE},
 		"queue.messagesDeliveredAckMode":              {"message_stats.deliver", metric.GAUGE},
-		"queue.messagesDeliveredAckModePerSecond":     {"message_stats.deliver_details.rate", metric.RATE},
+		"queue.messagesDeliveredAckModePerSecond":     {"message_stats.deliver_details.rate", metric.GAUGE},
 		"queue.sumMessagesDelivered":                  {"message_stats.deliver_get", metric.GAUGE},
-		"queue.sumMessagesDeliveredPerSecond":         {"message_stats.deliver_get_details.rate", metric.RATE},
+		"queue.sumMessagesDeliveredPerSecond":         {"message_stats.deliver_get_details.rate", metric.GAUGE},
 		"queue.messagesPublished":                     {"message_stats.publish", metric.GAUGE},
-		"queue.messagesPublishedPerSecond":            {"message_stats.publish_details.rate", metric.RATE},
+		"queue.messagesPublishedPerSecond":            {"message_stats.publish_details.rate", metric.GAUGE},
 		"queue.messagesRedeliverGet":                  {"message_stats.redeliver", metric.GAUGE},
-		"queue.messagesRedeliverGetPerSecond":         {"message_stats.redeliver_details.rate", metric.RATE},
+		"queue.messagesRedeliverGetPerSecond":         {"message_stats.redeliver_details.rate", metric.GAUGE},
 	},
 
 	"exchange": {
 		"exchange.messagesPublishedQueue":          {"message_stats.publish_out", metric.GAUGE},
-		"exchange.messagesPublishedQueuePerSecond": {"message_stats.publish_out_details.rate", metric.RATE},
+		"exchange.messagesPublishedQueuePerSecond": {"message_stats.publish_out_details.rate", metric.GAUGE},
 		"exchange.messagesPublished":               {"message_stats.publish_in", metric.GAUGE},
-		"exchange.messagesPublishedPerSecond":      {"message_stats.publish_in_details.rate", metric.RATE},
+		"exchange.messagesPublishedPerSecond":      {"message_stats.publish_in_details.rate", metric.GAUGE},
 	},
 
 	"vhost": {
@@ -167,7 +167,9 @@ func populateBindingMetric(entityName, vhost, entityType string, metricSet *metr
 func parseJSON(jsonData *objx.Map, key string) (interface{}, error) {
 	value := jsonData.Get(key)
 
-	if value.IsFloat64() {
+	if value.IsInterSlice() {
+		return len(value.InterSlice()), nil
+	} else if value.IsFloat64() {
 		return value.Float64(), nil
 	} else if value.IsBool() {
 		return utils.ConvertBoolToInt(value.Bool()), nil

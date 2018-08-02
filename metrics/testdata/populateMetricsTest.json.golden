@@ -1,1 +1,1 @@
-{"event_type":"testMetrics"}
+{"event_type":"testMetrics","queue.messagesReadyDeliveryClientsPerSecond":0}
