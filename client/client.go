@@ -115,9 +115,9 @@ func collectEndpoint(client *http.Client, req *http.Request) (interface{}, error
 func createRequest(endpoint string) (*http.Request, error) {
 	var fullURL string
 	if args.GlobalArgs.UseSSL {
-		fullURL = fmt.Sprintf("https://%s:%v%s", args.GlobalArgs.Hostname, args.GlobalArgs.Port, endpoint)
+		fullURL = fmt.Sprintf("https://%s:%d%s", args.GlobalArgs.Hostname, args.GlobalArgs.Port, endpoint)
 	} else {
-		fullURL = fmt.Sprintf("http://%s:%v%s", args.GlobalArgs.Hostname, args.GlobalArgs.Port, endpoint)
+		fullURL = fmt.Sprintf("http://%s:%d%s", args.GlobalArgs.Hostname, args.GlobalArgs.Port, endpoint)
 	}
 	req, _ := http.NewRequest("GET", fullURL, nil)
 	req.SetBasicAuth(args.GlobalArgs.Username, args.GlobalArgs.Password)
