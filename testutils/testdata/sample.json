@@ -1,0 +1,7 @@
+{
+    "string": "value",
+    "number": 1,
+    "bool": true,
+    "obj": { "sub-string": "sub-value" },
+    "array": [ true, false ]
+}

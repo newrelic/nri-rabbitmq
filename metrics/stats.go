@@ -1,9 +1,11 @@
-package main
+package metrics
 
 import (
+	"github.com/newrelic/nri-rabbitmq/consts"
 	"github.com/stretchr/objx"
 )
 
+// connKey is used to uniquely identify a connection by Vhost and State
 type connKey struct {
 	Vhost, State string
 }
@@ -24,10 +26,12 @@ func collectConnectionStats(connectionsData []objx.Map) (stats map[connKey]int) 
 	return
 }
 
+// bindingKey is used to uniquely identify a binding by Vhost, EntityName, and EntityType
 type bindingKey struct {
 	Vhost, EntityName, EntityType string
 }
 
+// CollectBindingStats returns a map of bindingKey{vhost,source,dest} -> count
 func collectBindingStats(bindingsData []objx.Map) (stats map[bindingKey]int) {
 	stats = map[bindingKey]int{}
 
@@ -35,7 +39,7 @@ func collectBindingStats(bindingsData []objx.Map) (stats map[bindingKey]int) {
 		srcKey := bindingKey{
 			binding.Get("vhost").Str(),
 			binding.Get("source").Str(),
-			exchangeType,
+			consts.ExchangeType,
 		}
 		dstKey := bindingKey{
 			srcKey.Vhost,

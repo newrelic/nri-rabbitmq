@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"fmt"
@@ -8,13 +8,40 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/newrelic/nri-rabbitmq/args"
 	"github.com/stretchr/testify/assert"
 )
 
+func TestGetListOfEndpointsToCollectAllArgs(t *testing.T) {
+	args.GlobalArgs = args.RabbitMQArguments{}
+	actual := GetEndpointsToCollect()
+	assert.Equal(t, AllEndpoints, actual, "should publish all endpoints")
+
+	args.GlobalArgs.Metrics = true
+	args.GlobalArgs.Inventory = true
+	actual = GetEndpointsToCollect()
+	assert.Equal(t, AllEndpoints, actual, "should publish all endpoints")
+}
+
+func TestGetListOfEndpointsToCollectNoEndpoints(t *testing.T) {
+	args.GlobalArgs = args.RabbitMQArguments{}
+	args.GlobalArgs.Metrics = true
+	actual := GetEndpointsToCollect()
+	assert.Empty(t, actual, "should be empty slice")
+}
+
+func TestGetListOfEndpointsToCollectInventory(t *testing.T) {
+	args.GlobalArgs = args.RabbitMQArguments{}
+	args.GlobalArgs.Inventory = true
+	actual := GetEndpointsToCollect()
+	assert.Equal(t, InventoryEndpoints, actual, "should publish inventory endpoints")
+}
+
 func TestCollectEndpointsConnectionsNoSSL(t *testing.T) {
+	args.GlobalArgs = args.RabbitMQArguments{}
 	mux, teardown := setupTestServer(false)
 	defer teardown()
-	mux.HandleFunc(connectionsEndpoint, func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(ConnectionsEndpoint, func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, `[
 			{
 				"destination": "test-destination",
@@ -23,7 +50,7 @@ func TestCollectEndpointsConnectionsNoSSL(t *testing.T) {
 			}
 		]`)
 	})
-	mux.HandleFunc(queuesEndpoint, func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(QueuesEndpoint, func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, `[
 			{
 				"message_details": {
@@ -35,17 +62,17 @@ func TestCollectEndpointsConnectionsNoSSL(t *testing.T) {
 		]`)
 	})
 
-	actualResultMap, _ := collectEndpoints(connectionsEndpoint, queuesEndpoint)
+	actualResultMap, _ := CollectEndpoints(ConnectionsEndpoint, QueuesEndpoint)
 
 	expectedResultMap := map[string]interface{}{
-		connectionsEndpoint: []interface{}{
+		ConnectionsEndpoint: []interface{}{
 			map[string]interface{}{
 				"destination": "test-destination",
 				"source":      "test-source",
 				"vhost":       "test-vhost",
 			},
 		},
-		queuesEndpoint: []interface{}{
+		QueuesEndpoint: []interface{}{
 			map[string]interface{}{
 				"message_details": map[string]interface{}{
 					"rate": 0.1,
@@ -63,20 +90,21 @@ func setupTestServer(tls bool) (mux *http.ServeMux, teardown func()) {
 	mux = http.NewServeMux()
 	var server *httptest.Server
 	if tls {
-		args.UseSSL = true
+		args.GlobalArgs.UseSSL = true
 		server = httptest.NewTLSServer(mux)
 	} else {
-		args.UseSSL = false
+		args.GlobalArgs.UseSSL = false
 		server = httptest.NewServer(mux)
 	}
 	url, _ := url.Parse(server.URL)
 
 	port, _ := strconv.Atoi(url.Port())
-	args.Hostname, args.Port = url.Hostname(), port
+	args.GlobalArgs.Hostname, args.GlobalArgs.Port = url.Hostname(), port
 	return mux, server.Close
 }
 
 func TestCollectEndpointErrors(t *testing.T) {
+	args.GlobalArgs = args.RabbitMQArguments{}
 	_, err := collectEndpoint(nil, nil)
 	assert.Error(t, err, "An error should be returned when passing a nil http.Client")
 	err = nil
@@ -90,13 +118,13 @@ func TestCollectEndpointErrors(t *testing.T) {
 	assert.Error(t, err, "An error should be returned when a bad request is provided")
 	err = nil
 
-	origCAFile := args.CABundleFile
-	args.CABundleFile = "not-found"
+	origCAFile := args.GlobalArgs.CABundleFile
+	args.GlobalArgs.CABundleFile = "not-found"
 
-	_, err = collectEndpoints("/bad")
+	_, err = CollectEndpoints("/bad")
 	assert.Error(t, err, "An error should be returned when bad CA files are supplied")
 	err = nil
-	args.CABundleFile = origCAFile
+	args.GlobalArgs.CABundleFile = origCAFile
 
 	mux, closer := setupTestServer(false)
 	defer func() {
@@ -107,24 +135,25 @@ func TestCollectEndpointErrors(t *testing.T) {
 		fmt.Fprint(w, "{[]}")
 	})
 
-	_, err = collectEndpoints("/bad")
+	_, err = CollectEndpoints("/bad")
 	assert.Error(t, err, "An error should be returned when a bad JSON response is returned")
 	err = nil
 }
 
 func TestCollectEndpointsEmptyArray(t *testing.T) {
-	actualResultMap, _ := collectEndpoints()
+	actualResultMap, _ := CollectEndpoints()
 	assert.Empty(t, actualResultMap)
 }
 
 func TestCreateRequestURL(t *testing.T) {
-	args.UseSSL = true
-	args.Hostname = "test-hostname"
-	args.Port = 3000
+	args.GlobalArgs = args.RabbitMQArguments{}
+	args.GlobalArgs.UseSSL = true
+	args.GlobalArgs.Hostname = "test-hostname"
+	args.GlobalArgs.Port = 3000
 	endpoint := "test-endpoint"
 	r, err := createRequest(endpoint)
 	actualURL := fmt.Sprintf("https://%v", r.Host)
-	expectedURL := fmt.Sprintf("https://%v:%v%v", args.Hostname, args.Port, endpoint)
+	expectedURL := fmt.Sprintf("https://%v:%v%v", args.GlobalArgs.Hostname, args.GlobalArgs.Port, endpoint)
 	assert.Equal(t, expectedURL, actualURL, "expect url to use https")
 	assert.NoError(t, err)
 	if r.Method != http.MethodGet {
