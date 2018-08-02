@@ -2,8 +2,8 @@ package inventory
 
 import (
 	"github.com/newrelic/infra-integrations-sdk/integration"
-	"github.com/newrelic/nri-rabbitmq/consts"
 	"github.com/newrelic/nri-rabbitmq/utils"
+	"github.com/newrelic/nri-rabbitmq/utils/consts"
 	"github.com/stretchr/objx"
 )
 

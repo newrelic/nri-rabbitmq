@@ -1,7 +1,7 @@
 package metrics
 
 import (
-	"github.com/newrelic/nri-rabbitmq/consts"
+	"github.com/newrelic/nri-rabbitmq/utils/consts"
 	"github.com/stretchr/objx"
 )
 

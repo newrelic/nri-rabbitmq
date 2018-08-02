@@ -6,7 +6,7 @@ import (
 	"regexp"
 
 	sdkArgs "github.com/newrelic/infra-integrations-sdk/args"
-	"github.com/newrelic/nri-rabbitmq/consts"
+	"github.com/newrelic/nri-rabbitmq/utils/consts"
 )
 
 // GlobalArgs are the global set of arguments

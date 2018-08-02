@@ -6,9 +6,9 @@ import (
 
 	"github.com/newrelic/infra-integrations-sdk/data/metric"
 	"github.com/newrelic/nri-rabbitmq/args"
-	"github.com/newrelic/nri-rabbitmq/consts"
 	"github.com/newrelic/nri-rabbitmq/logger"
 	"github.com/newrelic/nri-rabbitmq/testutils"
+	"github.com/newrelic/nri-rabbitmq/utils/consts"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

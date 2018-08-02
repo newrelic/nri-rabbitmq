@@ -7,8 +7,8 @@ import (
 	"github.com/newrelic/infra-integrations-sdk/data/metric"
 	"github.com/newrelic/infra-integrations-sdk/integration"
 	"github.com/newrelic/nri-rabbitmq/args"
-	"github.com/newrelic/nri-rabbitmq/consts"
 	"github.com/newrelic/nri-rabbitmq/logger"
+	"github.com/newrelic/nri-rabbitmq/utils/consts"
 )
 
 // CreateEntity will create an entity and metricNamespace attributes with approprate name/namespace values if the entity isn't filtered
@@ -29,12 +29,12 @@ func CreateEntity(rabbitmqIntegration *integration.Integration, entityName strin
 		if strings.HasSuffix(vhost, "/") {
 			name = vhost + name
 		} else {
-			name = fmt.Sprintf("%v/%v", vhost, name)
+			name = fmt.Sprintf("%s/%s", vhost, name)
 		}
 	}
 	metricNamespace = []metric.Attribute{
 		{Key: "displayName", Value: name},
-		{Key: "entityName", Value: fmt.Sprintf("%v:%v", namespace, name)},
+		{Key: "entityName", Value: fmt.Sprintf("%s:%s", namespace, name)},
 	}
 
 	entity, err = rabbitmqIntegration.Entity(name, namespace)

@@ -9,8 +9,8 @@ import (
 
 	"github.com/newrelic/nri-rabbitmq/args"
 	"github.com/newrelic/nri-rabbitmq/client"
-	"github.com/newrelic/nri-rabbitmq/consts"
 	"github.com/newrelic/nri-rabbitmq/testutils"
+	"github.com/newrelic/nri-rabbitmq/utils/consts"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

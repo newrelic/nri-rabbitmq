@@ -11,9 +11,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/newrelic/nri-rabbitmq/consts"
 	"github.com/newrelic/nri-rabbitmq/testutils"
 	"github.com/newrelic/nri-rabbitmq/utils"
+	"github.com/newrelic/nri-rabbitmq/utils/consts"
 
 	"github.com/newrelic/nri-rabbitmq/args"
 	"github.com/stretchr/objx"
