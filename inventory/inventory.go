@@ -58,7 +58,7 @@ func getLocalNodeName() (string, error) {
 	if len(args.GlobalArgs.NodeNameOverride) > 0 {
 		return args.GlobalArgs.NodeNameOverride, nil
 	}
-	output, err := execCommand("rabbitmqctl", "eval", "path().").Output()
+	output, err := execCommand("rabbitmqctl", "eval", "node().").Output()
 	if err != nil {
 		return "", err
 	}
@@ -109,10 +109,10 @@ func getConfigPath(nodeData objx.Map) string {
 		return args.GlobalArgs.ConfigPath
 	}
 	if nodeData != nil {
-		configs := nodeData.Get("config_files").StrSlice()
+		configs := nodeData.Get("config_files").InterSlice()
 		for _, config := range configs {
-			if strings.HasSuffix(config, ".conf") {
-				return config
+			if path, isString := config.(string); isString && strings.HasSuffix(path, ".conf") {
+				return path
 			}
 		}
 	}
