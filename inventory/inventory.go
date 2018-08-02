@@ -182,8 +182,8 @@ func setInventoryValue(entity *integration.Entity, typeName, key string, value i
 }
 
 func setInventoryItem(entity *integration.Entity, typeName, key string, value interface{}, keyPrefix ...string) {
-	actualKey := strings.Join(append(keyPrefix, key), ".")
-	if err := entity.SetInventoryItem(typeName, actualKey, value); err != nil {
-		logger.Infof("Error setting inventory [%s.%s] on [%s]: %v", typeName, actualKey, entity.Metadata.Name, err)
+	actualKey := typeName + "." + strings.Join(append(keyPrefix, key), ".")
+	if err := entity.SetInventoryItem(actualKey, "value", value); err != nil {
+		logger.Infof("Error setting inventory [%s] on [%s]: %v", actualKey, entity.Metadata.Name, err)
 	}
 }
