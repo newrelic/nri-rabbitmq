@@ -57,13 +57,14 @@ func Test_CollectInventory(t *testing.T) {
 		CollectInventory(i, nodesData)
 	}, "CollectInventory should fail with mismatched nodeData")
 
+	nodeData, _ := objx.FromJSON(fmt.Sprintf(`{
+		"name": %q,
+		"config_files": [
+			%q
+		]
+	}`, expectedNodeName, testConfigPath))
 	nodesData = []objx.Map{
-		objx.MSI(
-			"name", "node1",
-			"config_files", []string{
-				testConfigPath,
-			},
-		),
+		nodeData,
 	}
 
 	prevOsOpen := osOpen
@@ -214,21 +215,21 @@ func TestGetConfigPath(t *testing.T) {
 	actual = getConfigPath(nil)
 	assert.Empty(t, actual)
 
-	nodeData := map[string]interface{}{
-		"config_files": []string{
+	nodeData, _ := objx.FromJSON(`{
+		"config_files": [
 			"/etc/rabbitmq/rabbitmq.config",
-			"/etc/rabbitmq/advanced.config",
-		},
-	}
+			"/etc/rabbitmq/advanced.config"
+		]
+	}`)
 	actual = getConfigPath(nodeData)
 	assert.Empty(t, actual)
 
-	nodeData = map[string]interface{}{
-		"config_files": []string{
+	nodeData, _ = objx.FromJSON(`{
+		"config_files": [
 			"/etc/rabbitmq/rabbitmq.conf",
-			"/etc/rabbitmq/advanced.config",
-		},
-	}
+			"/etc/rabbitmq/advanced.config"
+		]
+	}`)
 	actual = getConfigPath(nodeData)
 	assert.Equal(t, "/etc/rabbitmq/rabbitmq.conf", actual)
 }
@@ -247,7 +248,7 @@ func Test_PopulateEntityInventory(t *testing.T) {
 	PopulateEntityInventory(exchangeEntity, consts.ExchangeType, &data)
 	setInventoryItem(exchangeEntity, "this-key-is-longer-than-375-to-force-an-error-lorem-ipsum-dolor-sit-amet-consectetur-adipiscing-elit-sed-do-eiusmod-tempor-incididunt-ut-labore-et-dolore-magna-aliqua-ut-enim-ad-minim-veniam-quis-nostrud-exercitation-ullamco-laboris-nisi-ut-aliquip-ex-ea-commodo-consequat-duis-aute-irure-dolor-in-reprehenderit-in-voluptate-velit-esse-cillum-dolore-eu-fugiat-nulla-pariatures", "nope", "false")
 
-	exchangeActual, err := json.Marshal(exchangeEntity.Inventory)
+	exchangeActual, err := exchangeEntity.Inventory.MarshalJSON()
 	assert.NoError(t, err)
 
 	if *testutils.Update {
@@ -306,7 +307,7 @@ func TestHelperProcess(*testing.T) {
 	cmd, args := args[0], args[1:]
 	switch cmd {
 	case "rabbitmqctl":
-		if len(args) == 2 && args[0] == "eval" && args[1] == "path()." {
+		if len(args) == 2 && args[0] == "eval" && args[1] == "node()." {
 			if os.Getenv("GET_NODE_NAME_ERROR") == "1" {
 				os.Exit(2)
 			}
