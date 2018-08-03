@@ -57,12 +57,12 @@ func Test_CollectInventory(t *testing.T) {
 		CollectInventory(i, nodesData)
 	}, "CollectInventory should fail with mismatched nodeData")
 
-	nodeData, _ := objx.FromJSON(fmt.Sprintf(`{
+	nodeData := objx.New(testutils.ReadObjectFromJSONString(t, fmt.Sprintf(`{
 		"name": %q,
 		"config_files": [
 			%q
 		]
-	}`, expectedNodeName, testConfigPath))
+	}`, expectedNodeName, testConfigPath)))
 	nodesData = []objx.Map{
 		nodeData,
 	}
@@ -215,21 +215,21 @@ func TestGetConfigPath(t *testing.T) {
 	actual = getConfigPath(nil)
 	assert.Empty(t, actual)
 
-	nodeData, _ := objx.FromJSON(`{
+	nodeData := objx.New(testutils.ReadObjectFromJSONString(t, `{
 		"config_files": [
 			"/etc/rabbitmq/rabbitmq.config",
 			"/etc/rabbitmq/advanced.config"
 		]
-	}`)
+	}`))
 	actual = getConfigPath(nodeData)
 	assert.Empty(t, actual)
 
-	nodeData, _ = objx.FromJSON(`{
+	nodeData = objx.New(testutils.ReadObjectFromJSONString(t, `{
 		"config_files": [
 			"/etc/rabbitmq/rabbitmq.conf",
 			"/etc/rabbitmq/advanced.config"
 		]
-	}`)
+	}`))
 	actual = getConfigPath(nodeData)
 	assert.Equal(t, "/etc/rabbitmq/rabbitmq.conf", actual)
 }

@@ -2,6 +2,7 @@
     "name": "test-name",
     "vhost": "test-vhost",
     "messages_ready_details": {
-        "rate": false
-    }
+        "rate": 10.5
+    },
+    "messages_ready": 243
 }

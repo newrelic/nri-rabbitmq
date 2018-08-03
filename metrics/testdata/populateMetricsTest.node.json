@@ -1,0 +1,9 @@
+{
+    "partitions": [
+        "one",
+        "two"
+    ],
+    "name": "node1",
+    "running": true,
+    "sockets_used": 523
+}

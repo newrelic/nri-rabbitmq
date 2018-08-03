@@ -54,24 +54,36 @@ func TestSetMetric(t *testing.T) {
 func TestPopulateMetrics(t *testing.T) {
 	testutils.SetTestLogger(t)
 	args.GlobalArgs = args.RabbitMQArguments{}
-	actualMetricSet := metric.NewSet("testMetrics", nil)
 
-	sourceFile := filepath.Join("testdata", "populateMetricsTest.json")
-	responseString, _ := readFile(sourceFile)
-	responseObject, _ := objx.FromJSON(responseString)
+	actualMetricSet := metric.NewSet("queueMetrics", nil)
+	sourceFile := filepath.Join("testdata", "populateMetricsTest.queue.json")
+	sourceMap := testutils.ReadObjectFromJSONFile(t, sourceFile)
+	responseObject := objx.New(sourceMap)
 
-	populateMetrics(actualMetricSet, "queue", &responseObject)
+	populateMetrics(actualMetricSet, consts.QueueType, &responseObject)
 
 	goldenFile := sourceFile + ".golden"
-	actual, _ := json.Marshal(actualMetricSet)
+	actual, _ := actualMetricSet.MarshalJSON()
 	if *testutils.Update {
 		ioutil.WriteFile(goldenFile, actual, 0644)
 	}
 	expected, _ := ioutil.ReadFile(goldenFile)
+	assert.Equal(t, expected, actual)
 
-	if !bytes.Equal(expected, actual) {
-		t.Errorf("Actual JSON results do not match expected .golden file for %s", goldenFile)
+	actualMetricSet = metric.NewSet("nodeMetrics", nil)
+	sourceFile = filepath.Join("testdata", "populateMetricsTest.node.json")
+	sourceMap = testutils.ReadObjectFromJSONFile(t, sourceFile)
+	responseObject = objx.New(sourceMap)
+
+	populateMetrics(actualMetricSet, consts.NodeType, &responseObject)
+
+	goldenFile = sourceFile + ".golden"
+	actual, _ = actualMetricSet.MarshalJSON()
+	if *testutils.Update {
+		ioutil.WriteFile(goldenFile, actual, 0644)
 	}
+	expected, _ = ioutil.ReadFile(goldenFile)
+	assert.Equal(t, expected, actual)
 }
 
 func readFile(filename string) (string, error) {
@@ -139,26 +151,25 @@ func TestPopulateBindingMetrics(t *testing.T) {
 	}
 }
 
-func TestParseJsonFloat(t *testing.T) {
+func TestParseJson(t *testing.T) {
 	testutils.SetTestLogger(t)
-	jsonString, _ := readFile(filepath.Join("testdata", "parseJsonTest.json"))
-	jsonObject, _ := objx.FromJSON(jsonString)
-	actual, _ := parseJSON(&jsonObject, "float-test")
+	jsonPath := filepath.Join("testdata", "parseJsonTest.json")
+	jsonMap := testutils.ReadObjectFromJSONFile(t, jsonPath)
+	jsonObject := objx.New(jsonMap)
+
+	actual, err := parseJSON(&jsonObject, "float-test")
+	assert.NoError(t, err)
 	assert.IsType(t, *new(float64), actual)
-}
 
-func TestParseJsonInt(t *testing.T) {
-	testutils.SetTestLogger(t)
-	jsonString, _ := readFile(filepath.Join("testdata", "parseJsonTest.json"))
-	jsonObject, _ := objx.FromJSON(jsonString)
-	_, err := parseJSON(&jsonObject, "int-test")
-	assert.Error(t, err, "output should have an error")
-}
+	actual, err = parseJSON(&jsonObject, "int-test")
+	assert.NoError(t, err)
+	assert.IsType(t, *new(float64), actual)
 
-func TestParseJsonBool(t *testing.T) {
-	testutils.SetTestLogger(t)
-	jsonString, _ := readFile(filepath.Join("testdata", "parseJsonTest.json"))
-	jsonObject, _ := objx.FromJSON(jsonString)
-	actual, _ := parseJSON(&jsonObject, "bool-test")
-	assert.IsType(t, *new(int), actual)
+	actual, err = parseJSON(&jsonObject, "true-bool-test")
+	assert.NoError(t, err)
+	assert.Equal(t, 1, actual)
+
+	actual, err = parseJSON(&jsonObject, "false-bool-test")
+	assert.NoError(t, err)
+	assert.Equal(t, 0, actual)
 }
