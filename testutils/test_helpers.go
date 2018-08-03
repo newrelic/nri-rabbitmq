@@ -62,9 +62,17 @@ func GetTestingEntity(t *testing.T, entityArgs ...string) (payload *integration.
 // ReadObjectFromJSONFile reads a generic map[string]interface{} from a file, typically used for reading JSON
 func ReadObjectFromJSONFile(t *testing.T, filename string) map[string]interface{} {
 	data, err := ioutil.ReadFile(filename)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	item := map[string]interface{}{}
 	err = json.Unmarshal(data, &item)
-	assert.NoError(t, err)
+	require.NoError(t, err)
+	return item
+}
+
+// ReadObjectFromJSONString reads a generic map[string]interface{} from a json string
+func ReadObjectFromJSONString(t *testing.T, rawJSON string) map[string]interface{} {
+	item := map[string]interface{}{}
+	err := json.Unmarshal([]byte(rawJSON), &item)
+	require.NoError(t, err)
 	return item
 }

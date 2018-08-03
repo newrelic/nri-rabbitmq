@@ -1,5 +1,6 @@
 {
     "float-test": 10.5,
-    "bool-test": true,
+    "true-bool-test": true,
+    "false-bool-test": false,
     "int-test": 10
 }
