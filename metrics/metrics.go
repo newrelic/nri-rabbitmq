@@ -56,10 +56,10 @@ var metricDefinitions = map[string]map[string]struct {
 	},
 
 	"exchange": {
-		"exchange.messagesPublishedQueue":          {"message_stats.publish_out", metric.GAUGE},
-		"exchange.messagesPublishedQueuePerSecond": {"message_stats.publish_out_details.rate", metric.GAUGE},
-		"exchange.messagesPublished":               {"message_stats.publish_in", metric.GAUGE},
-		"exchange.messagesPublishedPerSecond":      {"message_stats.publish_in_details.rate", metric.GAUGE},
+		"exchange.messagesPublishedPerChannel":          {"message_stats.publish_in", metric.GAUGE},
+		"exchange.messagesPublishedPerChannelPerSecond": {"message_stats.publish_in_details.rate", metric.GAUGE},
+		"exchange.messagesPublishedQueue":               {"message_stats.publish_out", metric.GAUGE},
+		"exchange.messagesPublishedQueuePerSecond":      {"message_stats.publish_out_details.rate", metric.GAUGE},
 	},
 
 	"vhost": {
