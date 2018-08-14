@@ -3,159 +3,145 @@ package client
 import (
 	"fmt"
 	"net/http"
-	"net/http/httptest"
-	"net/url"
-	"strconv"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"testing"
 
 	"github.com/newrelic/nri-rabbitmq/args"
+	"github.com/newrelic/nri-rabbitmq/data"
+	"github.com/newrelic/nri-rabbitmq/testutils"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetListOfEndpointsToCollectAllArgs(t *testing.T) {
+func Test_CollectEndpoint(t *testing.T) {
+	defaultClient = nil
 	args.GlobalArgs = args.RabbitMQArguments{}
-	actual := GetEndpointsToCollect()
-	assert.Equal(t, AllEndpoints, actual, "should publish all endpoints")
-
-	args.GlobalArgs.Metrics = true
-	args.GlobalArgs.Inventory = true
-	actual = GetEndpointsToCollect()
-	assert.Equal(t, AllEndpoints, actual, "should publish all endpoints")
-}
-
-func TestGetListOfEndpointsToCollectNoEndpoints(t *testing.T) {
-	args.GlobalArgs = args.RabbitMQArguments{}
-	args.GlobalArgs.Metrics = true
-	actual := GetEndpointsToCollect()
-	assert.Empty(t, actual, "should be empty slice")
-}
-
-func TestGetListOfEndpointsToCollectInventory(t *testing.T) {
-	args.GlobalArgs = args.RabbitMQArguments{}
-	args.GlobalArgs.Inventory = true
-	actual := GetEndpointsToCollect()
-	assert.Equal(t, InventoryEndpoints, actual, "should publish inventory endpoints")
-}
-
-func TestCollectEndpointsConnectionsNoSSL(t *testing.T) {
-	args.GlobalArgs = args.RabbitMQArguments{}
-	mux, teardown := setupTestServer(false)
+	mux, teardown := testutils.GetTestServer(false)
 	defer teardown()
 	mux.HandleFunc(ConnectionsEndpoint, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("content-type", "application/json")
 		fmt.Fprint(w, `[
 			{
-				"destination": "test-destination",
-				"source": "test-source",
+				"state": "running",
 				"vhost": "test-vhost"
 			}
 		]`)
 	})
 	mux.HandleFunc(QueuesEndpoint, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("content-type", "application/json")
 		fmt.Fprint(w, `[
 			{
-				"message_details": {
+				"messages_details": {
 					"rate": 0.1
 				},
 				"messages": 10,
-				"node": "rabbit@rabbitmq-1"
+				"name": "test-queue",
+				"vhost": "test-vhost"
 			}
 		]`)
 	})
 
-	actualResultMap, _ := CollectEndpoints(ConnectionsEndpoint, QueuesEndpoint)
+	err := CollectEndpoint("", nil)
+	assert.Error(t, err)
 
-	expectedResultMap := map[string]interface{}{
-		ConnectionsEndpoint: []interface{}{
-			map[string]interface{}{
-				"destination": "test-destination",
-				"source":      "test-source",
-				"vhost":       "test-vhost",
-			},
-		},
-		QueuesEndpoint: []interface{}{
-			map[string]interface{}{
-				"message_details": map[string]interface{}{
-					"rate": 0.1,
-				},
-				"messages": 10.0,
-				"node":     "rabbit@rabbitmq-1",
-			},
-		},
-	}
+	err = CollectEndpoint(ConnectionsEndpoint, nil)
+	assert.Error(t, err)
+	var actualConnections []data.ConnectionData
 
-	assert.Equal(t, expectedResultMap, actualResultMap)
+	err = CollectEndpoint(ConnectionsEndpoint, &actualConnections)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(actualConnections), "Connection length should be 1")
+	assert.Equal(t, "test-vhost", actualConnections[0].Vhost, "Vhost is different")
+	assert.Equal(t, "running", actualConnections[0].State, "State is different")
+	var actualQueues []data.QueueData
+
+	err = CollectEndpoint(QueuesEndpoint, &actualQueues)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(actualQueues))
+	f := float64(0.1)
+	assert.Equal(t, &f, actualQueues[0].MessagesDetails.Rate, "MessageDetails.Rate is different")
+	i := int64(10)
+	assert.Equal(t, &i, actualQueues[0].Messages, "Messages is different")
+	assert.Equal(t, "test-queue", actualQueues[0].Name, "Name is different")
+	assert.Equal(t, "test-vhost", actualQueues[0].Vhost, "Vhost is different")
 }
 
-func setupTestServer(tls bool) (mux *http.ServeMux, teardown func()) {
-	mux = http.NewServeMux()
-	var server *httptest.Server
-	if tls {
-		args.GlobalArgs.UseSSL = true
-		server = httptest.NewTLSServer(mux)
-	} else {
-		args.GlobalArgs.UseSSL = false
-		server = httptest.NewServer(mux)
-	}
-	url, _ := url.Parse(server.URL)
-
-	port, _ := strconv.Atoi(url.Port())
-	args.GlobalArgs.Hostname, args.GlobalArgs.Port = url.Hostname(), port
-	return mux, server.Close
-}
-
-func TestCollectEndpointErrors(t *testing.T) {
+func Test_ensureClient_CannotCreateClient(t *testing.T) {
+	defaultClient = nil
 	args.GlobalArgs = args.RabbitMQArguments{}
-	_, err := collectEndpoint(nil, nil)
-	assert.Error(t, err, "An error should be returned when passing a nil http.Client")
-	err = nil
 
-	_, err = collectEndpoint(http.DefaultClient, nil)
-	assert.Error(t, err, "An error should be returned when passing a nil http.Request")
-	err = nil
+	if os.Getenv("INVALID_CLIENT") == "1" {
+		// If this test was called to execute the invalid client test, then call collectEndpoint
+		// This is only called in this fashion below
+		args.GlobalArgs.CABundleFile = filepath.Join("not-found")
+		defer func() {
+			args.GlobalArgs.CABundleDir = ""
+		}()
 
-	req := new(http.Request)
-	_, err = collectEndpoint(http.DefaultClient, req)
-	assert.Error(t, err, "An error should be returned when a bad request is provided")
-	err = nil
+		ensureClient()
+		return
+	}
 
-	origCAFile := args.GlobalArgs.CABundleFile
-	args.GlobalArgs.CABundleFile = "not-found"
+	// If this is the first time this test method is ran, re-execute it telling it to pefrom the actual method call.
+	// Then test the result of that, which should be an os.Exit(2).
+	// The downside to this is the ensureClient() will not show full coverage when it actually does (since it's ran as a sub-test)
+	cmd := exec.Command(os.Args[0], "-test.run=Test_ensureClient_CannotCreateClient")
+	cmd.Env = append(os.Environ(), "INVALID_CLIENT=1")
+	err := cmd.Run()
+	if e, ok := err.(*exec.ExitError); ok {
+		assert.Equal(t, "exit status 2", e.Error(), "Exit status of invalid HTTP client should be 2")
+		return
+	}
+	if err != nil {
+		t.Fatalf("Unexpected error type from invalid HTTP client %v", err)
+	} else {
+		t.Fatalf("Expected ensureClient() to os.Exit() and it did not")
+	}
+}
 
-	_, err = CollectEndpoints("/bad")
-	assert.Error(t, err, "An error should be returned when bad CA files are supplied")
-	err = nil
-	args.GlobalArgs.CABundleFile = origCAFile
+func Test_collectEndpoint_Errors(t *testing.T) {
+	defaultClient = nil
+	args.GlobalArgs = args.RabbitMQArguments{}
 
-	mux, closer := setupTestServer(false)
-	defer func() {
-		closer()
-	}()
-
-	mux.HandleFunc("/bad", func(w http.ResponseWriter, req *http.Request) {
-		fmt.Fprint(w, "{[]}")
+	mux, close := testutils.GetTestServer(false)
+	defer close()
+	mux.HandleFunc(ConnectionsEndpoint, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("content-type", "application/json")
+		fmt.Fprint(w, `[
+			{}
+		]`)
+	})
+	mux.HandleFunc(QueuesEndpoint, func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(404)
 	})
 
-	_, err = CollectEndpoints("/bad")
-	assert.Error(t, err, "An error should be returned when a bad JSON response is returned")
-	err = nil
+	err := collectEndpoint(nil, &struct{}{})
+	assert.Error(t, err)
+
+	req := createRequest(ConnectionsEndpoint)
+	err = collectEndpoint(req, &struct{}{})
+	assert.Error(t, err)
+
+	req = createRequest(QueuesEndpoint)
+	err = collectEndpoint(req, &struct{}{})
+	assert.Error(t, err)
+
+	req.URL = nil
+	err = collectEndpoint(req, &struct{}{})
+	assert.Error(t, err)
 }
 
-func TestCollectEndpointsEmptyArray(t *testing.T) {
-	actualResultMap, _ := CollectEndpoints()
-	assert.Empty(t, actualResultMap)
-}
-
-func TestCreateRequestURL(t *testing.T) {
+func Test_createRequest(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{}
 	args.GlobalArgs.UseSSL = true
 	args.GlobalArgs.Hostname = "test-hostname"
 	args.GlobalArgs.Port = 3000
 	endpoint := "test-endpoint"
-	r, err := createRequest(endpoint)
+	r := createRequest(endpoint)
 	actualURL := fmt.Sprintf("https://%v", r.Host)
 	expectedURL := fmt.Sprintf("https://%v:%v%v", args.GlobalArgs.Hostname, args.GlobalArgs.Port, endpoint)
 	assert.Equal(t, expectedURL, actualURL, "expect url to use https")
-	assert.NoError(t, err)
 	if r.Method != http.MethodGet {
 		t.Error("Expected GET method, got POST method.")
 	}

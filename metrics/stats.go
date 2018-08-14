@@ -1,8 +1,8 @@
 package metrics
 
 import (
-	"github.com/newrelic/nri-rabbitmq/utils/consts"
-	"github.com/stretchr/objx"
+	"github.com/newrelic/nri-rabbitmq/data"
+	"github.com/newrelic/nri-rabbitmq/data/consts"
 )
 
 // connKey is used to uniquely identify a connection by Vhost and State
@@ -11,13 +11,13 @@ type connKey struct {
 }
 
 // collectConnectionStats returns a map of vhost -> connection totals by status and an overall status
-func collectConnectionStats(connectionsData []objx.Map) (stats map[connKey]int) {
+func collectConnectionStats(connectionsData []*data.ConnectionData) (stats map[connKey]int) {
 	stats = map[connKey]int{}
 
 	for _, connection := range connectionsData {
 		key := connKey{
-			connection.Get("vhost").Str(),
-			connection.Get("state").Str(),
+			connection.Vhost,
+			connection.State,
 		}
 
 		stats[key]++
@@ -32,19 +32,19 @@ type bindingKey struct {
 }
 
 // CollectBindingStats returns a map of bindingKey{vhost,source,dest} -> count
-func collectBindingStats(bindingsData []objx.Map) (stats map[bindingKey]int) {
+func collectBindingStats(bindingsData []*data.BindingData) (stats map[bindingKey]int) {
 	stats = map[bindingKey]int{}
 
 	for _, binding := range bindingsData {
 		srcKey := bindingKey{
-			binding.Get("vhost").Str(),
-			binding.Get("source").Str(),
+			binding.Vhost,
+			binding.Source,
 			consts.ExchangeType,
 		}
 		dstKey := bindingKey{
 			srcKey.Vhost,
-			binding.Get("destination").Str(),
-			binding.Get("destination_type").Str(),
+			binding.Destination,
+			binding.DestinationType,
 		}
 		stats[srcKey]++
 		stats[dstKey]++

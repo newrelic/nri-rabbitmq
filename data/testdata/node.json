@@ -1,0 +1,19 @@
+{
+    "config_files": [
+        "advanced.config",
+        "rabbit.conf"
+    ],
+    "disk_free": 1024,
+    "disk_free_alarm": false,
+    "fd_used": 20,
+    "mem_alarm": false,
+    "mem_used": 2048,
+    "name": "node1",
+    "partitions": [
+        "one",
+        "two"
+    ],
+    "run_queue": 3,
+    "running": true,
+    "sockets_used": 2
+}

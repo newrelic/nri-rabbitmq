@@ -8,50 +8,55 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"strconv"
 	"strings"
 	"unicode"
 
 	"github.com/newrelic/infra-integrations-sdk/integration"
+	"github.com/newrelic/infra-integrations-sdk/log"
 	"github.com/newrelic/nri-rabbitmq/args"
-	"github.com/newrelic/nri-rabbitmq/logger"
-	"github.com/newrelic/nri-rabbitmq/utils"
-	"github.com/newrelic/nri-rabbitmq/utils/consts"
-	"github.com/stretchr/objx"
+	"github.com/newrelic/nri-rabbitmq/data"
+	"github.com/newrelic/nri-rabbitmq/data/consts"
 )
 
 var (
-	execCommand     = exec.Command
-	osOpen          = os.Open
-	entityInventory = map[string][]string{
-		consts.ExchangeType: {
-			"type",
-			"durable",
-			"auto_delete",
-			"arguments",
-		},
-		consts.QueueType: {
-			"exclusive",
-			"durable",
-			"auto_delete",
-			"arguments",
-		},
-	}
+	execCommand = exec.Command
+	osOpen      = os.Open
 )
 
+type inventoryKey struct {
+	category string
+	key      string
+}
+
 // CollectInventory collects the inventory items (config file values) from the apiResponses
-func CollectInventory(rabbitmqIntegration *integration.Integration, nodesData []objx.Map) {
+func CollectInventory(rabbitmqIntegration *integration.Integration, nodesData []*data.NodeData) {
 	if len(nodesData) == 0 {
-		panic(errors.New("could not retrieve the list of nodes"))
+		log.Warn("No node data available to collect inventory")
+		return
 	}
 
 	nodeName, err := getLocalNodeName()
-	utils.PanicOnErr(err)
+	if err != nil {
+		log.Error("Error getting local node name: %v", err)
+		return
+	}
 
-	localNode, nodeData, err := getNodeEntity(nodeName, nodesData, rabbitmqIntegration)
-	utils.PanicOnErr(err)
+	nodeData, err := findNodeData(nodeName, nodesData)
+	if err != nil {
+		log.Error("Error finding node: %v", err)
+		return
+	}
 
-	utils.PanicOnErr(setInventoryData(localNode, nodeData))
+	if config := getConfigData(nodeData); len(config) > 0 {
+		localNode, _, err := data.CreateEntity(rabbitmqIntegration, nodeName, consts.NodeType, "")
+		if err != nil {
+			log.Error("Error creating local node entity: %v", err)
+		}
+
+		for k, v := range config {
+			data.SetInventoryItem(localNode, k.category, k.key, v)
+		}
+	}
 }
 
 func getLocalNodeName() (string, error) {
@@ -73,53 +78,59 @@ func trimNodeName(r rune) bool {
 	return unicode.IsSpace(r) || r == '\''
 }
 
-func getNodeEntity(nodeName string, nodesData []objx.Map, rabbitIntegration *integration.Integration) (entity *integration.Entity, nodeData objx.Map, err error) {
-	if rabbitIntegration != nil {
-		for _, node := range nodesData {
-			if node.Get("name").Str() == nodeName {
-				e, _, err := utils.CreateEntity(rabbitIntegration, nodeName, consts.NodeType, "")
-				return e, node, err
-			}
+func findNodeData(nodeName string, nodesData []*data.NodeData) (nodeData *data.NodeData, err error) {
+	for _, node := range nodesData {
+		if node.Name == nodeName {
+			return node, err
 		}
 	}
-	return nil, nil, fmt.Errorf("node name [%v] not found in cluster", nodeName)
+	return nil, fmt.Errorf("node name [%v] not found in RabbitMQ", nodeName)
 }
 
-func setInventoryData(nodeEntity *integration.Entity, nodeData objx.Map) error {
+func getConfigData(nodeData *data.NodeData) map[inventoryKey]string {
 	configPath := getConfigPath(nodeData)
 	if len(configPath) > 0 {
 		file, err := osOpen(configPath)
 		if os.IsNotExist(err) {
-			logger.Infof("The specified configuration file does not exist: %v", args.GlobalArgs.ConfigPath)
+			log.Error("The specified configuration file does not exist: %v", args.GlobalArgs.ConfigPath)
 			return nil
 		}
 		if err != nil {
-			logger.Errorf("Could not open the specified configuration file: %v", err)
-			return err
+			log.Error("Could not open the specified configuration file: %v", err)
+			return nil
 		}
-		defer utils.CheckErr(file.Close)
+		defer func() {
+			if err := file.Close(); err != nil {
+				log.Error("Error closing config file [%s]: %v", configPath, err)
+			}
+		}()
 
-		return populateConfigInventory(file, nodeEntity)
+		if config, err := parseConfigInventory(file); err != nil {
+			log.Error("Error parsing config file: %v", err)
+		} else {
+			return config
+		}
+
 	}
 	return nil
 }
 
-func getConfigPath(nodeData objx.Map) string {
+func getConfigPath(nodeData *data.NodeData) string {
 	if len(args.GlobalArgs.ConfigPath) > 0 {
 		return args.GlobalArgs.ConfigPath
 	}
 	if nodeData != nil {
-		configs := nodeData.Get("config_files").InterSlice()
-		for _, config := range configs {
-			if path, isString := config.(string); isString && strings.HasSuffix(path, ".conf") {
-				return path
+		for _, config := range nodeData.ConfigFiles {
+			if strings.HasSuffix(config, ".conf") {
+				return config
 			}
 		}
 	}
 	return ""
 }
 
-func populateConfigInventory(reader io.Reader, nodeEntity *integration.Entity) error {
+func parseConfigInventory(reader io.Reader) (map[inventoryKey]string, error) {
+	values := make(map[inventoryKey]string)
 	scanner := bufio.NewScanner(reader)
 	var line []byte
 	var commentIndex int
@@ -133,57 +144,13 @@ func populateConfigInventory(reader io.Reader, nodeEntity *integration.Entity) e
 		if commentIndex >= 0 {
 			line = line[:commentIndex]
 		}
-		if len(line) > 3 {
-			if eqIndex = bytes.IndexByte(line, '='); eqIndex > 1 {
+		if len(line) >= 2 {
+			if eqIndex = bytes.IndexByte(line, '='); eqIndex >= 1 {
 				key = string(bytes.TrimSpace(line[0:eqIndex]))
 				value = string(bytes.TrimSpace(line[eqIndex+1:]))
-				setInventoryItem(nodeEntity, "config", key, value)
+				values[inventoryKey{"config", key}] = value
 			}
 		}
 	}
-	return scanner.Err()
-}
-
-// PopulateEntityInventory adds inventory items from the entityData to the entity
-func PopulateEntityInventory(entity *integration.Entity, entityType string, entityData *objx.Map) {
-	for _, key := range entityInventory[entityType] {
-		setInventoryMap(entity, entityType, key, entityData)
-	}
-}
-
-func setInventoryMap(entity *integration.Entity, typeName, dataKey string, data *objx.Map, keyPrefix ...string) {
-	val := data.Get(dataKey)
-	setInventoryValue(entity, typeName, dataKey, val.Data(), keyPrefix...)
-}
-
-func setInventoryValue(entity *integration.Entity, typeName, key string, value interface{}, keyPrefix ...string) {
-	switch value.(type) {
-	case bool:
-		setInventoryItem(entity, typeName, key, utils.ConvertBoolToInt(value.(bool)), keyPrefix...)
-	case []interface{}:
-		arrayVal := value.([]interface{})
-		for i := range arrayVal {
-			setInventoryValue(entity, typeName, strconv.Itoa(i+1), arrayVal[i], append(keyPrefix, key)...)
-		}
-	case map[string]interface{}:
-		var ok bool
-		var objxMap objx.Map
-		if objxMap, ok = value.(objx.Map); !ok {
-			objxMap = objx.New(value)
-		}
-		for mapKey := range objxMap {
-			setInventoryMap(entity, typeName, mapKey, &objxMap, append(keyPrefix, key)...)
-		}
-	case nil:
-		// skip
-	default:
-		setInventoryItem(entity, typeName, key, value, keyPrefix...)
-	}
-}
-
-func setInventoryItem(entity *integration.Entity, typeName, key string, value interface{}, keyPrefix ...string) {
-	actualKey := typeName + "." + strings.Join(append(keyPrefix, key), ".")
-	if err := entity.SetInventoryItem(actualKey, "value", value); err != nil {
-		logger.Infof("Error setting inventory [%s] on [%s]: %v", actualKey, entity.Metadata.Name, err)
-	}
+	return values, scanner.Err()
 }

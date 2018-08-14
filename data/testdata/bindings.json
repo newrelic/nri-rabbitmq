@@ -1,0 +1,8 @@
+[
+    {
+        "source": "source1",
+        "vhost": "vhost1",
+        "destination": "dest1",
+        "destination_type": "queue"
+    }
+]

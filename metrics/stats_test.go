@@ -3,18 +3,16 @@ package metrics
 import (
 	"testing"
 
-	"github.com/newrelic/nri-rabbitmq/testutils"
-	"github.com/newrelic/nri-rabbitmq/utils/consts"
-	"github.com/stretchr/objx"
+	"github.com/newrelic/nri-rabbitmq/data"
+	"github.com/newrelic/nri-rabbitmq/data/consts"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_collectConnectionStats(t *testing.T) {
-	testutils.SetTestLogger(t)
-	data := []objx.Map{
-		objx.MSI("vhost", "/", "state", "running"),
-		objx.MSI("vhost", "/", "state", "blocked"),
-		objx.MSI("vhost", "/", "state", "running"),
+	data := []*data.ConnectionData{
+		{Vhost: "/", State: "running"},
+		{Vhost: "/", State: "blocked"},
+		{Vhost: "/", State: "running"},
 	}
 
 	stats := collectConnectionStats(data)
@@ -26,17 +24,56 @@ func Test_collectConnectionStats(t *testing.T) {
 }
 
 func Test_collectBindingStats(t *testing.T) {
-	testutils.SetTestLogger(t)
-	data := []objx.Map{
-		objx.MSI("vhost", "/", "source", "source1", "destination", "dest1", "destination_type", consts.QueueType),
-		objx.MSI("vhost", "/", "source", "source1", "destination", "dest2", "destination_type", consts.QueueType),
-		objx.MSI("vhost", "/", "source", "source2", "destination", "dest1", "destination_type", consts.QueueType),
-		objx.MSI("vhost", "/", "source", "source2", "destination", "dest2", "destination_type", consts.QueueType),
+	data := []*data.BindingData{
+		{
+			Vhost:           "/",
+			Source:          "source1",
+			Destination:     "dest1",
+			DestinationType: consts.QueueType,
+		},
+		{
+			Vhost:           "/",
+			Source:          "source1",
+			Destination:     "dest2",
+			DestinationType: consts.QueueType,
+		},
+		{
+			Vhost:           "/",
+			Source:          "source2",
+			Destination:     "dest1",
+			DestinationType: consts.QueueType,
+		},
+		{
+			Vhost:           "/",
+			Source:          "source2",
+			Destination:     "dest2",
+			DestinationType: consts.QueueType,
+		},
 
-		objx.MSI("vhost", "/", "source", "source1", "destination", "dest1", "destination_type", consts.ExchangeType),
-		objx.MSI("vhost", "/", "source", "source1", "destination", "dest2", "destination_type", consts.ExchangeType),
-		objx.MSI("vhost", "/", "source", "source2", "destination", "dest1", "destination_type", consts.ExchangeType),
-		objx.MSI("vhost", "/", "source", "source2", "destination", "dest2", "destination_type", consts.ExchangeType),
+		{
+			Vhost:           "/",
+			Source:          "source1",
+			Destination:     "dest1",
+			DestinationType: consts.ExchangeType,
+		},
+		{
+			Vhost:           "/",
+			Source:          "source1",
+			Destination:     "dest2",
+			DestinationType: consts.ExchangeType,
+		},
+		{
+			Vhost:           "/",
+			Source:          "source2",
+			Destination:     "dest1",
+			DestinationType: consts.ExchangeType,
+		},
+		{
+			Vhost:           "/",
+			Source:          "source2",
+			Destination:     "dest2",
+			DestinationType: consts.ExchangeType,
+		},
 	}
 
 	stats := collectBindingStats(data)
