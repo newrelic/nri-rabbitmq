@@ -3,8 +3,8 @@ package metrics
 import (
 	"testing"
 
-	"github.com/newrelic/nri-rabbitmq/data"
-	"github.com/newrelic/nri-rabbitmq/data/consts"
+	"github.com/newrelic/nri-rabbitmq/src/data"
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 	"github.com/stretchr/testify/assert"
 )
 

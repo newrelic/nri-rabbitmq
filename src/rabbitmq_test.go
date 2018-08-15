@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/newrelic/nri-rabbitmq/args"
-	"github.com/newrelic/nri-rabbitmq/client"
-	"github.com/newrelic/nri-rabbitmq/testutils"
+	"github.com/newrelic/nri-rabbitmq/src/args"
+	"github.com/newrelic/nri-rabbitmq/src/client"
+	"github.com/newrelic/nri-rabbitmq/src/testutils"
 	"github.com/stretchr/testify/assert"
 )
 

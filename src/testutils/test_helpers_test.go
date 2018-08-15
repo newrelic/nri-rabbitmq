@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/newrelic/nri-rabbitmq/args"
+	"github.com/newrelic/nri-rabbitmq/src/args"
 	"github.com/stretchr/testify/assert"
 )
 

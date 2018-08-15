@@ -11,7 +11,7 @@ import (
 
 	nrHttp "github.com/newrelic/infra-integrations-sdk/http"
 	"github.com/newrelic/infra-integrations-sdk/log"
-	"github.com/newrelic/nri-rabbitmq/args"
+	"github.com/newrelic/nri-rabbitmq/src/args"
 )
 
 const (

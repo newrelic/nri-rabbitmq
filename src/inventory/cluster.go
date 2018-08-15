@@ -2,8 +2,8 @@ package inventory
 
 import (
 	"github.com/newrelic/infra-integrations-sdk/integration"
-	"github.com/newrelic/nri-rabbitmq/data"
-	"github.com/newrelic/nri-rabbitmq/data/consts"
+	"github.com/newrelic/nri-rabbitmq/src/data"
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 )
 
 // PopulateClusterInventory populates the cluse entity with appropriate inventory data
