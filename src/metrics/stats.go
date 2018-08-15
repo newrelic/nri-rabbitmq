@@ -1,8 +1,8 @@
 package metrics
 
 import (
-	"github.com/newrelic/nri-rabbitmq/data"
-	"github.com/newrelic/nri-rabbitmq/data/consts"
+	"github.com/newrelic/nri-rabbitmq/src/data"
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 )
 
 // connKey is used to uniquely identify a connection by Vhost and State

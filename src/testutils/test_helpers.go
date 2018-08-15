@@ -12,7 +12,7 @@ import (
 
 	"github.com/newrelic/infra-integrations-sdk/integration"
 	"github.com/newrelic/infra-integrations-sdk/log"
-	"github.com/newrelic/nri-rabbitmq/args"
+	"github.com/newrelic/nri-rabbitmq/src/args"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

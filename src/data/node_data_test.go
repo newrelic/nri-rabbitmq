@@ -4,9 +4,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/newrelic/nri-rabbitmq/data/consts"
-
-	"github.com/newrelic/nri-rabbitmq/testutils"
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
+	"github.com/newrelic/nri-rabbitmq/src/testutils"
 	"github.com/stretchr/testify/assert"
 )
 

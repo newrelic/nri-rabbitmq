@@ -3,14 +3,13 @@ package main
 import (
 	"os"
 
-	"github.com/newrelic/nri-rabbitmq/metrics"
-
 	"github.com/newrelic/infra-integrations-sdk/integration"
 	"github.com/newrelic/infra-integrations-sdk/log"
-	"github.com/newrelic/nri-rabbitmq/args"
-	"github.com/newrelic/nri-rabbitmq/client"
-	"github.com/newrelic/nri-rabbitmq/data"
-	"github.com/newrelic/nri-rabbitmq/inventory"
+	"github.com/newrelic/nri-rabbitmq/src/args"
+	"github.com/newrelic/nri-rabbitmq/src/client"
+	"github.com/newrelic/nri-rabbitmq/src/data"
+	"github.com/newrelic/nri-rabbitmq/src/inventory"
+	"github.com/newrelic/nri-rabbitmq/src/metrics"
 )
 
 const (

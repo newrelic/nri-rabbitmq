@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/newrelic/infra-integrations-sdk/data/metric"
-	"github.com/newrelic/nri-rabbitmq/args"
-	"github.com/newrelic/nri-rabbitmq/data/consts"
-	"github.com/newrelic/nri-rabbitmq/testutils"
+	"github.com/newrelic/nri-rabbitmq/src/args"
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
+	"github.com/newrelic/nri-rabbitmq/src/testutils"
 	"github.com/stretchr/testify/assert"
 )
 

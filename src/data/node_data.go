@@ -5,7 +5,7 @@ import (
 
 	"github.com/newrelic/infra-integrations-sdk/data/metric"
 	"github.com/newrelic/infra-integrations-sdk/integration"
-	"github.com/newrelic/nri-rabbitmq/data/consts"
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 )
 
 // NodeData is the representation of the nodes endpoint
