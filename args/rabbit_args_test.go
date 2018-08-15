@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/newrelic/nri-rabbitmq/utils/consts"
+	"github.com/newrelic/nri-rabbitmq/data/consts"
 	"github.com/stretchr/testify/assert"
 )
 

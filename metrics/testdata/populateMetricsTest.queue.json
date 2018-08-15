@@ -1,8 +1,10 @@
-{
-    "name": "test-name",
-    "vhost": "test-vhost",
-    "messages_ready_details": {
-        "rate": 10.5
-    },
-    "messages_ready": 243
-}
+[
+    {
+        "name": "test-name",
+        "vhost": "test-vhost",
+        "messages_ready_details": {
+            "rate": 10.5
+        },
+        "messages_ready": 243
+    }
+]

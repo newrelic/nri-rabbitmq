@@ -1,0 +1,54 @@
+{
+    "messages": 1,
+    "messages_details": {
+        "rate": 0.1
+    },
+    "messages_ready": 2,
+    "messages_ready_details": {
+        "rate": 0.2
+    },
+    "messages_unacknowledged": 3,
+    "messages_unacknowledged_details": {
+        "rate": 0.3
+    },
+    "message_stats": {
+        "ack": 4,
+        "ack_details": {
+            "rate": 0.4
+        },
+        "deliver": 5,
+        "deliver_details": {
+            "rate": 0.5
+        },
+        "deliver_get": 6,
+        "deliver_get_details": {
+            "rate": 0.6
+        },
+        "publish": 7,
+        "publish_details": {
+            "rate": 0.7
+        },
+        "redeliver": 8,
+        "redeliver_details": {
+            "rate": 0.8
+        }
+    },
+    "arguments": {
+        "one": 1,
+        "two": "two",
+        "three": true,
+        "four": [
+            true,
+            false
+        ]
+    },
+    "exclusive": true,
+    "auto_delete": false,
+    "durable": true,
+    "vhost": "vhost1",
+    "name": "queue1",
+    "consumers": 9,
+    "active_consumers": 10,
+    "consumer_utilisation": 11.11,
+    "memory": 1024
+}

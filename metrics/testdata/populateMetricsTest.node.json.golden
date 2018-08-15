@@ -1,1 +1,1 @@
-{"event_type":"nodeMetrics","node.fileDescriptorsUsedSockets":523,"node.partitionsSeen":2,"node.running":1}
+{"displayName":"node1","entityName":"node:node1","event_type":"RabbitmqNodeSample","node.fileDescriptorsUsedSockets":523,"node.hostMemoryAlarm":1,"node.partitionsSeen":2,"node.running":1}

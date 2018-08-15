@@ -4,11 +4,15 @@ import (
 	"encoding/json"
 	"flag"
 	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"strconv"
 	"testing"
 
 	"github.com/newrelic/infra-integrations-sdk/integration"
 	"github.com/newrelic/infra-integrations-sdk/log"
-	"github.com/newrelic/nri-rabbitmq/logger"
+	"github.com/newrelic/nri-rabbitmq/args"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -19,29 +23,12 @@ var (
 	testLogger log.Logger
 )
 
-// SetTestLogger creates a logger that logs to the testing framework and returns that logger
-func SetTestLogger(t *testing.T) log.Logger {
-	if testLogger == nil {
-		testLogger = &TestLogger{F: t.Logf}
-	}
-	logger.SetLogger(testLogger)
-	return testLogger
-}
-
-// SetMockLogger creates a new MockedLogger, sets it to be used, and returns it so that it can be setup
-func SetMockLogger() *MockedLogger {
-	l := new(MockedLogger)
-	logger.SetLogger(l)
-	return l
-}
-
 // GetTestingIntegration creates an Integration used for testing and sets the logger to the integration's logger
 func GetTestingIntegration(t *testing.T) (payload *integration.Integration) {
-	testLogger := SetTestLogger(t)
+	testLogger := &TestLogger{F: t.Logf}
 	payload, err := integration.New("Test", "0.0.1", integration.Logger(testLogger))
 	require.NoError(t, err)
 	require.NotNil(t, payload)
-	logger.SetLogger(payload.Logger())
 	return
 }
 
@@ -59,20 +46,34 @@ func GetTestingEntity(t *testing.T, entityArgs ...string) (payload *integration.
 	return
 }
 
-// ReadObjectFromJSONFile reads a generic map[string]interface{} from a file, typically used for reading JSON
-func ReadObjectFromJSONFile(t *testing.T, filename string) map[string]interface{} {
+// ReadStructFromJSONFile Unmarshals the json file into the specified object
+func ReadStructFromJSONFile(t *testing.T, filename string, object interface{}) {
 	data, err := ioutil.ReadFile(filename)
 	require.NoError(t, err)
-	item := map[string]interface{}{}
-	err = json.Unmarshal(data, &item)
+	err = json.Unmarshal(data, object)
 	require.NoError(t, err)
-	return item
 }
 
-// ReadObjectFromJSONString reads a generic map[string]interface{} from a json string
-func ReadObjectFromJSONString(t *testing.T, rawJSON string) map[string]interface{} {
-	item := map[string]interface{}{}
-	err := json.Unmarshal([]byte(rawJSON), &item)
+// ReadStructFromJSONString reads a generic map[string]interface{} from a json string
+func ReadStructFromJSONString(t *testing.T, rawJSON string, object interface{}) {
+	err := json.Unmarshal([]byte(rawJSON), &object)
 	require.NoError(t, err)
-	return item
+}
+
+// GetTestServer creates a test server
+func GetTestServer(tls bool) (mux *http.ServeMux, teardown func()) {
+	mux = http.NewServeMux()
+	var server *httptest.Server
+	if tls {
+		args.GlobalArgs.UseSSL = true
+		server = httptest.NewTLSServer(mux)
+	} else {
+		args.GlobalArgs.UseSSL = false
+		server = httptest.NewServer(mux)
+	}
+	url, _ := url.Parse(server.URL)
+
+	port, _ := strconv.Atoi(url.Port())
+	args.GlobalArgs.Hostname, args.GlobalArgs.Port = url.Hostname(), port
+	return mux, server.Close
 }

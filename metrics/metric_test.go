@@ -1,175 +1,126 @@
 package metrics
 
 import (
-	"bytes"
-	"encoding/json"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
 
-	"github.com/newrelic/nri-rabbitmq/args"
-	"github.com/newrelic/nri-rabbitmq/client"
-	"github.com/newrelic/nri-rabbitmq/testutils"
-	"github.com/newrelic/nri-rabbitmq/utils/consts"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-
 	"github.com/newrelic/infra-integrations-sdk/data/metric"
-	"github.com/newrelic/infra-integrations-sdk/integration"
-	"github.com/stretchr/objx"
+	"github.com/newrelic/infra-integrations-sdk/persist"
+	"github.com/newrelic/nri-rabbitmq/data"
+	"github.com/newrelic/nri-rabbitmq/testutils"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCollectMetrics(t *testing.T) {
-	testutils.SetTestLogger(t)
-	apiResponses := objx.MSI(
-		client.VhostsEndpoint, []objx.Map{
-			objx.MSI("name", "vhost1"),
-		},
-		client.QueuesEndpoint, []objx.Map{
-			objx.MSI("name", "queue1"),
-		},
-	)
 	i := testutils.GetTestingIntegration(t)
-	CollectMetrics(i, &apiResponses)
+	CollectEntityMetrics(i, []*data.BindingData{},
+		&data.NodeData{Name: "node1"},
+		&data.QueueData{Name: "queue1"},
+	)
 	assert.Equal(t, 2, len(i.Entities))
 }
 
 func TestSetMetric(t *testing.T) {
-	l := testutils.SetMockLogger()
-	defer func() {
-		testutils.SetTestLogger(t)
-	}()
-
-	i, _ := integration.New("name", "version", integration.Logger(l))
-	l.On("Errorf", mock.Anything, mock.Anything).Once()
-
-	firstQueue, _ := i.Entity("first-queue", "/my-vhost/queue")
-	metrics := firstQueue.NewMetricSet("RabbitMQSample")
-	setMetric(metrics, "rate", 0.5, metric.RATE)
-
-	l.AssertExpectations(t)
+	ms := metric.NewSet("TestSample", persist.NewInMemoryStore())
+	setMetric(ms, "rate", 0.5, metric.GAUGE)
+	assert.Equal(t, float64(0.5), ms.Metrics["rate"])
 }
 
-func TestPopulateMetrics(t *testing.T) {
-	testutils.SetTestLogger(t)
-	args.GlobalArgs = args.RabbitMQArguments{}
+func Test_PopulateMetrics_Node(t *testing.T) {
+	var bindingData []*data.BindingData
+	var nodeData []*data.NodeData
+	i := testutils.GetTestingIntegration(t)
 
-	actualMetricSet := metric.NewSet("queueMetrics", nil)
+	sourceFile := filepath.Join("testdata", "populateMetricsTest.node.json")
+	testutils.ReadStructFromJSONFile(t, sourceFile, &nodeData)
+
+	entityData := make([]data.EntityData, len(nodeData))
+	for i, v := range nodeData {
+		entityData[i] = v
+	}
+
+	CollectEntityMetrics(i, bindingData, entityData...)
+
+	if assert.Equal(t, 1, len(i.Entities)) && assert.Equal(t, 1, len(i.Entities[0].Metrics)) {
+		goldenFile := sourceFile + ".golden"
+		actual, _ := i.Entities[0].Metrics[0].MarshalJSON()
+		if *testutils.Update {
+			ioutil.WriteFile(goldenFile, actual, 0644)
+		}
+		expected, _ := ioutil.ReadFile(goldenFile)
+		assert.Equal(t, string(expected), string(actual))
+	}
+}
+
+func Test_PopulateMetrics_Queue(t *testing.T) {
+	var bindingData []*data.BindingData
+	var queueData []*data.QueueData
+	i := testutils.GetTestingIntegration(t)
+
 	sourceFile := filepath.Join("testdata", "populateMetricsTest.queue.json")
-	sourceMap := testutils.ReadObjectFromJSONFile(t, sourceFile)
-	responseObject := objx.New(sourceMap)
+	testutils.ReadStructFromJSONFile(t, sourceFile, &queueData)
 
-	populateMetrics(actualMetricSet, consts.QueueType, &responseObject)
-
-	goldenFile := sourceFile + ".golden"
-	actual, _ := actualMetricSet.MarshalJSON()
-	if *testutils.Update {
-		ioutil.WriteFile(goldenFile, actual, 0644)
+	entityData := make([]data.EntityData, len(queueData))
+	for i, v := range queueData {
+		entityData[i] = v
 	}
-	expected, _ := ioutil.ReadFile(goldenFile)
-	assert.Equal(t, expected, actual)
 
-	actualMetricSet = metric.NewSet("nodeMetrics", nil)
-	sourceFile = filepath.Join("testdata", "populateMetricsTest.node.json")
-	sourceMap = testutils.ReadObjectFromJSONFile(t, sourceFile)
-	responseObject = objx.New(sourceMap)
+	CollectEntityMetrics(i, bindingData, entityData...)
 
-	populateMetrics(actualMetricSet, consts.NodeType, &responseObject)
-
-	goldenFile = sourceFile + ".golden"
-	actual, _ = actualMetricSet.MarshalJSON()
-	if *testutils.Update {
-		ioutil.WriteFile(goldenFile, actual, 0644)
+	if assert.Equal(t, 1, len(i.Entities)) && assert.Equal(t, 1, len(i.Entities[0].Metrics)) {
+		goldenFile := sourceFile + ".golden"
+		actual, _ := i.Entities[0].Metrics[0].MarshalJSON()
+		if *testutils.Update {
+			ioutil.WriteFile(goldenFile, actual, 0644)
+		}
+		expected, _ := ioutil.ReadFile(goldenFile)
+		assert.Equal(t, string(expected), string(actual))
 	}
-	expected, _ = ioutil.ReadFile(goldenFile)
-	assert.Equal(t, expected, actual)
 }
 
-func readFile(filename string) (string, error) {
-	b, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return "", err
+func Test_PopulateMetrics_Exchange(t *testing.T) {
+	var bindingData []*data.BindingData
+	var exchangeData []*data.ExchangeData
+	i := testutils.GetTestingIntegration(t)
+
+	sourceFile := filepath.Join("testdata", "populateMetricsTest.exchange.json")
+	testutils.ReadStructFromJSONFile(t, sourceFile, &exchangeData)
+
+	entityData := make([]data.EntityData, len(exchangeData))
+	for i, v := range exchangeData {
+		entityData[i] = v
 	}
-	return string(b), nil
+
+	CollectEntityMetrics(i, bindingData, entityData...)
+
+	if assert.Equal(t, 1, len(i.Entities)) && assert.Equal(t, 1, len(i.Entities[0].Metrics)) {
+		goldenFile := sourceFile + ".golden"
+		actual, _ := i.Entities[0].Metrics[0].MarshalJSON()
+		if *testutils.Update {
+			ioutil.WriteFile(goldenFile, actual, 0644)
+		}
+		expected, _ := ioutil.ReadFile(goldenFile)
+		assert.Equal(t, string(expected), string(actual))
+	}
 }
 
 func TestPopulateVhostMetrics(t *testing.T) {
-	testutils.SetTestLogger(t)
-	actualVhostMetricSet := metric.NewSet("testVhostMetrics", nil)
+	i := testutils.GetTestingIntegration(t)
+	var vhostData []*data.VhostData
+	var connectionsData []*data.ConnectionData
+	sourceFile := filepath.Join("testdata", "populateMetricsTest.vhost.json")
+	testutils.ReadStructFromJSONFile(t, sourceFile, &vhostData)
+	testutils.ReadStructFromJSONFile(t, filepath.Join("testdata", "populateMetricsTest.connections.json"), &connectionsData)
 
-	connKeyStruct := connKey{
-		Vhost: "/",
-		State: "starting",
+	CollectVhostMetrics(i, vhostData, connectionsData)
+	if assert.Equal(t, 1, len(i.Entities)) && assert.Equal(t, 1, len(i.Entities[0].Metrics)) {
+		goldenFile := sourceFile + ".golden"
+		actual, _ := i.Entities[0].Metrics[0].MarshalJSON()
+		if *testutils.Update {
+			ioutil.WriteFile(goldenFile, actual, 0644)
+		}
+		expected, _ := ioutil.ReadFile(goldenFile)
+		assert.Equal(t, string(expected), string(actual))
 	}
-	var connStats = map[connKey]int{}
-	connStats[connKeyStruct] = 7
-
-	connKeyStruct.State = "flow"
-	connStats[connKeyStruct] = 2
-
-	connKeyStruct.State = "total"
-	connStats[connKeyStruct] = 9
-
-	populateVhostMetrics(connKeyStruct.Vhost, actualVhostMetricSet, connStats)
-
-	goldenFile := filepath.Join("testdata", "populateVhostMetricsTest.json.golden")
-	actual, _ := json.Marshal(actualVhostMetricSet)
-	if *testutils.Update {
-		ioutil.WriteFile(goldenFile, actual, 0644)
-	}
-	expected, _ := ioutil.ReadFile(goldenFile)
-
-	if !bytes.Equal(expected, actual) {
-		t.Errorf("Actual JSON results do not match expected .golden file for %s", goldenFile)
-	}
-}
-
-func TestPopulateBindingMetrics(t *testing.T) {
-	testutils.SetTestLogger(t)
-	actualBindingMetricSet := metric.NewSet("testBindingMetrics", nil)
-
-	bindingKeyStruct := bindingKey{
-		Vhost:      "/",
-		EntityName: "test-queue",
-		EntityType: consts.QueueType,
-	}
-	var bindingStats = map[bindingKey]int{}
-	bindingStats[bindingKeyStruct] = 7
-
-	populateBindingMetric(bindingKeyStruct.EntityName, bindingKeyStruct.Vhost, bindingKeyStruct.EntityType, actualBindingMetricSet, bindingStats)
-
-	goldenFile := filepath.Join("testdata", "populateBindingMetricTest.json.golden")
-	actual, _ := json.Marshal(actualBindingMetricSet)
-	if *testutils.Update {
-		ioutil.WriteFile(goldenFile, actual, 0644)
-	}
-	expected, _ := ioutil.ReadFile(goldenFile)
-
-	if !bytes.Equal(expected, actual) {
-		t.Errorf("Actual JSON results do not match expected .golden file for %s", goldenFile)
-	}
-}
-
-func TestParseJson(t *testing.T) {
-	testutils.SetTestLogger(t)
-	jsonPath := filepath.Join("testdata", "parseJsonTest.json")
-	jsonMap := testutils.ReadObjectFromJSONFile(t, jsonPath)
-	jsonObject := objx.New(jsonMap)
-
-	actual, err := parseJSON(&jsonObject, "float-test")
-	assert.NoError(t, err)
-	assert.IsType(t, *new(float64), actual)
-
-	actual, err = parseJSON(&jsonObject, "int-test")
-	assert.NoError(t, err)
-	assert.IsType(t, *new(float64), actual)
-
-	actual, err = parseJSON(&jsonObject, "true-bool-test")
-	assert.NoError(t, err)
-	assert.Equal(t, 1, actual)
-
-	actual, err = parseJSON(&jsonObject, "false-bool-test")
-	assert.NoError(t, err)
-	assert.Equal(t, 0, actual)
 }

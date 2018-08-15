@@ -1,0 +1,38 @@
+[
+    {
+        "state": "flow",
+        "vhost": "vhost1"
+    },
+    {
+        "state": "flow",
+        "vhost": "vhost1"
+    },
+    {
+        "state": "starting",
+        "vhost": "vhost1"
+    },
+    {
+        "state": "starting",
+        "vhost": "vhost1"
+    },
+    {
+        "state": "starting",
+        "vhost": "vhost1"
+    },
+    {
+        "state": "starting",
+        "vhost": "vhost1"
+    },
+    {
+        "state": "starting",
+        "vhost": "vhost1"
+    },
+    {
+        "state": "starting",
+        "vhost": "vhost1"
+    },
+    {
+        "state": "starting",
+        "vhost": "vhost1"
+    }
+]

@@ -1,9 +1,12 @@
-{
-    "partitions": [
-        "one",
-        "two"
-    ],
-    "name": "node1",
-    "running": true,
-    "sockets_used": 523
-}
+[
+    {
+        "partitions": [
+            "one",
+            "two"
+        ],
+        "mem_alarm": true,
+        "name": "node1",
+        "running": true,
+        "sockets_used": 523
+    }
+]

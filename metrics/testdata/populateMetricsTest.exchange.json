@@ -1,0 +1,20 @@
+[
+    {
+        "auto_delete": false,
+        "durable": true,
+        "internal": false,
+        "message_stats": {
+            "publish_in": 1,
+            "publish_in_details": {
+                "rate": 1.1
+            },
+            "publish_out": 2,
+            "publish_out_details": {
+                "rate": 2.2
+            }
+        },
+        "name": "exchange1",
+        "type": "direct",
+        "vhost": "vhost1"
+    }
+]

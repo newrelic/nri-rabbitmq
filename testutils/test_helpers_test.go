@@ -1,25 +1,13 @@
 package testutils
 
 import (
+	"io/ioutil"
 	"path/filepath"
 	"testing"
 
+	"github.com/newrelic/nri-rabbitmq/args"
 	"github.com/stretchr/testify/assert"
 )
-
-func Test_SetTestLogger(t *testing.T) {
-	testLogger = nil
-	newLogger := SetTestLogger(t)
-	assert.NotNil(t, newLogger)
-	assert.Equal(t, newLogger, testLogger)
-}
-
-func Test_SetMockLogger(t *testing.T) {
-	testLogger = nil
-	newLogger := SetMockLogger()
-	assert.NotNil(t, newLogger)
-	assert.IsType(t, &MockedLogger{}, newLogger)
-}
 
 func Test_GetIntegrationEntity(t *testing.T) {
 	testIntegration, testEntity := GetTestingEntity(t)
@@ -35,16 +23,43 @@ func Test_GetIntegrationEntity(t *testing.T) {
 	assert.Equal(t, "namespace", testEntity.Metadata.Namespace)
 }
 
-func Test_ReadObjectFromJSONFile(t *testing.T) {
-	actual := ReadObjectFromJSONFile(t, filepath.Join("testdata", "sample.json"))
-	expected := map[string]interface{}{
-		"string": "value",
-		"number": 1.0,
-		"bool":   true,
-		"obj": map[string]interface{}{
-			"sub-string": "sub-value",
-		},
-		"array": []interface{}{true, false},
-	}
-	assert.Equal(t, expected, actual)
+type subStruct struct {
+	SubString string `json:"sub-string"`
+}
+type topStruct struct {
+	String string
+	Number int64
+	Bool   bool
+	Obj    *subStruct
+	Array  []bool
+}
+
+var expectedTopStruct = &topStruct{
+	"value",
+	int64(1),
+	true,
+	&subStruct{"sub-value"},
+	[]bool{true, false},
+}
+
+func Test_ReadStructFromJSONFile(t *testing.T) {
+	actual := new(topStruct)
+	ReadStructFromJSONFile(t, filepath.Join("testdata", "sample.json"), actual)
+	assert.Equal(t, expectedTopStruct, actual)
+}
+
+func Test_ReadStructFromJSONString(t *testing.T) {
+	actual := new(topStruct)
+	data, _ := ioutil.ReadFile(filepath.Join("testdata", "sample.json"))
+	ReadStructFromJSONString(t, string(data), actual)
+	assert.Equal(t, expectedTopStruct, actual)
+}
+
+func Test_GetTestServer(t *testing.T) {
+	mux, closer := GetTestServer(false)
+	assert.NotNil(t, mux)
+	assert.NotNil(t, closer)
+	assert.NotEmpty(t, args.GlobalArgs.Hostname)
+	assert.True(t, args.GlobalArgs.Port > 0)
+	closer()
 }

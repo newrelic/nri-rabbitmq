@@ -1,30 +1,37 @@
 package inventory
 
 import (
-	"encoding/json"
 	"path/filepath"
 	"testing"
 
+	"github.com/newrelic/nri-rabbitmq/data"
+	"github.com/newrelic/nri-rabbitmq/data/consts"
 	"github.com/newrelic/nri-rabbitmq/testutils"
-	"github.com/stretchr/objx"
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_PopulateClusterEntity(t *testing.T) {
+func Test_PopulateClusterInventory(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
-	PopulateClusterEntity(i, nil)
+	PopulateClusterInventory(i, nil)
 	assert.Empty(t, i.Entities)
 
-	data := objx.MSI("missing", "cluster_name")
-	PopulateClusterEntity(i, data)
+	overviewData := &data.OverviewData{}
+	PopulateClusterInventory(i, overviewData)
 	assert.Empty(t, i.Entities)
 
-	data = testutils.ReadObjectFromJSONFile(t, filepath.Join("testdata", "populateClusterEntity.json"))
+	testutils.ReadStructFromJSONFile(t, filepath.Join("testdata", "populateClusterEntity.json"), overviewData)
 
-	PopulateClusterEntity(i, data)
+	PopulateClusterInventory(i, overviewData)
 	assert.Equal(t, 1, len(i.Entities))
+	assert.Equal(t, "my-cluster", i.Entities[0].Metadata.Name)
+	assert.Equal(t, consts.ClusterType, i.Entities[0].Metadata.Namespace)
+	assert.Equal(t, 2, len(i.Entities[0].Inventory.Items()))
 
-	actual, err := json.Marshal(i.Entities[0])
-	assert.NoError(t, err)
-	assert.NotEmpty(t, actual)
+	item, ok := i.Entities[0].Inventory.Item("version/rabbitmq")
+	assert.True(t, ok)
+	assert.Equal(t, "1.0.1", item["value"])
+
+	item, ok = i.Entities[0].Inventory.Item("version/management")
+	assert.True(t, ok)
+	assert.Equal(t, "2.0.2", item["value"])
 }

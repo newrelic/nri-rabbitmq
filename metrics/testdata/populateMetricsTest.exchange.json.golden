@@ -1,0 +1,1 @@
+{"displayName":"vhost1/exchange1","entityName":"exchange:vhost1/exchange1","event_type":"RabbitmqExchangeSample","exchange.messagesPublishedPerChannel":1,"exchange.messagesPublishedPerChannelPerSecond":1.1,"exchange.messagesPublishedQueue":2,"exchange.messagesPublishedQueuePerSecond":2.2,"queue.bindings":0}

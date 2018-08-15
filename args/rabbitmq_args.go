@@ -6,7 +6,8 @@ import (
 	"regexp"
 
 	sdkArgs "github.com/newrelic/infra-integrations-sdk/args"
-	"github.com/newrelic/nri-rabbitmq/utils/consts"
+	"github.com/newrelic/infra-integrations-sdk/log"
+	"github.com/newrelic/nri-rabbitmq/data/consts"
 )
 
 // GlobalArgs are the global set of arguments
@@ -35,9 +36,13 @@ type RabbitMQArguments struct {
 // Validate checks that valid collection arguments were specified
 func (args *RabbitMQArguments) Validate() error {
 	if args.Metrics && !args.Inventory {
-		return errors.New("invalid arguments: can't collect metrics while not collecting inventory")
+		err := errors.New("invalid arguments: can't collect metrics while not collecting inventory")
+		log.Error("%v", err)
+		return err
 	} else if !args.All() && !args.Metrics && !args.Inventory {
-		return errors.New("invalid arguments: nothing specified to collect")
+		err := errors.New("invalid arguments: nothing specified to collect")
+		log.Error("%v", err)
+		return err
 	}
 	return nil
 }
@@ -104,22 +109,28 @@ func SetGlobalArgs(args ArgumentList) error {
 	}
 	var err error
 	if err = parseStrings(args.Exchanges, &rabbitArgs.Exchanges); err != nil {
+		log.Error("Error parsing arguments [Exchanges]: %v", err)
 		return err
 	}
 	if err = parseStrings(args.Queues, &rabbitArgs.Queues); err != nil {
+		log.Error("Error parsing arguments [Queues]: %v", err)
 		return err
 	}
 	if err = parseStrings(args.Vhosts, &rabbitArgs.Queues); err != nil {
+		log.Error("Error parsing arguments [Vhosts]: %v", err)
 		return err
 	}
 
 	if rabbitArgs.ExchangesRegexes, err = parseRegexes(args.ExchangesRegexes); err != nil {
+		log.Error("Error parsing arguments [ExchangesRegexes]: %v", err)
 		return err
 	}
 	if rabbitArgs.QueuesRegexes, err = parseRegexes(args.QueuesRegexes); err != nil {
+		log.Error("Error parsing arguments [QueuesRegexes]: %v", err)
 		return err
 	}
 	if rabbitArgs.VhostsRegexes, err = parseRegexes(args.VhostsRegexes); err != nil {
+		log.Error("Error parsing arguments [VhostsRegexes]: %v", err)
 		return err
 	}
 	GlobalArgs = rabbitArgs
