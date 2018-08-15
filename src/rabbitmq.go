@@ -64,16 +64,16 @@ type allData struct {
 
 func getNeededData() *allData {
 	data := new(allData)
-	if args.GlobalArgs.All() || args.GlobalArgs.Metrics {
+	if args.GlobalArgs.All() || (args.GlobalArgs.Metrics && args.GlobalArgs.Inventory) {
+		warnIfError(client.CollectEndpoint(client.OverviewEndpoint, &data.overview), "Error collecting Overview data: %v")
 		warnIfError(client.CollectEndpoint(client.ConnectionsEndpoint, &data.connections), "Error collecting Connections data: %v")
 		warnIfError(client.CollectEndpoint(client.BindingsEndpoint, &data.bindings), "Error collecting Bindings data: %v")
 		warnIfError(client.CollectEndpoint(client.VhostsEndpoint, &data.vhosts), "Error collecting Vhost data: %v")
 		warnIfError(client.CollectEndpoint(client.NodesEndpoint, &data.nodes), "Error collecting Node data: %v")
 		warnIfError(client.CollectEndpoint(client.QueuesEndpoint, &data.queues), "Error collecting Queue data: %v")
 		warnIfError(client.CollectEndpoint(client.ExchangesEndpoint, &data.exchanges), "Error collecting Exchange data: %v")
-	}
-	if args.GlobalArgs.All() || args.GlobalArgs.Inventory {
-		warnIfError(client.CollectEndpoint(client.OverviewEndpoint, &data.overview), "Error collecting Overview data: %v")
+	} else if args.GlobalArgs.Inventory {
+		warnIfError(client.CollectEndpoint(client.NodesEndpoint, &data.nodes), "Error collecting Node data: %v")
 	}
 	return data
 }
