@@ -36,14 +36,14 @@ func CollectEntityMetrics(rabbitmqIntegration *integration.Integration, bindings
 			log.Error("Could not create %s entity [%s]: %v", dataItem.EntityType(), dataItem.EntityName(), err)
 		} else if entity != nil {
 			metricSet := entity.NewMetricSet(getSampleName(dataItem.EntityType()), metricNamespace...)
-			warnIfError(metricSet.MarshalMetrics(dataItem), "Error collecting metrics for %s:%s", dataItem.EntityType(), dataItem.EntityName())
+			warnIfError(metricSet.MarshalMetrics(dataItem), "Error collecting metrics for [%s:%s]", dataItem.EntityType(), dataItem.EntityName())
 
 			if queue, ok := dataItem.(*data.QueueData); ok {
 				populateBindingMetric(queue.Name, queue.Vhost, consts.QueueType, metricSet, bindingStats)
-				queue.CollectInventory(entity)
+				queue.CollectInventory(entity, bindingStats)
 			} else if exchange, ok := dataItem.(*data.ExchangeData); ok {
 				populateBindingMetric(exchange.Name, exchange.Vhost, consts.QueueType, metricSet, bindingStats)
-				exchange.CollectInventory(entity)
+				exchange.CollectInventory(entity, bindingStats)
 			}
 		}
 	}
@@ -71,7 +71,7 @@ func getSampleName(entityType string) string {
 
 func warnIfError(err error, format string, args ...interface{}) {
 	if err != nil {
-		log.Warn(format, append([]interface{}{err}, args...))
+		log.Warn(format, append(args, err))
 	}
 }
 
@@ -81,11 +81,13 @@ func setMetric(metricSet *metric.Set, metricName string, metricValue interface{}
 	}
 }
 
-func populateBindingMetric(entityName, vhost, entityType string, metricSet *metric.Set, bindingsStats map[bindingKey]int) {
-	bindingKey := bindingKey{
-		Vhost:      vhost,
-		EntityName: entityName,
-		EntityType: entityType,
+func populateBindingMetric(entityName, vhost, entityType string, metricSet *metric.Set, bindingsStats data.BindingStats) {
+	count := 0
+	if bindingsStats != nil {
+		key := data.BindingKey{Vhost: vhost, EntityName: entityName, EntityType: entityType}
+		if stat := bindingsStats[key]; stat != nil {
+			count = len(stat.Destination) + len(stat.Source)
+		}
 	}
-	setMetric(metricSet, entityType+".bindings", bindingsStats[bindingKey], metric.GAUGE)
+	setMetric(metricSet, entityType+".bindings", count, metric.GAUGE)
 }

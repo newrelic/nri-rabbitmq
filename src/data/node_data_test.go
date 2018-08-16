@@ -1,12 +1,14 @@
 package data
 
 import (
+	"encoding/json"
 	"path/filepath"
 	"testing"
 
 	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 	"github.com/newrelic/nri-rabbitmq/src/testutils"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_NodeData(t *testing.T) {
@@ -35,6 +37,7 @@ func Test_NodeData(t *testing.T) {
 	assert.Equal(t, &i64, nodeData.SocketsUsed)
 	assert.Equal(t, "node1", nodeData.EntityName())
 	assert.Equal(t, consts.NodeType, nodeData.EntityType())
+	assert.Equal(t, "", nodeData.EntityVhost())
 
 	testIntegration := testutils.GetTestingIntegration(t)
 	e, metricAttribs, err := nodeData.GetEntity(testIntegration)
@@ -54,4 +57,14 @@ func Test_NodeData(t *testing.T) {
 	assert.Equal(t, float64(1), ms.Metrics["node.running"])
 	assert.Equal(t, float64(0), ms.Metrics["node.hostMemoryAlarm"])
 	assert.Equal(t, float64(0), ms.Metrics["node.diskAlarm"])
+}
+
+func Test_NodeData_JSONError(t *testing.T) {
+	badJSONData := `{
+		"name": "node1",
+		"running": "true"
+	}`
+	var nodeData NodeData
+	err := json.Unmarshal([]byte(badJSONData), &nodeData)
+	require.Error(t, err)
 }

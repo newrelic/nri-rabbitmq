@@ -38,6 +38,11 @@ func (n *NodeData) EntityName() string {
 	return n.Name
 }
 
+// EntityVhost returns the vhost of this entity
+func (n *NodeData) EntityVhost() string {
+	return ""
+}
+
 // UnmarshalJSON handles custom JSON Unmarshaling in order to convert values to metrics
 func (n *NodeData) UnmarshalJSON(data []byte) error {
 	// take from: http://choly.ca/post/go-json-marshalling/

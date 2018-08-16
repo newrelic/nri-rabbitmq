@@ -14,24 +14,15 @@ import (
 
 // CreateEntity will create an entity and metricNamespace attributes with approprate name/namespace values if the entity isn't filtered
 func CreateEntity(rabbitmqIntegration *integration.Integration, entityName string, entityType string, vhost string) (entity *integration.Entity, metricNamespace []metric.Attribute, err error) {
-	var name, namespace string
-	if entityType == consts.ExchangeType && entityName == "" {
-		name = consts.DefaultExchangeName
-	} else {
-		name = entityName
-	}
-	namespace = entityType
+	name := cleanEntityName(entityName, entityType)
+	namespace := entityType
 
 	if !args.GlobalArgs.IncludeEntity(name, entityType, vhost) {
 		return nil, nil, nil
 	}
 
 	if entityType == consts.QueueType || entityType == consts.ExchangeType {
-		if strings.HasSuffix(vhost, "/") {
-			name = vhost + name
-		} else {
-			name = fmt.Sprintf("%s/%s", vhost, name)
-		}
+		name = joinVhostName(vhost, name)
 	}
 	metricNamespace = []metric.Attribute{
 		{Key: "displayName", Value: name},
@@ -40,6 +31,20 @@ func CreateEntity(rabbitmqIntegration *integration.Integration, entityName strin
 
 	entity, err = rabbitmqIntegration.Entity(name, namespace)
 	return
+}
+
+func cleanEntityName(entityName, entityType string) string {
+	if entityType == consts.ExchangeType && entityName == "" {
+		return consts.DefaultExchangeName
+	}
+	return entityName
+}
+
+func joinVhostName(vhost, name string) string {
+	if strings.HasSuffix(vhost, "/") {
+		return vhost + name
+	}
+	return vhost + "/" + name
 }
 
 // SetInventoryItem sets an inventory item in a consistent way
@@ -56,6 +61,28 @@ func SetInventoryItem(entity *integration.Entity, category, key string, value in
 			}
 		}
 	}
+}
+
+func setInventoryBindings(entity *integration.Entity, data EntityData, bindingStats BindingStats) {
+	if bindingStats != nil {
+		if stat := bindingStats[BindingKey{data.EntityVhost(), data.EntityName(), data.EntityType()}]; stat != nil {
+			if len(stat.Source) > 0 {
+				SetInventoryItem(entity, data.EntityType(), "bindings.source", getKeyList(stat.Source))
+			}
+			if len(stat.Destination) > 0 {
+				SetInventoryItem(entity, data.EntityType(), "bindings.destination", getKeyList(stat.Destination))
+			}
+		}
+	}
+}
+
+func getKeyList(keys []*BindingKey) string {
+	names := []string{}
+	for _, v := range keys {
+		name := v.EntityType + ":" + joinVhostName(v.Vhost, cleanEntityName(v.EntityName, v.EntityType))
+		names = append(names, name)
+	}
+	return strings.Join(names, ", ")
 }
 
 // setInventoryMap sets an inventory map in a consistent way

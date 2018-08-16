@@ -1,1 +1,1 @@
-{"displayName":"test-vhost/test-name","entityName":"queue:test-vhost/test-name","event_type":"RabbitmqQueueSample","queue.bindings":0,"queue.messagesReadyDeliveryClients":243,"queue.messagesReadyDeliveryClientsPerSecond":10.5}
+{"displayName":"test-vhost/test-name","entityName":"queue:test-vhost/test-name","event_type":"RabbitmqQueueSample","queue.bindings":2,"queue.messagesReadyDeliveryClients":243,"queue.messagesReadyDeliveryClientsPerSecond":10.5}

@@ -32,6 +32,7 @@ func Test_ExchangeData(t *testing.T) {
 	assert.Equal(t, getFloat64(2.2), exchangeData.MessageStats.PublishOutDetails.Rate)
 	assert.Equal(t, "exchange1", exchangeData.EntityName())
 	assert.Equal(t, consts.ExchangeType, exchangeData.EntityType())
+	assert.Equal(t, "vhost1", exchangeData.EntityVhost())
 
 	testIntegration := testutils.GetTestingIntegration(t)
 	e, metricAttribs, err := exchangeData.GetEntity(testIntegration)
@@ -53,7 +54,7 @@ func Test_ExchangeData(t *testing.T) {
 		assert.Equal(t, v, ms.Metrics[k], k)
 	}
 
-	exchangeData.CollectInventory(e)
+	exchangeData.CollectInventory(e, nil)
 	expectedInventory := map[string]interface{}{
 		"exchange/type":        "direct",
 		"exchange/durable":     1,

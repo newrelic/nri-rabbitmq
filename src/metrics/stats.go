@@ -26,28 +26,37 @@ func collectConnectionStats(connectionsData []*data.ConnectionData) (stats map[c
 	return
 }
 
-// bindingKey is used to uniquely identify a binding by Vhost, EntityName, and EntityType
-type bindingKey struct {
-	Vhost, EntityName, EntityType string
-}
-
-// CollectBindingStats returns a map of bindingKey{vhost,source,dest} -> count
-func collectBindingStats(bindingsData []*data.BindingData) (stats map[bindingKey]int) {
-	stats = map[bindingKey]int{}
+// CollectBindingStats returns a map of BindingKey{vhost,source,dest} -> BindingStats
+func collectBindingStats(bindingsData []*data.BindingData) (stats data.BindingStats) {
+	stats = make(data.BindingStats)
 
 	for _, binding := range bindingsData {
-		srcKey := bindingKey{
-			binding.Vhost,
-			binding.Source,
-			consts.ExchangeType,
+		srcKey := data.BindingKey{
+			Vhost:      binding.Vhost,
+			EntityName: binding.Source,
+			EntityType: consts.ExchangeType,
 		}
-		dstKey := bindingKey{
-			srcKey.Vhost,
-			binding.Destination,
-			binding.DestinationType,
+		dstKey := data.BindingKey{
+			Vhost:      srcKey.Vhost,
+			EntityName: binding.Destination,
+			EntityType: binding.DestinationType,
 		}
-		stats[srcKey]++
-		stats[dstKey]++
+		if stat := stats[srcKey]; stat != nil {
+			stat.Destination = append(stat.Destination, &dstKey)
+		} else {
+			stats[srcKey] = &data.Binding{
+				Destination: []*data.BindingKey{&dstKey},
+				Source:      []*data.BindingKey{},
+			}
+		}
+		if stat := stats[dstKey]; stat != nil {
+			stat.Source = append(stat.Source, &srcKey)
+		} else {
+			stats[dstKey] = &data.Binding{
+				Destination: []*data.BindingKey{},
+				Source:      []*data.BindingKey{&srcKey},
+			}
+		}
 	}
 	return
 }

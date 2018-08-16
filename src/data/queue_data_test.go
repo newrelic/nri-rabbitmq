@@ -77,7 +77,7 @@ func Test_QueueData(t *testing.T) {
 		assert.Equal(t, v, ms.Metrics[k], k)
 	}
 
-	queueData.CollectInventory(e)
+	queueData.CollectInventory(e, nil)
 	expectedInventory := map[string]interface{}{
 		"queue/exclusive":   1,
 		"queue/durable":     1,

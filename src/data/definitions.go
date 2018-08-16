@@ -8,6 +8,7 @@ import (
 // EntityData is capabile of reporting it's own data to inventory
 type EntityData interface {
 	GetEntity(integration *integration.Integration) (*integration.Entity, []metric.Attribute, error)
+	EntityVhost() string
 	EntityName() string
 	EntityType() string
 }
@@ -32,6 +33,20 @@ type BindingData struct {
 	Destination     string
 	DestinationType string `json:"destination_type"`
 }
+
+// BindingKey is used to uniquely identify a binding by Vhost, EntityName, and EntityType
+type BindingKey struct {
+	Vhost, EntityName, EntityType string
+}
+
+// Binding contains a list of Source and Destination BindingKeys
+type Binding struct {
+	Source      []*BindingKey
+	Destination []*BindingKey
+}
+
+// BindingStats contains the calculation for Source/Destination Binding for each entity/BindingKey
+type BindingStats map[BindingKey]*Binding
 
 // VhostData is the representation of the vhosts endpoint
 type VhostData struct {
