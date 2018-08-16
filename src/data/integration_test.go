@@ -104,24 +104,24 @@ func Test_CollectInventory_Exchange(t *testing.T) {
 			EntityType: consts.ExchangeType,
 		}: &Binding{
 			Source: []*BindingKey{
-				&BindingKey{
+				{
 					Vhost:      "vhost1",
 					EntityName: "exchange2",
 					EntityType: consts.ExchangeType,
 				},
-				&BindingKey{
+				{
 					Vhost:      "vhost1",
 					EntityName: "exchange3",
 					EntityType: consts.ExchangeType,
 				},
 			},
 			Destination: []*BindingKey{
-				&BindingKey{
+				{
 					Vhost:      "vhost1",
 					EntityName: "queue2",
 					EntityType: consts.QueueType,
 				},
-				&BindingKey{
+				{
 					Vhost:      "vhost1",
 					EntityName: "exchange4",
 					EntityType: consts.ExchangeType,
@@ -181,12 +181,12 @@ func Test_CollectInventory_Queue(t *testing.T) {
 			EntityType: consts.QueueType,
 		}: &Binding{
 			Source: []*BindingKey{
-				&BindingKey{
+				{
 					Vhost:      "vhost1",
 					EntityName: "exchange1",
 					EntityType: consts.ExchangeType,
 				},
-				&BindingKey{
+				{
 					Vhost:      "vhost1",
 					EntityName: "exchange2",
 					EntityType: consts.ExchangeType,

@@ -59,13 +59,13 @@ func Test_PopulateMetrics_Queue(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
 	var queueData []*data.QueueData
 	bindingData := []*data.BindingData{
-		&data.BindingData{
+		{
 			Vhost:           "test-vhost",
 			Source:          "exchange1",
 			Destination:     "test-name",
 			DestinationType: consts.QueueType,
 		},
-		&data.BindingData{
+		{
 			Vhost:           "test-vhost",
 			Source:          "exchange2",
 			Destination:     "test-name",
