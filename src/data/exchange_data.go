@@ -27,11 +27,12 @@ type ExchangeData struct {
 }
 
 // CollectInventory collects inventory data and reports it to the integration.Entity
-func (e *ExchangeData) CollectInventory(entity *integration.Entity) {
+func (e *ExchangeData) CollectInventory(entity *integration.Entity, bindingStats BindingStats) {
 	SetInventoryItem(entity, consts.ExchangeType, "type", e.Type)
 	SetInventoryItem(entity, consts.ExchangeType, "durable", ConvertBoolToInt(e.Durable))
 	SetInventoryItem(entity, consts.ExchangeType, "auto_delete", ConvertBoolToInt(e.AutoDelete))
 	setInventoryMap(entity, consts.ExchangeType, "arguments", e.Arguments)
+	setInventoryBindings(entity, e, bindingStats)
 }
 
 // GetEntity creates an integration.Entity for this ExchangeData
@@ -47,4 +48,9 @@ func (e *ExchangeData) EntityType() string {
 // EntityName returns the main name of this entity
 func (e *ExchangeData) EntityName() string {
 	return e.Name
+}
+
+// EntityVhost returns the vhost of this entity
+func (e *ExchangeData) EntityVhost() string {
+	return e.Vhost
 }

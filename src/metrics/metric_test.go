@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
+
 	"github.com/newrelic/infra-integrations-sdk/data/metric"
 	"github.com/newrelic/infra-integrations-sdk/persist"
 	"github.com/newrelic/nri-rabbitmq/src/data"
@@ -54,9 +56,22 @@ func Test_PopulateMetrics_Node(t *testing.T) {
 }
 
 func Test_PopulateMetrics_Queue(t *testing.T) {
-	var bindingData []*data.BindingData
-	var queueData []*data.QueueData
 	i := testutils.GetTestingIntegration(t)
+	var queueData []*data.QueueData
+	bindingData := []*data.BindingData{
+		{
+			Vhost:           "test-vhost",
+			Source:          "exchange1",
+			Destination:     "test-name",
+			DestinationType: consts.QueueType,
+		},
+		{
+			Vhost:           "test-vhost",
+			Source:          "exchange2",
+			Destination:     "test-name",
+			DestinationType: consts.QueueType,
+		},
+	}
 
 	sourceFile := filepath.Join("testdata", "populateMetricsTest.queue.json")
 	testutils.ReadStructFromJSONFile(t, sourceFile, &queueData)

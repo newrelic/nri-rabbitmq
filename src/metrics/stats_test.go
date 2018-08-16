@@ -24,7 +24,7 @@ func Test_collectConnectionStats(t *testing.T) {
 }
 
 func Test_collectBindingStats(t *testing.T) {
-	data := []*data.BindingData{
+	bindingData := []*data.BindingData{
 		{
 			Vhost:           "/",
 			Source:          "source1",
@@ -72,20 +72,61 @@ func Test_collectBindingStats(t *testing.T) {
 			Vhost:           "/",
 			Source:          "source2",
 			Destination:     "dest2",
+			DestinationType: consts.ExchangeType,
+		},
+		{
+			Vhost:           "/",
+			Source:          "source1",
+			Destination:     "source2",
+			DestinationType: consts.ExchangeType,
+		},
+		{
+			Vhost:           "/",
+			Source:          "source2",
+			Destination:     "source1",
 			DestinationType: consts.ExchangeType,
 		},
 	}
 
-	stats := collectBindingStats(data)
+	stats := collectBindingStats(bindingData)
 	assert.NotNil(t, stats)
 
-	assert.Equal(t, 0, stats[bindingKey{}], "A missing key should return a 0 count")
+	stat := stats[data.BindingKey{}]
+	assert.Nil(t, stat)
 
-	assert.Equal(t, 4, stats[bindingKey{"/", "source1", consts.ExchangeType}], "Source exchange [source1] should have 4 bindings")
-	assert.Equal(t, 4, stats[bindingKey{"/", "source2", consts.ExchangeType}], "Source exchange [source2] should have 4 bindings")
+	stat = stats[data.BindingKey{Vhost: "/", EntityName: "source1", EntityType: consts.ExchangeType}]
+	if assert.NotNil(t, stat) {
+		assert.Equal(t, 1, len(stat.Source))
+		assert.Equal(t, 5, len(stat.Destination))
+	}
 
-	assert.Equal(t, 2, stats[bindingKey{"/", "dest1", consts.QueueType}])
-	assert.Equal(t, 2, stats[bindingKey{"/", "dest2", consts.QueueType}])
-	assert.Equal(t, 2, stats[bindingKey{"/", "dest1", consts.ExchangeType}])
-	assert.Equal(t, 2, stats[bindingKey{"/", "dest2", consts.ExchangeType}])
+	stat = stats[data.BindingKey{Vhost: "/", EntityName: "source2", EntityType: consts.ExchangeType}]
+	if assert.NotNil(t, stat) {
+		assert.Equal(t, 1, len(stat.Source))
+		assert.Equal(t, 5, len(stat.Destination))
+	}
+
+	stat = stats[data.BindingKey{Vhost: "/", EntityName: "dest1", EntityType: consts.QueueType}]
+	if assert.NotNil(t, stat) {
+		assert.Equal(t, 2, len(stat.Source))
+		assert.Equal(t, 0, len(stat.Destination))
+	}
+
+	stat = stats[data.BindingKey{Vhost: "/", EntityName: "dest2", EntityType: consts.QueueType}]
+	if assert.NotNil(t, stat) {
+		assert.Equal(t, 2, len(stat.Source))
+		assert.Equal(t, 0, len(stat.Destination))
+	}
+
+	stat = stats[data.BindingKey{Vhost: "/", EntityName: "dest1", EntityType: consts.ExchangeType}]
+	if assert.NotNil(t, stat) {
+		assert.Equal(t, 2, len(stat.Source))
+		assert.Equal(t, 0, len(stat.Destination))
+	}
+
+	stat = stats[data.BindingKey{Vhost: "/", EntityName: "dest2", EntityType: consts.ExchangeType}]
+	if assert.NotNil(t, stat) {
+		assert.Equal(t, 2, len(stat.Source))
+		assert.Equal(t, 0, len(stat.Destination))
+	}
 }

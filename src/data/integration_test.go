@@ -90,15 +90,57 @@ const testArgsArrayValue = `["sub-string",654.321,false,["sub-array",987]]`
 
 func Test_CollectInventory_Exchange(t *testing.T) {
 	data := &ExchangeData{
+		Vhost:      "vhost1",
+		Name:       "exchange1",
 		Type:       "test-type",
 		Durable:    true,
 		AutoDelete: false,
 		Arguments:  testArgs,
 	}
+	bindingStats := BindingStats{
+		BindingKey{
+			Vhost:      "vhost1",
+			EntityName: "exchange1",
+			EntityType: consts.ExchangeType,
+		}: &Binding{
+			Source: []*BindingKey{
+				{
+					Vhost:      "vhost1",
+					EntityName: "exchange2",
+					EntityType: consts.ExchangeType,
+				},
+				{
+					Vhost:      "vhost1",
+					EntityName: "exchange3",
+					EntityType: consts.ExchangeType,
+				},
+			},
+			Destination: []*BindingKey{
+				{
+					Vhost:      "vhost1",
+					EntityName: "queue2",
+					EntityType: consts.QueueType,
+				},
+				{
+					Vhost:      "vhost1",
+					EntityName: "exchange4",
+					EntityType: consts.ExchangeType,
+				},
+			},
+		},
+	}
 	_, e := testutils.GetTestingEntity(t)
-	data.CollectInventory(e)
+	data.CollectInventory(e, bindingStats)
 
-	item, ok := e.Inventory.Item("exchange/type")
+	item, ok := e.Inventory.Item("exchange/bindings.source")
+	assert.True(t, ok)
+	assert.Equal(t, "exchange:vhost1/exchange2, exchange:vhost1/exchange3", item["value"])
+
+	item, ok = e.Inventory.Item("exchange/bindings.destination")
+	assert.True(t, ok)
+	assert.Equal(t, "queue:vhost1/queue2, exchange:vhost1/exchange4", item["value"])
+
+	item, ok = e.Inventory.Item("exchange/type")
 	assert.True(t, ok)
 	assert.Equal(t, "test-type", item["value"])
 
@@ -125,15 +167,45 @@ func Test_CollectInventory_Exchange(t *testing.T) {
 
 func Test_CollectInventory_Queue(t *testing.T) {
 	data := &QueueData{
+		Vhost:      "vhost1",
+		Name:       "queue1",
 		Exclusive:  true,
 		Durable:    false,
 		AutoDelete: true,
 		Arguments:  testArgs,
 	}
+	bindingStats := BindingStats{
+		BindingKey{
+			Vhost:      "vhost1",
+			EntityName: "queue1",
+			EntityType: consts.QueueType,
+		}: &Binding{
+			Source: []*BindingKey{
+				{
+					Vhost:      "vhost1",
+					EntityName: "exchange1",
+					EntityType: consts.ExchangeType,
+				},
+				{
+					Vhost:      "vhost1",
+					EntityName: "exchange2",
+					EntityType: consts.ExchangeType,
+				},
+			},
+			Destination: []*BindingKey{},
+		},
+	}
 	_, e := testutils.GetTestingEntity(t)
-	data.CollectInventory(e)
+	data.CollectInventory(e, bindingStats)
 
-	item, ok := e.Inventory.Item("queue/exclusive")
+	item, ok := e.Inventory.Item("queue/bindings.source")
+	assert.True(t, ok)
+	assert.Equal(t, "exchange:vhost1/exchange1, exchange:vhost1/exchange2", item["value"])
+
+	item, ok = e.Inventory.Item("queue/bindings.destination")
+	assert.False(t, ok)
+
+	item, ok = e.Inventory.Item("queue/exclusive")
 	assert.True(t, ok)
 	assert.Equal(t, 1, item["value"])
 

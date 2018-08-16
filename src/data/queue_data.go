@@ -55,11 +55,12 @@ type QueueData struct {
 }
 
 // CollectInventory collects inventory data and reports it to the integration.Entity
-func (q *QueueData) CollectInventory(entity *integration.Entity) {
+func (q *QueueData) CollectInventory(entity *integration.Entity, bindingStats BindingStats) {
 	SetInventoryItem(entity, consts.QueueType, "exclusive", ConvertBoolToInt(q.Exclusive))
 	SetInventoryItem(entity, consts.QueueType, "durable", ConvertBoolToInt(q.Durable))
 	SetInventoryItem(entity, consts.QueueType, "auto_delete", ConvertBoolToInt(q.AutoDelete))
 	setInventoryMap(entity, consts.QueueType, "arguments", q.Arguments)
+	setInventoryBindings(entity, q, bindingStats)
 }
 
 // GetEntity creates an integration.Entity for this QueueData
@@ -75,4 +76,9 @@ func (q *QueueData) EntityType() string {
 // EntityName returns the main name of this entity
 func (q *QueueData) EntityName() string {
 	return q.Name
+}
+
+// EntityVhost returns the vhost of this entity
+func (q *QueueData) EntityVhost() string {
+	return q.Vhost
 }
