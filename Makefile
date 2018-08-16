@@ -1,13 +1,15 @@
+WORKDIR      := $(shell pwd)
+TARGET       := target
+TARGET_DIR    = $(WORKDIR)/$(TARGET)
 NATIVEOS	 := $(shell go version | awk -F '[ /]' '{print $$4}')
 NATIVEARCH	 := $(shell go version | awk -F '[ /]' '{print $$5}')
 INTEGRATION  := rabbitmq
 BINARY_NAME   = nr-$(INTEGRATION)
 GO_PKGS      := $(shell go list ./... | grep -v "/vendor/")
-GO_FILES     := $(shell find src -type f -name "*.go")
+GO_FILES     := ./src/
 GOTOOLS       = github.com/kardianos/govendor \
 		gopkg.in/alecthomas/gometalinter.v2 \
 		github.com/axw/gocov/gocov \
-		github.com/stretchr/testify/assert \
 		github.com/AlekSi/gocov-xml \
 
 all: build
