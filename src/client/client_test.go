@@ -79,9 +79,7 @@ func TestEnsureClient_CannotCreateClient(t *testing.T) {
 			args.GlobalArgs.CABundleDir = ""
 		}()
 
-		t.Log("Before")
 		ensureClient()
-		t.Log("After")
 		return
 	}
 
