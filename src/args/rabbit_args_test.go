@@ -8,13 +8,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseFilterArgsDefault(t *testing.T) {
+func TestSetGlobalArgs_Default(t *testing.T) {
 	var argList = ArgumentList{}
 	err := SetGlobalArgs(argList)
 	assert.NoError(t, err, "err should be nil")
 }
 
-func TestParseFilterArgsBadArg(t *testing.T) {
+func TestSetGlobalArgs_BadArgs(t *testing.T) {
 	var argList = ArgumentList{
 		Exchanges: "invalid",
 	}
@@ -51,7 +51,7 @@ func TestParseFilterArgsBadArg(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func TestParseFilterArgsValidJson(t *testing.T) {
+func TestSetGlobalArgs_ValidJson(t *testing.T) {
 	var argList = ArgumentList{
 		Queues:        `["test-1", "test-2", "test-3"]`,
 		QueuesRegexes: `["one-.*", "two-.*"]`,
@@ -67,7 +67,7 @@ func TestParseFilterArgsValidJson(t *testing.T) {
 	assert.True(t, GlobalArgs.QueuesRegexes[1].MatchString("two-queue"))
 }
 
-func TestCheckArgsBadInventory(t *testing.T) {
+func TestValidate_BadInventory(t *testing.T) {
 	testArgs := RabbitMQArguments{}
 	testArgs.Metrics = true
 	testArgs.Inventory = false
@@ -75,7 +75,7 @@ func TestCheckArgsBadInventory(t *testing.T) {
 	assert.Error(t, err, "To collect Metrics, you also need to collect Inventory")
 }
 
-func TestCheckArgsBadMetrics(t *testing.T) {
+func TestValidate_BadMetrics(t *testing.T) {
 	testArgs := RabbitMQArguments{}
 	testArgs.Metrics = false
 	testArgs.Inventory = false
@@ -84,7 +84,7 @@ func TestCheckArgsBadMetrics(t *testing.T) {
 	assert.Error(t, err, "It should collect at lest Inventory, or Inventory and Metrics")
 }
 
-func TestCheckArgsGoodArgs(t *testing.T) {
+func TestValidate(t *testing.T) {
 	testArgs := RabbitMQArguments{}
 	err := testArgs.Validate()
 	assert.NoError(t, err, "Collecting everything (no args) should be valid")
@@ -107,20 +107,20 @@ func TestIncludeFilters(t *testing.T) {
 		Vhosts:           []string{"three"},
 		VhostsRegexes:    []*regexp.Regexp{testRegex},
 	}
-	assert.True(t, testArgs.IncludeExchange("one"))
-	assert.False(t, testArgs.IncludeExchange("false"))
-	assert.True(t, testArgs.IncludeExchange("four-exchange"))
+	assert.True(t, testArgs.includeExchange("one"))
+	assert.False(t, testArgs.includeExchange("false"))
+	assert.True(t, testArgs.includeExchange("four-exchange"))
 
-	assert.True(t, testArgs.IncludeQueue("two"))
-	assert.False(t, testArgs.IncludeQueue("false"))
-	assert.True(t, testArgs.IncludeQueue("four-queue"))
+	assert.True(t, testArgs.includeQueue("two"))
+	assert.False(t, testArgs.includeQueue("false"))
+	assert.True(t, testArgs.includeQueue("four-queue"))
 
-	assert.True(t, testArgs.IncludeVhost("three"))
-	assert.False(t, testArgs.IncludeVhost("false"))
-	assert.True(t, testArgs.IncludeVhost("four-vhost"))
+	assert.True(t, testArgs.includeVhost("three"))
+	assert.False(t, testArgs.includeVhost("false"))
+	assert.True(t, testArgs.includeVhost("four-vhost"))
 }
 
-func TestEntityFilter(t *testing.T) {
+func TestIncludeEntity(t *testing.T) {
 	testArgs := RabbitMQArguments{
 		Exchanges: []string{"one"},
 		Queues:    []string{"two"},

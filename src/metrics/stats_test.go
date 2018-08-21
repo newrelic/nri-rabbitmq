@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_collectConnectionStats(t *testing.T) {
+func TestCollectConnectionStats(t *testing.T) {
 	data := []*data.ConnectionData{
 		{Vhost: "/", State: "running"},
 		{Vhost: "/", State: "blocked"},
@@ -23,7 +23,7 @@ func Test_collectConnectionStats(t *testing.T) {
 	assert.Equal(t, 3, stats[connKey{"/", "total"}])
 }
 
-func Test_collectBindingStats(t *testing.T) {
+func TestCollectBindingStats(t *testing.T) {
 	bindingData := []*data.BindingData{
 		{
 			Vhost:           "/",

@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_GetIntegrationEntity(t *testing.T) {
+func TestGetIntegrationEntity(t *testing.T) {
 	testIntegration, testEntity := GetTestingEntity(t)
 	assert.NotNil(t, testIntegration)
 	assert.Equal(t, "Test", testIntegration.Name)
@@ -42,20 +42,20 @@ var expectedTopStruct = &topStruct{
 	[]bool{true, false},
 }
 
-func Test_ReadStructFromJSONFile(t *testing.T) {
+func TestReadStructFromJSONFile(t *testing.T) {
 	actual := new(topStruct)
 	ReadStructFromJSONFile(t, filepath.Join("testdata", "sample.json"), actual)
 	assert.Equal(t, expectedTopStruct, actual)
 }
 
-func Test_ReadStructFromJSONString(t *testing.T) {
+func TestReadStructFromJSONString(t *testing.T) {
 	actual := new(topStruct)
 	data, _ := ioutil.ReadFile(filepath.Join("testdata", "sample.json"))
 	ReadStructFromJSONString(t, string(data), actual)
 	assert.Equal(t, expectedTopStruct, actual)
 }
 
-func Test_GetTestServer(t *testing.T) {
+func TestGetTestServer(t *testing.T) {
 	mux, closer := GetTestServer(false)
 	assert.NotNil(t, mux)
 	assert.NotNil(t, closer)

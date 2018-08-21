@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_main(t *testing.T) {
+func TestMain(t *testing.T) {
 	mux, closer := testutils.GetTestServer(false)
 	defer closer()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +59,7 @@ func Test_main(t *testing.T) {
 	assert.Equal(t, fmt.Sprintf(`{"name":%q,"protocol_version":"2","integration_version":%q,"data":[]}`, integrationName, integrationVersion), out)
 }
 
-func Test_getNeededData(t *testing.T) {
+func TestGetNeededData(t *testing.T) {
 	mux, closer := testutils.GetTestServer(false)
 	defer closer()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

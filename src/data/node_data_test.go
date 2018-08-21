@@ -11,30 +11,23 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_NodeData(t *testing.T) {
+func TestNodeData(t *testing.T) {
 	var nodeData NodeData
 	testutils.ReadStructFromJSONFile(t, filepath.Join("testdata", "node.json"), &nodeData)
 	assert.NotNil(t, nodeData)
 	assert.Equal(t, 2, len(nodeData.ConfigFiles))
 	assert.Contains(t, nodeData.ConfigFiles, "advanced.config")
 	assert.Contains(t, nodeData.ConfigFiles, "rabbit.conf")
-	i64 := int64(1024)
-	assert.Equal(t, &i64, nodeData.DiskFreeSpace)
-	i := int(0)
-	assert.Equal(t, &i, nodeData.DiskAlarm)
-	assert.Equal(t, &i, nodeData.MemoryAlarm)
-	i64 = int64(20)
-	assert.Equal(t, &i64, nodeData.FileDescriptorsUsed)
-	i64 = int64(2048)
-	assert.Equal(t, &i64, nodeData.MemoryUsed)
+	assert.Equal(t, getInt64(1024), nodeData.DiskFreeSpace)
+	assert.Equal(t, getInt(0), nodeData.DiskAlarm)
+	assert.Equal(t, getInt(0), nodeData.MemoryAlarm)
+	assert.Equal(t, getInt64(20), nodeData.FileDescriptorsUsed)
+	assert.Equal(t, getInt64(2048), nodeData.MemoryUsed)
 	assert.Equal(t, "node1", nodeData.Name)
 	assert.Equal(t, 2, nodeData.Partitions)
-	i64 = int64(3)
-	assert.Equal(t, &i64, nodeData.RunQueue)
-	i = int(1)
-	assert.Equal(t, &i, nodeData.Running)
-	i64 = int64(2)
-	assert.Equal(t, &i64, nodeData.SocketsUsed)
+	assert.Equal(t, getInt64(3), nodeData.RunQueue)
+	assert.Equal(t, getInt(1), nodeData.Running)
+	assert.Equal(t, getInt64(2), nodeData.SocketsUsed)
 	assert.Equal(t, "node1", nodeData.EntityName())
 	assert.Equal(t, consts.NodeType, nodeData.EntityType())
 	assert.Equal(t, "", nodeData.EntityVhost())
@@ -59,7 +52,7 @@ func Test_NodeData(t *testing.T) {
 	assert.Equal(t, float64(0), ms.Metrics["node.diskAlarm"])
 }
 
-func Test_NodeData_JSONError(t *testing.T) {
+func TestNodeData_JSONError(t *testing.T) {
 	badJSONData := `{
 		"name": "node1",
 		"running": "true"

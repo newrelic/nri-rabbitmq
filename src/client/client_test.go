@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_CollectEndpoint(t *testing.T) {
+func TestCollectEndpoint(t *testing.T) {
 	defaultClient = nil
 	args.GlobalArgs = args.RabbitMQArguments{}
 	mux, teardown := testutils.GetTestServer(false)
@@ -67,7 +67,7 @@ func Test_CollectEndpoint(t *testing.T) {
 	assert.Equal(t, "test-vhost", actualQueues[0].Vhost, "Vhost is different")
 }
 
-func Test_ensureClient_CannotCreateClient(t *testing.T) {
+func TestEnsureClient_CannotCreateClient(t *testing.T) {
 	defaultClient = nil
 	args.GlobalArgs = args.RabbitMQArguments{}
 
@@ -79,14 +79,16 @@ func Test_ensureClient_CannotCreateClient(t *testing.T) {
 			args.GlobalArgs.CABundleDir = ""
 		}()
 
+		t.Log("Before")
 		ensureClient()
+		t.Log("After")
 		return
 	}
 
 	// If this is the first time this test method is ran, re-execute it telling it to pefrom the actual method call.
 	// Then test the result of that, which should be an os.Exit(2).
 	// The downside to this is the ensureClient() will not show full coverage when it actually does (since it's ran as a sub-test)
-	cmd := exec.Command(os.Args[0], "-test.run=Test_ensureClient_CannotCreateClient")
+	cmd := exec.Command(os.Args[0], "-test.run=TestEnsureClient_CannotCreateClient")
 	cmd.Env = append(os.Environ(), "INVALID_CLIENT=1")
 	err := cmd.Run()
 	if e, ok := err.(*exec.ExitError); ok {
@@ -100,7 +102,7 @@ func Test_ensureClient_CannotCreateClient(t *testing.T) {
 	}
 }
 
-func Test_collectEndpoint_Errors(t *testing.T) {
+func TestCollectEndpoint_Errors(t *testing.T) {
 	defaultClient = nil
 	args.GlobalArgs = args.RabbitMQArguments{}
 
@@ -119,11 +121,13 @@ func Test_collectEndpoint_Errors(t *testing.T) {
 	err := collectEndpoint(nil, &struct{}{})
 	assert.Error(t, err)
 
-	req := createRequest(ConnectionsEndpoint)
+	req, err := createRequest(ConnectionsEndpoint)
+	assert.NoError(t, err)
 	err = collectEndpoint(req, &struct{}{})
 	assert.Error(t, err)
 
-	req = createRequest(QueuesEndpoint)
+	req, err = createRequest(QueuesEndpoint)
+	assert.NoError(t, err)
 	err = collectEndpoint(req, &struct{}{})
 	assert.Error(t, err)
 
@@ -132,17 +136,27 @@ func Test_collectEndpoint_Errors(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func Test_createRequest(t *testing.T) {
+func TestCreateRequest(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{}
 	args.GlobalArgs.UseSSL = true
 	args.GlobalArgs.Hostname = "test-hostname"
 	args.GlobalArgs.Port = 3000
-	endpoint := "test-endpoint"
-	r := createRequest(endpoint)
-	actualURL := fmt.Sprintf("https://%v", r.Host)
+	endpoint := "/test-endpoint"
+	r, err := createRequest(endpoint)
+	assert.NoError(t, err)
+
+	actualURL := r.URL.String()
 	expectedURL := fmt.Sprintf("https://%v:%v%v", args.GlobalArgs.Hostname, args.GlobalArgs.Port, endpoint)
 	assert.Equal(t, expectedURL, actualURL, "expect url to use https")
 	if r.Method != http.MethodGet {
 		t.Error("Expected GET method, got POST method.")
 	}
+}
+
+func TestCreateRequest_Error(t *testing.T) {
+	args.GlobalArgs = args.RabbitMQArguments{}
+	args.GlobalArgs.Hostname = "[test-hostname"
+	endpoint := "/test-endpoint"
+	_, err := createRequest(endpoint)
+	assert.Error(t, err)
 }

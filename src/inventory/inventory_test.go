@@ -28,7 +28,7 @@ const (
 
 var testConfigPath = filepath.Join("testdata", "sample.conf")
 
-func Test_CollectInventory(t *testing.T) {
+func TestCollectInventory(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
 	args.GlobalArgs = args.RabbitMQArguments{}
 
@@ -84,7 +84,7 @@ func Test_CollectInventory(t *testing.T) {
 	assert.Equal(t, expected, actual, "CollectInventory does not have the expected output")
 }
 
-func Test_CollectInventory_Errors(t *testing.T) {
+func TestCollectInventory_Errors(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{
 		NodeNameOverride: "node1",
 	}
@@ -97,7 +97,7 @@ func Test_CollectInventory_Errors(t *testing.T) {
 	CollectInventory(i, nodesData)
 }
 
-func Test_getLocalNodeName(t *testing.T) {
+func TestGetLocalNodeName(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{
 		NodeNameOverride: expectedNodeName,
 	}
@@ -130,7 +130,7 @@ func Test_getLocalNodeName(t *testing.T) {
 	assert.Equal(t, expectedNodeName, nodeName)
 }
 
-func Test_findNodeData(t *testing.T) {
+func TestFindNodeData(t *testing.T) {
 	actualNodeData, err := findNodeData("node1", nil)
 	assert.EqualError(t, err, "node name [node1] not found in RabbitMQ")
 
@@ -148,7 +148,7 @@ func Test_findNodeData(t *testing.T) {
 	assert.Equal(t, nodeData[1], actualNodeData)
 }
 
-func Test_getConfigData_ConfigNotExist(t *testing.T) {
+func TestGetConfigData_ConfigNotExist(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{
 		ConfigPath: filepath.Join("testdata", "file-not_found.config"),
 	}
@@ -156,7 +156,7 @@ func Test_getConfigData_ConfigNotExist(t *testing.T) {
 	assert.Empty(t, config)
 }
 
-func Test_getConfigData_ConfigOpenError(t *testing.T) {
+func TestGetConfigData_ConfigOpenError(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{
 		ConfigPath: filepath.Join("testdata"),
 	}
@@ -173,7 +173,7 @@ func Test_getConfigData_ConfigOpenError(t *testing.T) {
 	assert.Empty(t, config)
 }
 
-func Test_getConfigData(t *testing.T) {
+func TestGetConfigData(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{}
 
 	config := getConfigData(nil)
@@ -184,7 +184,7 @@ func Test_getConfigData(t *testing.T) {
 	require.NotEmpty(t, config)
 }
 
-func Test_getConfigPath(t *testing.T) {
+func TestGetConfigPath(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{
 		ConfigPath: testConfigPath,
 	}
@@ -258,8 +258,7 @@ func fakeRabbitmqctl(args []string) {
 		if os.Getenv("GET_NODE_NAME_EMPTY") == "1" {
 			fmt.Fprintf(os.Stdout, "")
 		} else {
-			fmt.Fprintf(os.Stdout, `'node1'
-`)
+			fmt.Fprintf(os.Stdout, expectedNodeCmdOutput)
 		}
 	}
 }

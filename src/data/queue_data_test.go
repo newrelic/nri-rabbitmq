@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_QueueData(t *testing.T) {
+func TestQueueData(t *testing.T) {
 	var queueData QueueData
 	testutils.ReadStructFromJSONFile(t, filepath.Join("testdata", "queue.json"), &queueData)
 	assert.NotNil(t, queueData)
@@ -95,6 +95,10 @@ func Test_QueueData(t *testing.T) {
 			assert.Equal(t, v, args[k], "queue/arguments/"+k)
 		}
 	}
+}
+
+func getInt(i int) *int {
+	return &i
 }
 
 func getInt64(i int64) *int64 {
