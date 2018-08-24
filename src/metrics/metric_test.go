@@ -23,7 +23,7 @@ func TestCollectEntityMetrics(t *testing.T) {
 	assert.Equal(t, 2, len(i.Entities))
 }
 
-func TestSetMetric(t *testing.T) {
+func Test_setMetric(t *testing.T) {
 	ms := metric.NewSet("TestSample", persist.NewInMemoryStore())
 	setMetric(ms, "rate", 0.5, metric.GAUGE)
 	assert.Equal(t, float64(0.5), ms.Metrics["rate"])

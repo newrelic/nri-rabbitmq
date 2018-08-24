@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNodeData(t *testing.T) {
+func TestNodeData_UnmarshalJSON_MarshalMetrics(t *testing.T) {
 	var nodeData NodeData
 	testutils.ReadStructFromJSONFile(t, filepath.Join("testdata", "node.json"), &nodeData)
 	assert.NotNil(t, nodeData)
@@ -19,14 +19,14 @@ func TestNodeData(t *testing.T) {
 	assert.Contains(t, nodeData.ConfigFiles, "advanced.config")
 	assert.Contains(t, nodeData.ConfigFiles, "rabbit.conf")
 	assert.Equal(t, getInt64(1024), nodeData.DiskFreeSpace)
-	assert.Equal(t, getInt(0), nodeData.DiskAlarm)
-	assert.Equal(t, getInt(0), nodeData.MemoryAlarm)
+	assert.Equal(t, getBool(false), nodeData.DiskAlarm)
+	assert.Equal(t, getBool(false), nodeData.MemoryAlarm)
 	assert.Equal(t, getInt64(20), nodeData.FileDescriptorsUsed)
 	assert.Equal(t, getInt64(2048), nodeData.MemoryUsed)
 	assert.Equal(t, "node1", nodeData.Name)
 	assert.Equal(t, 2, nodeData.Partitions)
 	assert.Equal(t, getInt64(3), nodeData.RunQueue)
-	assert.Equal(t, getInt(1), nodeData.Running)
+	assert.Equal(t, getBool(true), nodeData.Running)
 	assert.Equal(t, getInt64(2), nodeData.SocketsUsed)
 	assert.Equal(t, "node1", nodeData.EntityName())
 	assert.Equal(t, consts.NodeType, nodeData.EntityType())

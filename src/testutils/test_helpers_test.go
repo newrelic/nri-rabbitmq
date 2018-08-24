@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetIntegrationEntity(t *testing.T) {
+func TestGetTestingEntity(t *testing.T) {
 	testIntegration, testEntity := GetTestingEntity(t)
 	assert.NotNil(t, testIntegration)
 	assert.Equal(t, "Test", testIntegration.Name)

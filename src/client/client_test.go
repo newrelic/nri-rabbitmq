@@ -67,7 +67,26 @@ func TestCollectEndpoint(t *testing.T) {
 	assert.Equal(t, "test-vhost", actualQueues[0].Vhost, "Vhost is different")
 }
 
-func TestEnsureClient_CannotCreateClient(t *testing.T) {
+func TestCollectEndpoint_Errors(t *testing.T) {
+	defaultClient = nil
+	args.GlobalArgs = args.RabbitMQArguments{}
+	mux, teardown := testutils.GetTestServer(false)
+	defer teardown()
+	mux.HandleFunc(ConnectionsEndpoint, func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(404)
+	})
+
+	err := CollectEndpoint(ConnectionsEndpoint, &struct{}{})
+	assert.Error(t, err)
+
+	defaultClient = nil
+	args.GlobalArgs.Hostname = "[" + args.GlobalArgs.Hostname
+
+	err = CollectEndpoint("/missing", &struct{}{})
+	assert.Error(t, err)
+}
+
+func Test_ensureClient_CannotCreateClient(t *testing.T) {
 	defaultClient = nil
 	args.GlobalArgs = args.RabbitMQArguments{}
 
@@ -86,7 +105,7 @@ func TestEnsureClient_CannotCreateClient(t *testing.T) {
 	// If this is the first time this test method is ran, re-execute it telling it to pefrom the actual method call.
 	// Then test the result of that, which should be an os.Exit(2).
 	// The downside to this is the ensureClient() will not show full coverage when it actually does (since it's ran as a sub-test)
-	cmd := exec.Command(os.Args[0], "-test.run=TestEnsureClient_CannotCreateClient")
+	cmd := exec.Command(os.Args[0], "-test.run=Test_ensureClient_CannotCreateClient")
 	cmd.Env = append(os.Environ(), "INVALID_CLIENT=1")
 	err := cmd.Run()
 	if e, ok := err.(*exec.ExitError); ok {
@@ -100,7 +119,7 @@ func TestEnsureClient_CannotCreateClient(t *testing.T) {
 	}
 }
 
-func TestCollectEndpoint_Errors(t *testing.T) {
+func Test_collectEndpoint_Errors(t *testing.T) {
 	defaultClient = nil
 	args.GlobalArgs = args.RabbitMQArguments{}
 
@@ -134,7 +153,7 @@ func TestCollectEndpoint_Errors(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func TestCreateRequest(t *testing.T) {
+func Test_createRequest(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{}
 	args.GlobalArgs.UseSSL = true
 	args.GlobalArgs.Hostname = "test-hostname"
@@ -151,7 +170,7 @@ func TestCreateRequest(t *testing.T) {
 	}
 }
 
-func TestCreateRequest_Error(t *testing.T) {
+func Test_createRequest_Error(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{}
 	args.GlobalArgs.Hostname = "[test-hostname"
 	endpoint := "/test-endpoint"

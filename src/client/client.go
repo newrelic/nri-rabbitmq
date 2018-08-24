@@ -29,6 +29,10 @@ const (
 	ConnectionsEndpoint = "/api/connections"
 	// BindingsEndpoint path
 	BindingsEndpoint = "/api/bindings"
+	// AlivenessTestEndpoint path, this is formatted with the vhost name
+	AlivenessTestEndpoint = "/api/aliveness-test/%s"
+	// HealthCheckEndpoint path, this is formatted with the node name
+	HealthCheckEndpoint = "/api/healthchecks/node/%s"
 )
 
 var defaultClient *http.Client

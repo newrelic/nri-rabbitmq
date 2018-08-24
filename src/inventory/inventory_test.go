@@ -97,7 +97,7 @@ func TestCollectInventory_Errors(t *testing.T) {
 	CollectInventory(i, nodesData)
 }
 
-func TestGetLocalNodeName(t *testing.T) {
+func Test_getLocalNodeName(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{
 		NodeNameOverride: expectedNodeName,
 	}
@@ -130,7 +130,7 @@ func TestGetLocalNodeName(t *testing.T) {
 	assert.Equal(t, expectedNodeName, nodeName)
 }
 
-func TestFindNodeData(t *testing.T) {
+func Test_findNodeData(t *testing.T) {
 	actualNodeData, err := findNodeData("node1", nil)
 	assert.EqualError(t, err, "node name [node1] not found in RabbitMQ")
 
@@ -148,7 +148,7 @@ func TestFindNodeData(t *testing.T) {
 	assert.Equal(t, nodeData[1], actualNodeData)
 }
 
-func TestGetConfigData_ConfigNotExist(t *testing.T) {
+func Test_getConfigData_ConfigNotExist(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{
 		ConfigPath: filepath.Join("testdata", "file-not_found.config"),
 	}
@@ -156,7 +156,7 @@ func TestGetConfigData_ConfigNotExist(t *testing.T) {
 	assert.Empty(t, config)
 }
 
-func TestGetConfigData_ConfigOpenError(t *testing.T) {
+func Test_getConfigData_ConfigOpenError(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{
 		ConfigPath: filepath.Join("testdata"),
 	}
@@ -173,7 +173,7 @@ func TestGetConfigData_ConfigOpenError(t *testing.T) {
 	assert.Empty(t, config)
 }
 
-func TestGetConfigData(t *testing.T) {
+func Test_getConfigData(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{}
 
 	config := getConfigData(nil)
@@ -184,7 +184,7 @@ func TestGetConfigData(t *testing.T) {
 	require.NotEmpty(t, config)
 }
 
-func TestGetConfigPath(t *testing.T) {
+func Test_getConfigPath(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{
 		ConfigPath: testConfigPath,
 	}

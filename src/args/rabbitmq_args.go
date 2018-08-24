@@ -36,12 +36,7 @@ type RabbitMQArguments struct {
 // Validate checks that valid collection arguments were specified
 func (args *RabbitMQArguments) Validate() error {
 	if args.Metrics && !args.Inventory {
-		err := errors.New("invalid arguments: can't collect metrics while not collecting inventory")
-		log.Error("%v", err)
-		return err
-	} else if !args.All() && args.Events {
-		// At least Inventory or Metrics and Inventory should be specified
-		err := errors.New("invalid arguments: Metrics or Inventory has not been specified to collect")
+		err := errors.New("when collecting metrics, you must also collect inventory")
 		log.Error("%v", err)
 		return err
 	}
