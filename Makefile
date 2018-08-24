@@ -5,7 +5,6 @@ NATIVEOS	 := $(shell go version | awk -F '[ /]' '{print $$4}')
 NATIVEARCH	 := $(shell go version | awk -F '[ /]' '{print $$5}')
 INTEGRATION  := rabbitmq
 BINARY_NAME   = nr-$(INTEGRATION)
-GO_FILES     := ./src/
 GOTOOLS       = github.com/kardianos/govendor \
 		gopkg.in/alecthomas/gometalinter.v2 \
 		github.com/axw/gocov/gocov \
@@ -37,23 +36,23 @@ deps-only:
 
 validate: deps
 	@echo "=== $(INTEGRATION) === [ validate ]: Validating source code running gometalinter..."
-	@gometalinter.v2 --config=.gometalinter.json $(GO_FILES)...
+	@gometalinter.v2 --config=.gometalinter.json ./src/...
 
 validate-all: deps
 	@echo "=== $(INTEGRATION) === [ validate ]: Validating source code running gometalinter..."
-	@gometalinter.v2 --config=.gometalinter.json --enable=interfacer --enable=gosimple $(GO_FILES)...
+	@gometalinter.v2 --config=.gometalinter.json --enable=interfacer --enable=gosimple ./src/...
 
 compile: deps
 	@echo "=== $(INTEGRATION) === [ compile ]: Building $(BINARY_NAME)..."
-	@go build -o bin/$(BINARY_NAME) $(GO_FILES)
+	@go build -o bin/$(BINARY_NAME) ./src/
 
 compile-only: deps-only
 	@echo "=== $(INTEGRATION) === [ compile ]: Building $(BINARY_NAME)..."
-	@go build -o bin/$(BINARY_NAME) $(GO_FILES)
+	@go build -o bin/$(BINARY_NAME) ./src/
 
 test: deps
 	@echo "=== $(INTEGRATION) === [ test ]: Running unit tests..."
-	@gocov test $(GO_FILES)... | gocov-xml > coverage.xml
+	@gocov test ./src/... | gocov-xml > coverage.xml
 
 # Include thematic Makefiles
 include Makefile-*.mk

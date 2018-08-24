@@ -16,3 +16,9 @@ commands:
       - -inventory
     prefix: config/rabbitmq
     interval: 15
+  
+  events:
+    command:
+      - ./bin/nr-rabbitmq
+      - -events
+    interval: 15
