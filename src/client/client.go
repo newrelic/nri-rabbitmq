@@ -29,6 +29,10 @@ const (
 	ConnectionsEndpoint = "/api/connections"
 	// BindingsEndpoint path
 	BindingsEndpoint = "/api/bindings"
+	// AlivenessTestEndpoint path, this is formatted with the vhost name
+	AlivenessTestEndpoint = "/api/aliveness-test/%s"
+	// HealthCheckEndpoint path, this is formatted with the node name
+	HealthCheckEndpoint = "/api/healthchecks/node/%s"
 )
 
 var defaultClient *http.Client
@@ -45,7 +49,11 @@ func CollectEndpoint(endpoint string, result interface{}) error {
 		log.Error("Error collecting endpoint: %v", err)
 		return err
 	}
-	request := createRequest(endpoint)
+	request, err := createRequest(endpoint)
+	if err != nil {
+		log.Error("Error creating request to Management API: %v", err)
+		return err
+	}
 	if err := collectEndpoint(request, result); err != nil {
 		return err
 	}
@@ -91,15 +99,17 @@ func ensureClient() {
 	}
 }
 
-func createRequest(endpoint string) *http.Request {
+func createRequest(endpoint string) (*http.Request, error) {
 	var fullURL string
 	if args.GlobalArgs.UseSSL {
 		fullURL = fmt.Sprintf("https://%s:%d%s", args.GlobalArgs.Hostname, args.GlobalArgs.Port, endpoint)
 	} else {
 		fullURL = fmt.Sprintf("http://%s:%d%s", args.GlobalArgs.Hostname, args.GlobalArgs.Port, endpoint)
 	}
-	req, _ := http.NewRequest("GET", fullURL, nil)
+	req, err := http.NewRequest("GET", fullURL, nil)
+	if err != nil {
+		return nil, err
+	}
 	req.SetBasicAuth(args.GlobalArgs.Username, args.GlobalArgs.Password)
-
-	return req
+	return req, nil
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_PopulateClusterInventory(t *testing.T) {
+func TestPopulateClusterInventory(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
 	PopulateClusterInventory(i, nil)
 	assert.Empty(t, i.Entities)

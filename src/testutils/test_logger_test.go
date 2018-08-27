@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_TestLogger(t *testing.T) {
+func TestTestLogger(t *testing.T) {
 	topFormat := "%v"
 	logLevel := "debug"
 	var x = func(format string, args ...interface{}) {

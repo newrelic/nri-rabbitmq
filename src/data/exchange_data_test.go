@@ -16,7 +16,7 @@ var expectedArguments = map[string]interface{}{
 	"four":  "[true,false]",
 }
 
-func Test_ExchangeData(t *testing.T) {
+func TestExchangeData_UnmarshalJSON_MarshalMetrics(t *testing.T) {
 	var exchangeData ExchangeData
 	testutils.ReadStructFromJSONFile(t, filepath.Join("testdata", "exchange.json"), &exchangeData)
 	assert.NotNil(t, exchangeData)

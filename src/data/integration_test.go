@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_CreateEntity(t *testing.T) {
+func TestCreateEntity(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{}
 	i := testutils.GetTestingIntegration(t)
 
@@ -61,7 +61,7 @@ func Test_CreateEntity(t *testing.T) {
 
 const errorKey = "this-key-is-longer-than-375-to-force-an-error-lorem-ipsum-dolor-sit-amet-consectetur-adipiscing-elit-sed-do-eiusmod-tempor-incididunt-ut-labore-et-dolore-magna-aliqua-ut-enim-ad-minim-veniam-quis-nostrud-exercitation-ullamco-laboris-nisi-ut-aliquip-ex-ea-commodo-consequat-duis-aute-irure-dolor-in-reprehenderit-in-voluptate-velit-esse-cillum-dolore-eu-fugiat-nulla-pariatures"
 
-func Test_SetInventoryItem_ErrorKeyToLong(t *testing.T) {
+func TestSetInventoryItem_ErrorKeyToLong(t *testing.T) {
 	_, e := testutils.GetTestingEntity(t)
 	SetInventoryItem(e, errorKey, "nope", "false")
 	assert.Empty(t, e.Inventory.Items())
@@ -88,7 +88,7 @@ var testArgs = map[string]interface{}{
 
 const testArgsArrayValue = `["sub-string",654.321,false,["sub-array",987]]`
 
-func Test_CollectInventory_Exchange(t *testing.T) {
+func TestCollectInventory_Exchange(t *testing.T) {
 	data := &ExchangeData{
 		Vhost:      "vhost1",
 		Name:       "exchange1",
@@ -165,7 +165,7 @@ func Test_CollectInventory_Exchange(t *testing.T) {
 	}
 }
 
-func Test_CollectInventory_Queue(t *testing.T) {
+func TestCollectInventory_Queue(t *testing.T) {
 	data := &QueueData{
 		Vhost:      "vhost1",
 		Name:       "queue1",

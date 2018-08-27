@@ -36,11 +36,7 @@ type RabbitMQArguments struct {
 // Validate checks that valid collection arguments were specified
 func (args *RabbitMQArguments) Validate() error {
 	if args.Metrics && !args.Inventory {
-		err := errors.New("invalid arguments: can't collect metrics while not collecting inventory")
-		log.Error("%v", err)
-		return err
-	} else if !args.All() && !args.Metrics && !args.Inventory {
-		err := errors.New("invalid arguments: nothing specified to collect")
+		err := errors.New("when collecting metrics, you must also collect inventory")
 		log.Error("%v", err)
 		return err
 	}
@@ -49,30 +45,30 @@ func (args *RabbitMQArguments) Validate() error {
 
 // IncludeEntity returns true if the entity should be included; false otherwise
 func (args *RabbitMQArguments) IncludeEntity(entityName string, entityType string, vhostName string) bool {
-	if !args.IncludeVhost(vhostName) {
+	if !args.includeVhost(vhostName) {
 		return false
 	}
 	if entityType == consts.QueueType {
-		return args.IncludeQueue(entityName)
+		return args.includeQueue(entityName)
 	} else if entityType == consts.ExchangeType {
-		return args.IncludeExchange(entityName)
+		return args.includeExchange(entityName)
 	} else {
 		return true
 	}
 }
 
-// IncludeExchange returns true if exchage should be included; false otherwise
-func (args *RabbitMQArguments) IncludeExchange(exchangeName string) bool {
+// includeExchange returns true if exchage should be included; false otherwise
+func (args *RabbitMQArguments) includeExchange(exchangeName string) bool {
 	return includeName(exchangeName, args.Exchanges, args.ExchangesRegexes)
 }
 
-// IncludeQueue returns true if queue should be included; false otherwise
-func (args *RabbitMQArguments) IncludeQueue(queueName string) bool {
+// includeQueue returns true if queue should be included; false otherwise
+func (args *RabbitMQArguments) includeQueue(queueName string) bool {
 	return includeName(queueName, args.Queues, args.QueuesRegexes)
 }
 
-// IncludeVhost returns true if vhost should be included; false otherwise
-func (args *RabbitMQArguments) IncludeVhost(vhostName string) bool {
+// includeVhost returns true if vhost should be included; false otherwise
+func (args *RabbitMQArguments) includeVhost(vhostName string) bool {
 	return includeName(vhostName, args.Vhosts, args.VhostsRegexes)
 }
 

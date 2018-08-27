@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"net/url"
 	"os"
 
 	"github.com/newrelic/infra-integrations-sdk/integration"
@@ -31,7 +33,7 @@ func main() {
 
 	rabbitData := getNeededData()
 
-	if args.GlobalArgs.All() || (args.GlobalArgs.Metrics && args.GlobalArgs.Inventory) {
+	if args.GlobalArgs.HasMetrics() && args.GlobalArgs.HasInventory() {
 		metrics.CollectVhostMetrics(rabbitmqIntegration, rabbitData.vhosts, rabbitData.connections)
 
 		metricEntities := getMetricEntities(rabbitData)
@@ -40,14 +42,21 @@ func main() {
 		inventory.PopulateClusterInventory(rabbitmqIntegration, rabbitData.overview)
 	}
 
-	if args.GlobalArgs.All() || args.GlobalArgs.Inventory {
+	if args.GlobalArgs.HasInventory() {
 		inventory.CollectInventory(rabbitmqIntegration, rabbitData.nodes)
 	}
 
-	err = rabbitmqIntegration.Publish()
-	if err != nil {
-		log.Error("Error publishing integration: %v", err)
-		exitOnError(err)
+	if args.GlobalArgs.HasEvents() {
+		alivenessTest(rabbitmqIntegration, rabbitData.aliveness)
+		healthcheckTest(rabbitmqIntegration, rabbitData.healthcheck)
+	}
+
+	if len(rabbitmqIntegration.Entities) > 0 {
+		err = rabbitmqIntegration.Publish()
+		if err != nil {
+			log.Error("Error publishing integration: %v", err)
+			exitOnError(err)
+		}
 	}
 }
 
@@ -59,22 +68,62 @@ type allData struct {
 	exchanges   []*data.ExchangeData
 	connections []*data.ConnectionData
 	bindings    []*data.BindingData
+	healthcheck []*data.NodeTest
+	aliveness   []*data.VhostTest
 }
 
 func getNeededData() *allData {
-	data := new(allData)
-	if args.GlobalArgs.All() || (args.GlobalArgs.Metrics && args.GlobalArgs.Inventory) {
-		warnIfError(client.CollectEndpoint(client.OverviewEndpoint, &data.overview), "Error collecting Overview data: %v")
-		warnIfError(client.CollectEndpoint(client.ConnectionsEndpoint, &data.connections), "Error collecting Connections data: %v")
-		warnIfError(client.CollectEndpoint(client.BindingsEndpoint, &data.bindings), "Error collecting Bindings data: %v")
-		warnIfError(client.CollectEndpoint(client.VhostsEndpoint, &data.vhosts), "Error collecting Vhost data: %v")
-		warnIfError(client.CollectEndpoint(client.NodesEndpoint, &data.nodes), "Error collecting Node data: %v")
-		warnIfError(client.CollectEndpoint(client.QueuesEndpoint, &data.queues), "Error collecting Queue data: %v")
-		warnIfError(client.CollectEndpoint(client.ExchangesEndpoint, &data.exchanges), "Error collecting Exchange data: %v")
-	} else if args.GlobalArgs.Inventory {
-		warnIfError(client.CollectEndpoint(client.NodesEndpoint, &data.nodes), "Error collecting Node data: %v")
+	rabbitData := new(allData)
+	warnIfError(client.CollectEndpoint(client.NodesEndpoint, &rabbitData.nodes), "Error collecting Node data: %v")
+	if args.GlobalArgs.HasMetrics() {
+		warnIfError(client.CollectEndpoint(client.OverviewEndpoint, &rabbitData.overview), "Error collecting Overview data: %v")
+		warnIfError(client.CollectEndpoint(client.ConnectionsEndpoint, &rabbitData.connections), "Error collecting Connections data: %v")
+		warnIfError(client.CollectEndpoint(client.BindingsEndpoint, &rabbitData.bindings), "Error collecting Bindings data: %v")
+		warnIfError(client.CollectEndpoint(client.VhostsEndpoint, &rabbitData.vhosts), "Error collecting Vhost data: %v")
+		warnIfError(client.CollectEndpoint(client.QueuesEndpoint, &rabbitData.queues), "Error collecting Queue data: %v")
+		warnIfError(client.CollectEndpoint(client.ExchangesEndpoint, &rabbitData.exchanges), "Error collecting Exchange data: %v")
+	} else if args.GlobalArgs.HasEvents() {
+		warnIfError(client.CollectEndpoint(client.VhostsEndpoint, &rabbitData.vhosts), "Error collecting Vhost data: %v")
 	}
-	return data
+	if args.GlobalArgs.HasEvents() {
+		getEventData(rabbitData)
+	}
+	return rabbitData
+}
+
+func getEventData(rabbitData *allData) {
+	var endpoint string
+	if len(rabbitData.nodes) > 0 {
+		rabbitData.healthcheck = make([]*data.NodeTest, len(rabbitData.nodes))
+		for i, node := range rabbitData.nodes {
+			nodeTest := &data.NodeTest{
+				Node: node,
+				Test: new(data.TestData),
+			}
+			endpoint = fmt.Sprintf(client.HealthCheckEndpoint, url.PathEscape(node.Name))
+			if err := client.CollectEndpoint(endpoint, nodeTest.Test); err != nil {
+				nodeTest.Test.Status = "error"
+				nodeTest.Test.Reason = err.Error()
+			}
+			rabbitData.healthcheck[i] = nodeTest
+		}
+	}
+
+	if len(rabbitData.vhosts) > 0 {
+		rabbitData.aliveness = make([]*data.VhostTest, len(rabbitData.vhosts))
+		for i, vhost := range rabbitData.vhosts {
+			vhostTest := &data.VhostTest{
+				Vhost: vhost,
+				Test:  new(data.TestData),
+			}
+			endpoint = fmt.Sprintf(client.AlivenessTestEndpoint, url.PathEscape(vhost.Name))
+			if err := client.CollectEndpoint(endpoint, vhostTest.Test); err != nil {
+				vhostTest.Test.Status = "error"
+				vhostTest.Test.Reason = err.Error()
+			}
+			rabbitData.aliveness[i] = vhostTest
+		}
+	}
 }
 
 func getMetricEntities(apiData *allData) []data.EntityData {

@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_CollectEndpoint(t *testing.T) {
+func TestCollectEndpoint(t *testing.T) {
 	defaultClient = nil
 	args.GlobalArgs = args.RabbitMQArguments{}
 	mux, teardown := testutils.GetTestServer(false)
@@ -65,6 +65,25 @@ func Test_CollectEndpoint(t *testing.T) {
 	assert.Equal(t, &i, actualQueues[0].Messages, "Messages is different")
 	assert.Equal(t, "test-queue", actualQueues[0].Name, "Name is different")
 	assert.Equal(t, "test-vhost", actualQueues[0].Vhost, "Vhost is different")
+}
+
+func TestCollectEndpoint_Errors(t *testing.T) {
+	defaultClient = nil
+	args.GlobalArgs = args.RabbitMQArguments{}
+	mux, teardown := testutils.GetTestServer(false)
+	defer teardown()
+	mux.HandleFunc(ConnectionsEndpoint, func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(404)
+	})
+
+	err := CollectEndpoint(ConnectionsEndpoint, &struct{}{})
+	assert.Error(t, err)
+
+	defaultClient = nil
+	args.GlobalArgs.Hostname = "[" + args.GlobalArgs.Hostname
+
+	err = CollectEndpoint("/missing", &struct{}{})
+	assert.Error(t, err)
 }
 
 func Test_ensureClient_CannotCreateClient(t *testing.T) {
@@ -119,11 +138,13 @@ func Test_collectEndpoint_Errors(t *testing.T) {
 	err := collectEndpoint(nil, &struct{}{})
 	assert.Error(t, err)
 
-	req := createRequest(ConnectionsEndpoint)
+	req, err := createRequest(ConnectionsEndpoint)
+	assert.NoError(t, err)
 	err = collectEndpoint(req, &struct{}{})
 	assert.Error(t, err)
 
-	req = createRequest(QueuesEndpoint)
+	req, err = createRequest(QueuesEndpoint)
+	assert.NoError(t, err)
 	err = collectEndpoint(req, &struct{}{})
 	assert.Error(t, err)
 
@@ -137,12 +158,22 @@ func Test_createRequest(t *testing.T) {
 	args.GlobalArgs.UseSSL = true
 	args.GlobalArgs.Hostname = "test-hostname"
 	args.GlobalArgs.Port = 3000
-	endpoint := "test-endpoint"
-	r := createRequest(endpoint)
-	actualURL := fmt.Sprintf("https://%v", r.Host)
+	endpoint := "/test-endpoint"
+	r, err := createRequest(endpoint)
+	assert.NoError(t, err)
+
+	actualURL := r.URL.String()
 	expectedURL := fmt.Sprintf("https://%v:%v%v", args.GlobalArgs.Hostname, args.GlobalArgs.Port, endpoint)
 	assert.Equal(t, expectedURL, actualURL, "expect url to use https")
 	if r.Method != http.MethodGet {
 		t.Error("Expected GET method, got POST method.")
 	}
+}
+
+func Test_createRequest_Error(t *testing.T) {
+	args.GlobalArgs = args.RabbitMQArguments{}
+	args.GlobalArgs.Hostname = "[test-hostname"
+	endpoint := "/test-endpoint"
+	_, err := createRequest(endpoint)
+	assert.Error(t, err)
 }

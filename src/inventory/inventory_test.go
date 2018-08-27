@@ -28,7 +28,7 @@ const (
 
 var testConfigPath = filepath.Join("testdata", "sample.conf")
 
-func Test_CollectInventory(t *testing.T) {
+func TestCollectInventory(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
 	args.GlobalArgs = args.RabbitMQArguments{}
 
@@ -84,7 +84,7 @@ func Test_CollectInventory(t *testing.T) {
 	assert.Equal(t, expected, actual, "CollectInventory does not have the expected output")
 }
 
-func Test_CollectInventory_Errors(t *testing.T) {
+func TestCollectInventory_Errors(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{
 		NodeNameOverride: "node1",
 	}
@@ -258,8 +258,7 @@ func fakeRabbitmqctl(args []string) {
 		if os.Getenv("GET_NODE_NAME_EMPTY") == "1" {
 			fmt.Fprintf(os.Stdout, "")
 		} else {
-			fmt.Fprintf(os.Stdout, `'node1'
-`)
+			fmt.Fprintf(os.Stdout, expectedNodeCmdOutput)
 		}
 	}
 }

@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCollectMetrics(t *testing.T) {
+func TestCollectEntityMetrics(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
 	CollectEntityMetrics(i, []*data.BindingData{},
 		&data.NodeData{Name: "node1"},
@@ -23,13 +23,13 @@ func TestCollectMetrics(t *testing.T) {
 	assert.Equal(t, 2, len(i.Entities))
 }
 
-func TestSetMetric(t *testing.T) {
+func Test_setMetric(t *testing.T) {
 	ms := metric.NewSet("TestSample", persist.NewInMemoryStore())
 	setMetric(ms, "rate", 0.5, metric.GAUGE)
 	assert.Equal(t, float64(0.5), ms.Metrics["rate"])
 }
 
-func Test_PopulateMetrics_Node(t *testing.T) {
+func TestCollectEntityMetrics_Node(t *testing.T) {
 	var bindingData []*data.BindingData
 	var nodeData []*data.NodeData
 	i := testutils.GetTestingIntegration(t)
@@ -55,7 +55,7 @@ func Test_PopulateMetrics_Node(t *testing.T) {
 	}
 }
 
-func Test_PopulateMetrics_Queue(t *testing.T) {
+func TestCollectEntityMetrics_Queue(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
 	var queueData []*data.QueueData
 	bindingData := []*data.BindingData{
@@ -94,7 +94,7 @@ func Test_PopulateMetrics_Queue(t *testing.T) {
 	}
 }
 
-func Test_PopulateMetrics_Exchange(t *testing.T) {
+func TestCollectEntityMetrics_Exchange(t *testing.T) {
 	var bindingData []*data.BindingData
 	var exchangeData []*data.ExchangeData
 	i := testutils.GetTestingIntegration(t)
@@ -120,7 +120,7 @@ func Test_PopulateMetrics_Exchange(t *testing.T) {
 	}
 }
 
-func TestPopulateVhostMetrics(t *testing.T) {
+func TestCollectVhostMetrics(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
 	var vhostData []*data.VhostData
 	var connectionsData []*data.ConnectionData

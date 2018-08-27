@@ -20,7 +20,11 @@ func Test_main(t *testing.T) {
 	defer closer()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("content-type", "application/json")
-		if r.RequestURI == client.OverviewEndpoint {
+		if r.RequestURI == fmt.Sprintf(client.HealthCheckEndpoint, "node1") {
+			fmt.Fprint(w, `{"status":"ok"}`)
+		} else if r.RequestURI == client.NodesEndpoint {
+			fmt.Fprintf(w, `[{ "name": "node1" }]`)
+		} else if r.RequestURI == client.OverviewEndpoint {
 			fmt.Fprint(w, "{}")
 		} else {
 			fmt.Fprint(w, "[]")
@@ -56,7 +60,7 @@ func Test_main(t *testing.T) {
 	os.Stdout = origStdout
 	out := <-outC
 
-	assert.Equal(t, fmt.Sprintf(`{"name":%q,"protocol_version":"2","integration_version":%q,"data":[]}`, integrationName, integrationVersion), out)
+	assert.Equal(t, fmt.Sprintf(`{"name":%q,"protocol_version":"2","integration_version":%q,"data":[{"entity":{"name":"node1","type":"node"},"metrics":[{"displayName":"node1","entityName":"node:node1","event_type":"RabbitmqNodeSample","node.partitionsSeen":0}],"inventory":{},"events":[]}]}`, integrationName, integrationVersion), out)
 }
 
 func Test_getNeededData(t *testing.T) {
@@ -64,7 +68,9 @@ func Test_getNeededData(t *testing.T) {
 	defer closer()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("content-type", "application/json")
-		if r.RequestURI == client.OverviewEndpoint {
+		if r.RequestURI == client.OverviewEndpoint ||
+			r.RequestURI == fmt.Sprintf(client.AlivenessTestEndpoint, "") ||
+			r.RequestURI == fmt.Sprintf(client.HealthCheckEndpoint, "node1") {
 			fmt.Fprint(w, "{}")
 		} else {
 			fmt.Fprint(w, "[{}]")

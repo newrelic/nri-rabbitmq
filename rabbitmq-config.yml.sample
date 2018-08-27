@@ -2,7 +2,7 @@ integration_name: com.newrelic.rabbitmq
 
 instances:
   - name: rabbitmq
-    command: <"all" or "inventory">
+    command: <"all", "inventory", or "events">
     arguments:
       hostname: <hostname or IP of RabbitMQ host>
       port: <management UI port>

@@ -52,3 +52,21 @@ type BindingStats map[BindingKey]*Binding
 type VhostData struct {
 	Name string
 }
+
+// VhostTest holds data around a test against a Vhost
+type VhostTest struct {
+	Vhost *VhostData
+	Test  *TestData
+}
+
+// NodeTest holds data around a test against a Node
+type NodeTest struct {
+	Node *NodeData
+	Test *TestData
+}
+
+// TestData is the representation of both the AlivenessTest and Healthchecks endpoints
+type TestData struct {
+	Status string
+	Reason string
+}
