@@ -1,0 +1,39 @@
+integration,metric_name,metric_type,metric_enabled,metric_description
+RabbitMQ,node.fileDescriptorsTotalUsed,Gauge,true,Count of File Descriptors Used
+RabbitMQ,node.diskSpaceFreeInBytes,Gauge,true,Current free disk space
+RabbitMQ,node.totalMemoryUsedInBytes,Gauge,true,Memory used in bytes
+RabbitMQ,node.averageErlangProcessesWaiting,Gauge,true,Average number of Erlang processes waiting to run
+RabbitMQ,node.fileDescriptorsUsedSockets,Gauge,true,Number of file descriptors used as sockets
+RabbitMQ,node.partitionsSeen,Gauge,true,Number of network partitions seen per node
+RabbitMQ,node.running,Gauge,true,Node Running 
+RabbitMQ,node.hostMemoryAlarm,Gauge,true,Host Memory Alarm
+RabbitMQ,node.diskAlarm,Gauge,true,Node Disk Alarm
+RabbitMQ,vhost.aliveness,Gauge,true,"Check of alivenss of a Vhost. 0 = OK, 1 = Failure"
+RabbitMQ,vhost.currentConnections,Gauge,true,Number of current connections to a given rabbitmq vhost
+RabbitMQ,vhost.connectionsSpecifiedState,Gauge,true,Number of connections in the specified connection state
+RabbitMQ,exchange.bindings,Gauge,true,Number of bindings for a specific exchange
+RabbitMQ,queue.bindings,Gauge,true,Number of bindings for a specific queue
+RabbitMQ,queue.consumers,Gauge,true,Number of consumers per Queue
+RabbitMQ,queue.consumerMessageUtilizationPerSecond,Gauge,true,The ratio of time that a queue's consumers can take new messages
+RabbitMQ,queue.countActiveConsumersReceiveMessages,Gauge,true,Number of active consumers that can immediately receive any messages sent to the queue
+RabbitMQ,queue.erlangBytesConsumedInBytes,Gauge,true,Bytes consumed by the Erlang process associated with the queue
+RabbitMQ,queue.totalMessages,Gauge,true,Count of the total messages in the queue
+RabbitMQ,queue.totalMessagesPerSecond,Gauge,true,Gauge of total messages in queue
+RabbitMQ,queue.messagesReadyDeliveryClients,Gauge,true,Count of messages ready to be delivered to clients
+RabbitMQ,queue.messagesReadyDeliveryClientsPerSecond,Gauge,true,Gauge of messages ready to be delivered to clients per second
+RabbitMQ,queue.messagesReadyUnacknowledged,Gauge,true,Count of messages per queue delivered to clients but not yet acknowledged
+RabbitMQ,queue.messagesReadyUnacknowledgedPerSecond,Gauge,true,Gauge of messages per queue delivered to clients but not yet acknowledged per second
+RabbitMQ,queue.messagesAcknowledged,Gauge,true,Count of messages delivered to clients and acknowledged per queue
+RabbitMQ,queue.messagesAcknowledgedPerSecond,Gauge,true,Gauge of messages  delivered to clients and acknowledged per second per queue
+RabbitMQ,queue.messagesDeliveredAckMode,Gauge,true,Count of messages delivered in acknowledgement mode to consumers per queue
+RabbitMQ,queue.messagesDeliveredAckModePerSecond,Gauge,true,Gauge of messages  delivered in acknowledgement mode to consumers per queue per second
+RabbitMQ,queue.sumMessagesDelivered,Gauge,true,"Sum of messages delivered in acknowledgement mode to consumers, in no-acknowledgement mode to consumers, in acknowledgement mode in response to basic.get, and in no-acknowledgement mode in response to basic.get. per queue"
+RabbitMQ,queue.sumMessagesDeliveredPerSecond,Gauge,true,"Gauge per second of the sum of messages delivered in acknowledgement mode to consumers, in no-acknowledgement mode to consumers, in acknowledgement mode in response to basic.get, and in no-acknowledgement mode in response to basic.get. per queue"
+RabbitMQ,queue.messagesPublished,Gauge,true,Count of messages published per queue
+RabbitMQ,queue.messagesPublishedPerSecond,Gauge,true,Gauge of messages published per second per queue
+RabbitMQ,queue.messagesRedeliverGet,Gauge,true,Count of subset of messages in acknowledgement mode which had the redelivered flag set per queue
+RabbitMQ,queue.messagesRedeliverGetPerSecond,Gauge,true,Gauge of subset of messages in acknowledgement mode which had the redelivered flag set per queue per second
+RabbitMQ,exchange.messagesPublishedPerChannel,Gauge,true,Count of messages published from a channel into this exchange
+RabbitMQ,exchange.messagesPublishedPerChannelPerSecond,Gauge,true,Gauge of messages published from a channel into this exchange per sec
+RabbitMQ,exchange.messagesPublishedQueue,Gauge,true,Count of messages published from this exchange into a queue
+RabbitMQ,exchange.messagesPublishedQueuePerSecond,Gauge,true,Gauge of messages published from this exchange into a queue per second
