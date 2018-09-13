@@ -8,7 +8,7 @@ RabbitMQ,node.partitionsSeen,Gauge,true,Number of network partitions seen per no
 RabbitMQ,node.running,Gauge,true,Node Running 
 RabbitMQ,node.hostMemoryAlarm,Gauge,true,Host Memory Alarm
 RabbitMQ,node.diskAlarm,Gauge,true,Node Disk Alarm
-RabbitMQ,vhost.aliveness,Gauge,true,"Check of alivenss of a Vhost. 0 = OK, 1 = Failure"
+RabbitMQ,vhost.aliveness,Gauge,true,"Check of aliveness of a Vhost. 0 = OK, 1 = Failure"
 RabbitMQ,vhost.currentConnections,Gauge,true,Number of current connections to a given rabbitmq vhost
 RabbitMQ,vhost.connectionsSpecifiedState,Gauge,true,Number of connections in the specified connection state
 RabbitMQ,exchange.bindings,Gauge,true,Number of bindings for a specific exchange
