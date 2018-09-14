@@ -42,7 +42,7 @@ func CollectEntityMetrics(rabbitmqIntegration *integration.Integration, bindings
 				populateBindingMetric(queue.Name, queue.Vhost, consts.QueueType, metricSet, bindingStats)
 				queue.CollectInventory(entity, bindingStats)
 			} else if exchange, ok := dataItem.(*data.ExchangeData); ok {
-				populateBindingMetric(exchange.Name, exchange.Vhost, consts.QueueType, metricSet, bindingStats)
+				populateBindingMetric(exchange.Name, exchange.Vhost, consts.ExchangeType, metricSet, bindingStats)
 				exchange.CollectInventory(entity, bindingStats)
 			}
 		}

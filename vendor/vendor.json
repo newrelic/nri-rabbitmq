@@ -9,7 +9,7 @@
 			"revisionTime": "2018-02-21T22:46:20Z"
 		},
 		{
-			"checksumSHA1": "yGhnzrJzvWrx003CMYtHa9oqRrk=",
+			"checksumSHA1": "MFH1316fMarruD6ogBAi55X8o8g=",
 			"path": "github.com/newrelic/infra-integrations-sdk/args",
 			"revision": "b4be62020f15797040858b1cb9a0690d5a3cf0ee",
 			"revisionTime": "2018-08-22T13:46:45Z"
@@ -39,19 +39,19 @@
 			"revisionTime": "2018-08-22T13:46:45Z"
 		},
 		{
-			"checksumSHA1": "cFbpAnwZE1j53qTABzlH2kCdYig=",
+			"checksumSHA1": "iYqZm+K1690zh7ihc+yDbKftd9g=",
 			"path": "github.com/newrelic/infra-integrations-sdk/integration",
 			"revision": "b4be62020f15797040858b1cb9a0690d5a3cf0ee",
 			"revisionTime": "2018-08-22T13:46:45Z"
 		},
 		{
-			"checksumSHA1": "0BBXPooW7++gsDJjkbgc5PvNIf4=",
+			"checksumSHA1": "6/DhD+/LhC/k3NaLgkpd6iE8b5E=",
 			"path": "github.com/newrelic/infra-integrations-sdk/log",
 			"revision": "b4be62020f15797040858b1cb9a0690d5a3cf0ee",
 			"revisionTime": "2018-08-22T13:46:45Z"
 		},
 		{
-			"checksumSHA1": "WxkkZR2rDZvmbmpzxO2NqXbOj80=",
+			"checksumSHA1": "Bmaab3vN4SGpT+/8L7Ouj365z6o=",
 			"path": "github.com/newrelic/infra-integrations-sdk/persist",
 			"revision": "b4be62020f15797040858b1cb9a0690d5a3cf0ee",
 			"revisionTime": "2018-08-22T13:46:45Z"
@@ -69,25 +69,25 @@
 			"revisionTime": "2016-01-10T10:55:54Z"
 		},
 		{
-			"checksumSHA1": "dkOtdSOQbbRUhplRKo+YKDXOTis=",
+			"checksumSHA1": "XHH8+1ESYdBoyKSD4FXwdy1liUk=",
 			"path": "github.com/stretchr/objx",
 			"revision": "b8b73a35e9830ae509858c10dec5866b4d5c8bff",
 			"revisionTime": "2018-07-02T10:34:55Z"
 		},
 		{
-			"checksumSHA1": "jenVefPSi9LRwnR7Nd29Bx94bIk=",
+			"checksumSHA1": "c6pbpF7eowwO59phRTpF8cQ80Z0=",
 			"path": "github.com/stretchr/testify/assert",
 			"revision": "f35b8ab0b5a2cef36673838d662e249dd9c94686",
 			"revisionTime": "2018-05-06T18:05:49Z"
 		},
 		{
-			"checksumSHA1": "sWRtQT/BwocEGpizdQaJsp7Hivc=",
+			"checksumSHA1": "WmBSFdqpdYRIkp0I408JIZ3LDMY=",
 			"path": "github.com/stretchr/testify/mock",
 			"revision": "f35b8ab0b5a2cef36673838d662e249dd9c94686",
 			"revisionTime": "2018-05-06T18:05:49Z"
 		},
 		{
-			"checksumSHA1": "cLG9wvFtg/qolkjjmq4DywbBHeU=",
+			"checksumSHA1": "wnEANt4k5X/KGwoFyfSSnpxULm4=",
 			"path": "github.com/stretchr/testify/require",
 			"revision": "f35b8ab0b5a2cef36673838d662e249dd9c94686",
 			"revisionTime": "2018-05-06T18:05:49Z"
