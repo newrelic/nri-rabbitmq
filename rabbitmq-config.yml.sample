@@ -1,7 +1,7 @@
 integration_name: com.newrelic.rabbitmq
 
 instances:
-  - name: rabbitmq
+  - name: <cluster name>
     command: <"all", "inventory", or "events">
     arguments:
       hostname: <hostname or IP of RabbitMQ host>
@@ -11,7 +11,7 @@ instances:
       ca_bundle_dir: <ca bundle directory>
       ca_bundle_file: <ca bundle file>
       node_name_override: <local node name>
-      config_path: </path/to/config/file>
+      config_path: </path/to/config/file/rabbitmq.conf>
       use_ssl: <bool>
       queues: <json array of queue names to collect>
       queues_regexes: <json array of regexes, matching queue names will be collected>
