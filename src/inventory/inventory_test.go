@@ -67,7 +67,7 @@ func TestCollectInventory(t *testing.T) {
 	prevOsOpen := osOpen
 	osOpen = errorOsOpen
 	CollectInventory(i, nodesData)
-	assert.Empty(t, i.Entities, "CollectInventory should create anythign when config file fails to open")
+	assert.Empty(t, i.Entities, "CollectInventory should create anything when config file fails to open")
 	osOpen = prevOsOpen
 
 	CollectInventory(i, nodesData)

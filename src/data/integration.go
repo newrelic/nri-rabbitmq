@@ -12,7 +12,7 @@ import (
 	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 )
 
-// CreateEntity will create an entity and metricNamespace attributes with approprate name/namespace values if the entity isn't filtered
+// CreateEntity will create an entity and metricNamespace attributes with appropriate name/namespace values if the entity isn't filtered
 func CreateEntity(rabbitmqIntegration *integration.Integration, entityName string, entityType string, vhost string) (entity *integration.Entity, metricNamespace []metric.Attribute, err error) {
 	name := cleanEntityName(entityName, entityType)
 	namespace := entityType
@@ -49,16 +49,17 @@ func joinVhostName(vhost, name string) string {
 
 // SetInventoryItem sets an inventory item in a consistent way
 func SetInventoryItem(entity *integration.Entity, category, key string, value interface{}) {
-	if entity != nil && key != "" && value != nil {
-		if category != "" {
-			key = category + "/" + key
-		}
-		if err := entity.SetInventoryItem(key, "value", value); err != nil {
-			if entity.Metadata == nil {
-				log.Warn("Error setting inventory [%s] on LocalEntity: %v", key, err)
-			} else {
-				log.Warn("Error setting inventory [%s] on [%s]: %v", key, entity.Metadata.Name, err)
-			}
+	if entity == nil || key == "" || value == nil {
+		return
+	}
+	if category != "" {
+		key = category + "/" + key
+	}
+	if err := entity.SetInventoryItem(key, "value", value); err != nil {
+		if entity.Metadata == nil {
+			log.Warn("Error setting inventory [%s] on LocalEntity: %v", key, err)
+		} else {
+			log.Warn("Error setting inventory [%s] on [%s]: %v", key, entity.Metadata.Name, err)
 		}
 	}
 }

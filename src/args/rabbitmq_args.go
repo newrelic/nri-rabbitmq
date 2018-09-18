@@ -57,7 +57,7 @@ func (args *RabbitMQArguments) IncludeEntity(entityName string, entityType strin
 	}
 }
 
-// includeExchange returns true if exchage should be included; false otherwise
+// includeExchange returns true if exchange should be included; false otherwise
 func (args *RabbitMQArguments) includeExchange(exchangeName string) bool {
 	return includeName(exchangeName, args.Exchanges, args.ExchangesRegexes)
 }

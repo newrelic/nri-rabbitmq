@@ -102,7 +102,7 @@ func Test_ensureClient_CannotCreateClient(t *testing.T) {
 		return
 	}
 
-	// If this is the first time this test method is ran, re-execute it telling it to pefrom the actual method call.
+	// If this is the first time this test method is ran, re-execute it telling it to perform the actual method call.
 	// Then test the result of that, which should be an os.Exit(2).
 	// The downside to this is the ensureClient() will not show full coverage when it actually does (since it's ran as a sub-test)
 	cmd := exec.Command(os.Args[0], "-test.run=Test_ensureClient_CannotCreateClient")

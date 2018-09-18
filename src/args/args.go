@@ -2,7 +2,7 @@ package args
 
 import sdkArgs "github.com/newrelic/infra-integrations-sdk/args"
 
-// ArgumentList is the raw arguments passed into the intgration via YAML, CLI args, or ENV variables
+// ArgumentList is the raw arguments passed into the integration via YAML, CLI args, or ENV variables
 type ArgumentList struct {
 	sdkArgs.DefaultArgumentList
 	Hostname         string `default:"localhost" help:"Hostname or IP where RabbitMQ Management Plugin is running."`

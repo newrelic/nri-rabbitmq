@@ -7,7 +7,7 @@ import (
 	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 )
 
-// PopulateClusterInventory populates the cluse entity with appropriate inventory data
+// PopulateClusterInventory populates the cluster entity with appropriate inventory data
 func PopulateClusterInventory(integrationData *integration.Integration, overviewData *data.OverviewData) {
 	if overviewData == nil || overviewData.ClusterName == "" {
 		return
