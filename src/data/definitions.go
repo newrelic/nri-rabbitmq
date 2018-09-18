@@ -5,7 +5,7 @@ import (
 	"github.com/newrelic/infra-integrations-sdk/integration"
 )
 
-// EntityData is capabile of reporting it's own data to inventory
+// EntityData is capable of reporting it's own data to inventory
 type EntityData interface {
 	GetEntity(integration *integration.Integration) (*integration.Entity, []metric.Attribute, error)
 	EntityVhost() string
