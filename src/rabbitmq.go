@@ -16,7 +16,7 @@ import (
 
 const (
 	integrationName    = "com.newrelic.rabbitmq"
-	integrationVersion = "0.1.2"
+	integrationVersion = "0.1.3"
 )
 
 func main() {
@@ -126,9 +126,17 @@ func getEventData(rabbitData *allData) {
 	}
 }
 
+// maxQueues is the maximum amount of Queues that can be collect.
+// If there are more than this number of Queues then collection of
+// Queues will fail.
+const maxQueues = 300
+
 func getMetricEntities(apiData *allData) []data.EntityData {
 	i := 0
-	dataItems := make([]data.EntityData, len(apiData.nodes)+len(apiData.exchanges)+len(apiData.queues))
+	// Make the length the size of nodes and exchanges but capacity the length + size of queues. This is to accommodate the chance that there are more
+	// queues than can be collected.
+	dataItems := make([]data.EntityData, len(apiData.nodes)+len(apiData.exchanges), len(apiData.nodes)+len(apiData.exchanges)+len(apiData.queues))
+
 	for _, v := range apiData.nodes {
 		dataItems[i] = v
 		i++
@@ -137,9 +145,13 @@ func getMetricEntities(apiData *allData) []data.EntityData {
 		dataItems[i] = v
 		i++
 	}
+	if queueLength := len(apiData.queues); queueLength >= maxQueues {
+		log.Error("There are %d queues in collection, the maximum amount of queues to collect is %d. Use the queue whitelist or regex configuration parameter to limit collection size.", queueLength, maxQueues)
+		return dataItems
+	}
+
 	for _, v := range apiData.queues {
-		dataItems[i] = v
-		i++
+		dataItems = append(dataItems, v)
 	}
 	return dataItems
 }
