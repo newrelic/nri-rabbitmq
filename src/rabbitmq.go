@@ -145,7 +145,7 @@ func getMetricEntities(apiData *allData) []data.EntityData {
 		dataItems[i] = v
 		i++
 	}
-	if queueLength := len(apiData.queues); queueLength >= maxQueues {
+	if queueLength := len(apiData.queues); queueLength > maxQueues {
 		log.Error("There are %d queues in collection, the maximum amount of queues to collect is %d. Use the queue whitelist or regex configuration parameter to limit collection size.", queueLength, maxQueues)
 		return dataItems
 	}
