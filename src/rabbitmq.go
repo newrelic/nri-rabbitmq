@@ -16,7 +16,7 @@ import (
 
 const (
 	integrationName    = "com.newrelic.rabbitmq"
-	integrationVersion = "0.1.3"
+	integrationVersion = "0.1.4"
 )
 
 func main() {
@@ -129,7 +129,7 @@ func getEventData(rabbitData *allData) {
 // maxQueues is the maximum amount of Queues that can be collect.
 // If there are more than this number of Queues then collection of
 // Queues will fail.
-const maxQueues = 300
+const maxQueues = 500
 
 func getMetricEntities(apiData *allData) []data.EntityData {
 	i := 0
