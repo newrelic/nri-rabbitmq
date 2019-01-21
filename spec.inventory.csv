@@ -1,5 +1,5 @@
 entity type,inventory source,inventory path
-node,conf/rabbitmq,config/
+node,conf/rabbitmq,config/*
 vhost,,
 queue,conf/rabbitmq,queue/exclusive
 queue,conf/rabbitmq,queue/durable
