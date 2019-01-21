@@ -1,0 +1,16 @@
+entity type,inventory source,inventory path
+node,conf/rabbitmq,config/
+vhost,,
+queue,conf/rabbitmq,queue/exclusive
+queue,conf/rabbitmq,queue/durable
+queue,conf/rabbitmq,queue/auto_delete
+queue,conf/rabbitmq,queue/bindings.source
+queue,conf/rabbitmq,queue/bindings.destination
+queue,conf/rabbitmq,queue/arguments/
+exchange,conf/rabbitmq,exchange/type
+exchange,conf/rabbitmq,exchange/durable
+exchange,conf/rabbitmq,exchange/auto_delete
+exchange,conf/rabbitmq,exchange/bindings.source
+exchange,conf/rabbitmq,exchange/bindings.destination
+cluster,conf/rabbitmq,version/rabbitmq
+cluster,conf/rabbitmq,version/management
