@@ -7,4 +7,4 @@ RUN go get -d github.com/newrelic/nri-rabbitmq/... && \
 FROM newrelic/infrastructure:latest
 COPY . .
 COPY --from=builder /go/src/github.com/newrelic/nri-rabbitmq/bin/nr-rabbitmq /var/db/newrelic-infra/newrelic-integrations/bin/nr-rabbitmq
-COPY --from=builder /go/src/github.com/newrelic/nri-rabbitmq/rabbitmq-definition.yml /var/db/newrelic-infra/newrelic-integrations/rabbitmq-definition.yml
+COPY --from=builder /go/src/github.com/newrelic/nri-rabbitmq/rabbitmq-definition.yml /var/db/newrelic-infra/newrelic-integrations/definition.yml
