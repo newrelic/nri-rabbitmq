@@ -1,6 +1,6 @@
 name: com.newrelic.rabbitmq
 description: Reports status and metrics for rabbitmq service
-protocol_version: 1
+protocol_version: 2
 os: linux
 
 commands:
