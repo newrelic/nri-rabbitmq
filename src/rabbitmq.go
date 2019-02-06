@@ -16,7 +16,7 @@ import (
 
 const (
 	integrationName    = "com.newrelic.rabbitmq"
-	integrationVersion = "1.0.1"
+	integrationVersion = "1.0.2"
 )
 
 func main() {
@@ -145,7 +145,8 @@ func getMetricEntities(apiData *allData) []data.EntityData {
 		dataItems[i] = v
 		i++
 	}
-	if queueLength := len(apiData.queues); queueLength > maxQueues {
+
+	if queueLength := getFilteredQueueCount(apiData.queues); queueLength > maxQueues {
 		log.Error("There are %d queues in collection, the maximum amount of queues to collect is %d. Use the queue whitelist or regex configuration parameter to limit collection size.", queueLength, maxQueues)
 		return dataItems
 	}
@@ -154,6 +155,17 @@ func getMetricEntities(apiData *allData) []data.EntityData {
 		dataItems = append(dataItems, v)
 	}
 	return dataItems
+}
+
+func getFilteredQueueCount(queuesData []*data.QueueData) int {
+	queueCount := 0
+	for _, queueData := range queuesData {
+		if args.GlobalArgs.IncludeEntity(queueData.Name, "queue", queueData.Vhost) {
+			queueCount++
+		}
+	}
+
+	return queueCount
 }
 
 func warnIfError(err error, format string, args ...interface{}) {
