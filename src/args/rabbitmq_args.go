@@ -112,7 +112,7 @@ func SetGlobalArgs(args ArgumentList) error {
 		log.Error("Error parsing arguments [Queues]: %v", err)
 		return err
 	}
-	if err = parseStrings(args.Vhosts, &rabbitArgs.Queues); err != nil {
+	if err = parseStrings(args.Vhosts, &rabbitArgs.Vhosts); err != nil {
 		log.Error("Error parsing arguments [Vhosts]: %v", err)
 		return err
 	}
