@@ -1,7 +1,7 @@
 package data
 
 import (
-  "strings"
+	"strings"
 
 	"github.com/newrelic/infra-integrations-sdk/data/metric"
 	"github.com/newrelic/infra-integrations-sdk/integration"

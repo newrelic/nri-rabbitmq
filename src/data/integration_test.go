@@ -142,7 +142,7 @@ func TestCollectInventory_Exchange(t *testing.T) {
 
 	item, ok = e.Inventory.Item("exchange/type")
 	assert.True(t, ok)
-  assert.Equal(t, "test-type", item["value"])
+	assert.Equal(t, "test-type", item["value"])
 
 	item, ok = e.Inventory.Item("exchange/durable")
 	assert.True(t, ok)

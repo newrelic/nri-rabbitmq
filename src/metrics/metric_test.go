@@ -17,7 +17,7 @@ import (
 func TestCollectEntityMetrics(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
 	CollectEntityMetrics(i, []*data.BindingData{},
-    "testClusterName",
+		"testClusterName",
 		&data.NodeData{Name: "node1"},
 		&data.QueueData{Name: "queue1"},
 	)
