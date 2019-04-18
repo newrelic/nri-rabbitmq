@@ -33,7 +33,7 @@ func TestNodeData_UnmarshalJSON_MarshalMetrics(t *testing.T) {
 	assert.Equal(t, "", nodeData.EntityVhost())
 
 	testIntegration := testutils.GetTestingIntegration(t)
-	e, metricAttribs, err := nodeData.GetEntity(testIntegration)
+	e, metricAttribs, err := nodeData.GetEntity(testIntegration, "testClusterName")
 	assert.NotNil(t, e)
 	assert.NotEmpty(t, metricAttribs)
 	assert.NoError(t, err)

@@ -42,7 +42,7 @@ func TestQueueData_UnmarshalJSON_MarshalMetrics(t *testing.T) {
 	assert.Equal(t, consts.QueueType, queueData.EntityType())
 
 	testIntegration := testutils.GetTestingIntegration(t)
-	e, metricAttribs, err := queueData.GetEntity(testIntegration)
+	e, metricAttribs, err := queueData.GetEntity(testIntegration, "testClusterName")
 	assert.NotNil(t, e)
 	assert.NotEmpty(t, metricAttribs)
 	assert.NoError(t, err)
@@ -72,7 +72,7 @@ func TestQueueData_UnmarshalJSON_MarshalMetrics(t *testing.T) {
 		"queue.messagesRedeliverGet":                  float64(8),
 		"queue.messagesRedeliverGetPerSecond":         float64(0.8),
 	}
-	assert.Equal(t, 1+len(expectedMetrics)+len(metricAttribs), len(ms.Metrics), "Unexpected metric count for QueueData")
+	assert.Equal(t, 2+len(expectedMetrics)+len(metricAttribs), len(ms.Metrics), "Unexpected metric count for QueueData")
 	for k, v := range expectedMetrics {
 		assert.Equal(t, v, ms.Metrics[k], k)
 	}

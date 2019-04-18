@@ -29,7 +29,7 @@ type inventoryKey struct {
 }
 
 // CollectInventory collects the inventory items (config file values) from the apiResponses
-func CollectInventory(rabbitmqIntegration *integration.Integration, nodesData []*data.NodeData) {
+func CollectInventory(rabbitmqIntegration *integration.Integration, nodesData []*data.NodeData, clusterName string) {
 	if len(nodesData) == 0 {
 		log.Warn("No node data available to collect inventory")
 		return
@@ -48,7 +48,7 @@ func CollectInventory(rabbitmqIntegration *integration.Integration, nodesData []
 	}
 
 	if config := getConfigData(nodeData); len(config) > 0 {
-		localNode, _, err := data.CreateEntity(rabbitmqIntegration, nodeName, consts.NodeType, "")
+		localNode, _, err := data.CreateEntity(rabbitmqIntegration, nodeName, strings.TrimPrefix(consts.NodeType, "ra-"), "", clusterName)
 		if err != nil {
 			log.Error("Error creating local node entity: %v", err)
 		}

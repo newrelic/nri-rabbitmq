@@ -24,8 +24,8 @@ type NodeData struct {
 }
 
 // GetEntity creates an integration.Entity for this NodeData
-func (n *NodeData) GetEntity(integration *integration.Integration) (*integration.Entity, []metric.Attribute, error) {
-	return CreateEntity(integration, n.Name, consts.NodeType, "")
+func (n *NodeData) GetEntity(integration *integration.Integration, clusterName string) (*integration.Entity, []metric.Attribute, error) {
+	return CreateEntity(integration, n.Name, consts.NodeType, "", clusterName)
 }
 
 // EntityType returns the type of this entity

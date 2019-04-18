@@ -20,7 +20,7 @@ func Test_alivenessTest_Pass(t *testing.T) {
 			},
 		},
 	}
-	alivenessTest(i, vhostTests)
+	alivenessTest(i, vhostTests, "testClusterName")
 	assert.Empty(t, i.Entities)
 }
 
@@ -33,7 +33,7 @@ func Test_alivenessTest_FailCreateEntity(t *testing.T) {
 			Test:  &data.TestData{},
 		},
 	}
-	alivenessTest(i, vhostTests)
+	alivenessTest(i, vhostTests, "testClusterName")
 	assert.Empty(t, i.Entities)
 }
 
@@ -49,7 +49,7 @@ func Test_alivenessTest_FailAliveness(t *testing.T) {
 			},
 		},
 	}
-	alivenessTest(i, vhostTests)
+	alivenessTest(i, vhostTests, "testClusterName")
 	assert.Equal(t, 1, len(i.Entities))
 	assert.Equal(t, 1, len(i.Entities[0].Events))
 }
@@ -65,7 +65,7 @@ func Test_healthcheckTest_Pass(t *testing.T) {
 			},
 		},
 	}
-	healthcheckTest(i, nodeTests)
+	healthcheckTest(i, nodeTests, "testClusterName")
 	assert.Empty(t, i.Entities)
 }
 
@@ -78,7 +78,7 @@ func Test_healthcheckTest_FailCreateEntity(t *testing.T) {
 			Test: &data.TestData{},
 		},
 	}
-	healthcheckTest(i, nodeTests)
+	healthcheckTest(i, nodeTests, "testClusterName")
 	assert.Empty(t, i.Entities)
 }
 
@@ -94,7 +94,7 @@ func Test_healthcheckTest_FailAliveness(t *testing.T) {
 			},
 		},
 	}
-	healthcheckTest(i, nodeTests)
+	healthcheckTest(i, nodeTests, "testClusterName")
 	assert.Equal(t, 1, len(i.Entities))
 	assert.Equal(t, 1, len(i.Entities[0].Events))
 }

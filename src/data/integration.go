@@ -13,7 +13,7 @@ import (
 )
 
 // CreateEntity will create an entity and metricNamespace attributes with appropriate name/namespace values if the entity isn't filtered
-func CreateEntity(rabbitmqIntegration *integration.Integration, entityName string, entityType string, vhost string) (entity *integration.Entity, metricNamespace []metric.Attribute, err error) {
+func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, entityType, vhost, clusterName string) (entity *integration.Entity, metricNamespace []metric.Attribute, err error) {
 	name := cleanEntityName(entityName, entityType)
 	namespace := entityType
 
@@ -26,10 +26,16 @@ func CreateEntity(rabbitmqIntegration *integration.Integration, entityName strin
 	}
 	metricNamespace = []metric.Attribute{
 		{Key: "displayName", Value: name},
-		{Key: "entityName", Value: fmt.Sprintf("%s:%s", namespace, name)},
+		{Key: "entityName", Value: fmt.Sprintf("%s:%s", strings.TrimPrefix(namespace, "ra-"), name)},
 	}
 
-	entity, err = rabbitmqIntegration.Entity(name, namespace)
+	clusterNameAttribute := integration.IDAttribute{Key: "clusterName", Value: clusterName}
+	endpoint := fmt.Sprintf("%s:%d", args.GlobalArgs.Hostname, args.GlobalArgs.Port)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	entity, err = rabbitmqIntegration.EntityReportedVia(endpoint, name, namespace, clusterNameAttribute)
 	return
 }
 
@@ -68,10 +74,10 @@ func setInventoryBindings(entity *integration.Entity, data EntityData, bindingSt
 	if bindingStats != nil {
 		if stat := bindingStats[BindingKey{data.EntityVhost(), data.EntityName(), data.EntityType()}]; stat != nil {
 			if len(stat.Source) > 0 {
-				SetInventoryItem(entity, data.EntityType(), "bindings.source", getKeyList(stat.Source))
+				SetInventoryItem(entity, strings.TrimPrefix(data.EntityType(), "ra-"), "bindings.source", getKeyList(stat.Source))
 			}
 			if len(stat.Destination) > 0 {
-				SetInventoryItem(entity, data.EntityType(), "bindings.destination", getKeyList(stat.Destination))
+				SetInventoryItem(entity, strings.TrimPrefix(data.EntityType(), "ra-"), "bindings.destination", getKeyList(stat.Destination))
 			}
 		}
 	}

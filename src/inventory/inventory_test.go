@@ -33,7 +33,7 @@ func TestCollectInventory(t *testing.T) {
 	args.GlobalArgs = args.RabbitMQArguments{}
 
 	var nodesData []*data.NodeData
-	CollectInventory(i, nodesData)
+	CollectInventory(i, nodesData, "testClusterName")
 	assert.Empty(t, i.Entities, "CollectInventory shouldn't create anything with empty NodeData")
 
 	prevExec := execCommand
@@ -50,11 +50,11 @@ func TestCollectInventory(t *testing.T) {
 		},
 	}
 	os.Setenv("GET_NODE_NAME_ERROR", "1")
-	CollectInventory(i, nodesData)
+	CollectInventory(i, nodesData, "testClusterName")
 	assert.Empty(t, i.Entities, "CollectInventory shouldn't create anything with error getting node name")
 	os.Unsetenv("GET_NODE_NAME_ERROR")
 
-	CollectInventory(i, nodesData)
+	CollectInventory(i, nodesData, "testClustreName")
 	assert.Empty(t, i.Entities, "CollectInventory shouldn't create anything with mismatched nodeData")
 
 	nodesData = []*data.NodeData{
@@ -66,11 +66,11 @@ func TestCollectInventory(t *testing.T) {
 
 	prevOsOpen := osOpen
 	osOpen = errorOsOpen
-	CollectInventory(i, nodesData)
+	CollectInventory(i, nodesData, "testClusterName")
 	assert.Empty(t, i.Entities, "CollectInventory should create anything when config file fails to open")
 	osOpen = prevOsOpen
 
-	CollectInventory(i, nodesData)
+	CollectInventory(i, nodesData, "testClusterName")
 	assert.Equal(t, 1, len(i.Entities), "CollectInventory should create one Entity")
 	actual, _ := i.Entities[0].Inventory.MarshalJSON()
 
@@ -94,7 +94,7 @@ func TestCollectInventory_Errors(t *testing.T) {
 		{Name: "node2"},
 	}
 
-	CollectInventory(i, nodesData)
+	CollectInventory(i, nodesData, "testClusterName")
 }
 
 func Test_getLocalNodeName(t *testing.T) {
