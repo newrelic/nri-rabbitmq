@@ -17,6 +17,7 @@ import (
 func TestCollectEntityMetrics(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
 	CollectEntityMetrics(i, []*data.BindingData{},
+		"testClusterName",
 		&data.NodeData{Name: "node1"},
 		&data.QueueData{Name: "queue1"},
 	)
@@ -42,7 +43,7 @@ func TestCollectEntityMetrics_Node(t *testing.T) {
 		entityData[i] = v
 	}
 
-	CollectEntityMetrics(i, bindingData, entityData...)
+	CollectEntityMetrics(i, bindingData, "testClusterName", entityData...)
 
 	if assert.Equal(t, 1, len(i.Entities)) && assert.Equal(t, 1, len(i.Entities[0].Metrics)) {
 		goldenFile := sourceFile + ".golden"
@@ -81,7 +82,7 @@ func TestCollectEntityMetrics_Queue(t *testing.T) {
 		entityData[i] = v
 	}
 
-	CollectEntityMetrics(i, bindingData, entityData...)
+	CollectEntityMetrics(i, bindingData, "testClusterName", entityData...)
 
 	if assert.Equal(t, 1, len(i.Entities)) && assert.Equal(t, 1, len(i.Entities[0].Metrics)) {
 		goldenFile := sourceFile + ".golden"
@@ -107,7 +108,7 @@ func TestCollectEntityMetrics_Exchange(t *testing.T) {
 		entityData[i] = v
 	}
 
-	CollectEntityMetrics(i, bindingData, entityData...)
+	CollectEntityMetrics(i, bindingData, "testClusterName", entityData...)
 
 	if assert.Equal(t, 1, len(i.Entities)) && assert.Equal(t, 1, len(i.Entities[0].Metrics)) {
 		goldenFile := sourceFile + ".golden"
@@ -128,7 +129,7 @@ func TestCollectVhostMetrics(t *testing.T) {
 	testutils.ReadStructFromJSONFile(t, sourceFile, &vhostData)
 	testutils.ReadStructFromJSONFile(t, filepath.Join("testdata", "populateMetricsTest.connections.json"), &connectionsData)
 
-	CollectVhostMetrics(i, vhostData, connectionsData)
+	CollectVhostMetrics(i, vhostData, connectionsData, "testClusterName")
 	if assert.Equal(t, 1, len(i.Entities)) && assert.Equal(t, 1, len(i.Entities[0].Metrics)) {
 		goldenFile := sourceFile + ".golden"
 		actual, _ := i.Entities[0].Metrics[0].MarshalJSON()

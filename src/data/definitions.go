@@ -7,7 +7,7 @@ import (
 
 // EntityData is capable of reporting it's own data to inventory
 type EntityData interface {
-	GetEntity(integration *integration.Integration) (*integration.Entity, []metric.Attribute, error)
+	GetEntity(integration *integration.Integration, entityName string) (*integration.Entity, []metric.Attribute, error)
 	EntityVhost() string
 	EntityName() string
 	EntityType() string

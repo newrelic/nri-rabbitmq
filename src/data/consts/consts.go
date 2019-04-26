@@ -5,13 +5,13 @@ const (
 	DefaultExchangeName = "amq.default"
 
 	// NodeType name
-	NodeType = "node"
+	NodeType = "ra-node"
 	// VhostType name
-	VhostType = "vhost"
+	VhostType = "ra-vhost"
 	// QueueType name
-	QueueType = "queue"
+	QueueType = "ra-queue"
 	// ExchangeType name
-	ExchangeType = "exchange"
+	ExchangeType = "ra-exchange"
 	// ClusterType name
-	ClusterType = "cluster"
+	ClusterType = "ra-cluster"
 )

@@ -16,7 +16,7 @@ import (
 
 const (
 	integrationName    = "com.newrelic.rabbitmq"
-	integrationVersion = "1.0.4"
+	integrationVersion = "2.0.0"
 )
 
 func main() {
@@ -32,23 +32,24 @@ func main() {
 	exitOnError(args.GlobalArgs.Validate())
 
 	rabbitData := getNeededData()
+	clusterName := rabbitData.overview.ClusterName
 
 	if args.GlobalArgs.HasMetrics() && args.GlobalArgs.HasInventory() {
-		metrics.CollectVhostMetrics(rabbitmqIntegration, rabbitData.vhosts, rabbitData.connections)
+		metrics.CollectVhostMetrics(rabbitmqIntegration, rabbitData.vhosts, rabbitData.connections, clusterName)
 
 		metricEntities := getMetricEntities(rabbitData)
-		metrics.CollectEntityMetrics(rabbitmqIntegration, rabbitData.bindings, metricEntities...)
+		metrics.CollectEntityMetrics(rabbitmqIntegration, rabbitData.bindings, clusterName, metricEntities...)
 
 		inventory.PopulateClusterInventory(rabbitmqIntegration, rabbitData.overview)
 	}
 
 	if args.GlobalArgs.HasInventory() {
-		inventory.CollectInventory(rabbitmqIntegration, rabbitData.nodes)
+		inventory.CollectInventory(rabbitmqIntegration, rabbitData.nodes, clusterName)
 	}
 
 	if args.GlobalArgs.HasEvents() {
-		alivenessTest(rabbitmqIntegration, rabbitData.aliveness)
-		healthcheckTest(rabbitmqIntegration, rabbitData.healthcheck)
+		alivenessTest(rabbitmqIntegration, rabbitData.aliveness, clusterName)
+		healthcheckTest(rabbitmqIntegration, rabbitData.healthcheck, clusterName)
 	}
 
 	if len(rabbitmqIntegration.Entities) > 0 {

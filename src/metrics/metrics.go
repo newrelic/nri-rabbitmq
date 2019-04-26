@@ -29,10 +29,10 @@ var vhostMetrics = []struct {
 }
 
 // CollectEntityMetrics ...
-func CollectEntityMetrics(rabbitmqIntegration *integration.Integration, bindings []*data.BindingData, dataItems ...data.EntityData) {
+func CollectEntityMetrics(rabbitmqIntegration *integration.Integration, bindings []*data.BindingData, clusterName string, dataItems ...data.EntityData) {
 	bindingStats := collectBindingStats(bindings)
 	for _, dataItem := range dataItems {
-		if entity, metricNamespace, err := dataItem.GetEntity(rabbitmqIntegration); err != nil {
+		if entity, metricNamespace, err := dataItem.GetEntity(rabbitmqIntegration, clusterName); err != nil {
 			log.Error("Could not create %s entity [%s]: %v", dataItem.EntityType(), dataItem.EntityName(), err)
 		} else if entity != nil {
 			metricSet := entity.NewMetricSet(getSampleName(dataItem.EntityType()), metricNamespace...)
@@ -50,10 +50,10 @@ func CollectEntityMetrics(rabbitmqIntegration *integration.Integration, bindings
 }
 
 // CollectVhostMetrics collects the metrics for VHost entities
-func CollectVhostMetrics(rabbitmqIntegration *integration.Integration, vhosts []*data.VhostData, connections []*data.ConnectionData) {
+func CollectVhostMetrics(rabbitmqIntegration *integration.Integration, vhosts []*data.VhostData, connections []*data.ConnectionData, clusterName string) {
 	connStats := collectConnectionStats(connections)
 	for _, vhost := range vhosts {
-		if entity, metricNamespace, err := data.CreateEntity(rabbitmqIntegration, vhost.Name, consts.VhostType, vhost.Name); err != nil {
+		if entity, metricNamespace, err := data.CreateEntity(rabbitmqIntegration, vhost.Name, consts.VhostType, vhost.Name, clusterName); err != nil {
 			log.Error("Could not create vhost entity [%s]: %v", vhost.Name, err)
 		} else if entity != nil {
 			metricSet := entity.NewMetricSet(getSampleName(consts.VhostType), metricNamespace...)
@@ -66,7 +66,8 @@ func CollectVhostMetrics(rabbitmqIntegration *integration.Integration, vhosts []
 }
 
 func getSampleName(entityType string) string {
-	return fmt.Sprintf("Rabbitmq%sSample", strings.Title(entityType))
+	namespace := strings.TrimPrefix(entityType, "ra-")
+	return fmt.Sprintf("Rabbitmq%sSample", strings.Title(namespace))
 }
 
 func warnIfError(err error, format string, args ...interface{}) {

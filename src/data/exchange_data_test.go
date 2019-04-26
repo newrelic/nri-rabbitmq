@@ -35,7 +35,7 @@ func TestExchangeData_UnmarshalJSON_MarshalMetrics(t *testing.T) {
 	assert.Equal(t, "vhost1", exchangeData.EntityVhost())
 
 	testIntegration := testutils.GetTestingIntegration(t)
-	e, metricAttribs, err := exchangeData.GetEntity(testIntegration)
+	e, metricAttribs, err := exchangeData.GetEntity(testIntegration, "testClusterName")
 	assert.NotNil(t, e)
 	assert.NotEmpty(t, metricAttribs)
 	assert.NoError(t, err)
@@ -49,7 +49,7 @@ func TestExchangeData_UnmarshalJSON_MarshalMetrics(t *testing.T) {
 		"exchange.messagesPublishedQueue":               float64(2),
 		"exchange.messagesPublishedQueuePerSecond":      float64(2.2),
 	}
-	assert.Equal(t, 1+len(expectedMetrics)+len(metricAttribs), len(ms.Metrics), "Unexpected metric count for ExchangeData")
+	assert.Equal(t, 2+len(expectedMetrics)+len(metricAttribs), len(ms.Metrics), "Unexpected metric count for ExchangeData")
 	for k, v := range expectedMetrics {
 		assert.Equal(t, v, ms.Metrics[k], k)
 	}

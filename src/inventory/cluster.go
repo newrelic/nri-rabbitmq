@@ -12,7 +12,7 @@ func PopulateClusterInventory(integrationData *integration.Integration, overview
 	if overviewData == nil || overviewData.ClusterName == "" {
 		return
 	}
-	e, _, err := data.CreateEntity(integrationData, overviewData.ClusterName, consts.ClusterType, "")
+	e, _, err := data.CreateEntity(integrationData, overviewData.ClusterName, consts.ClusterType, "", overviewData.ClusterName)
 	if err != nil {
 		log.Error("Error creating cluster entity: %v", err)
 		return

@@ -14,11 +14,11 @@ const (
 	success = "ok"
 )
 
-func alivenessTest(rabbitmqIntegration *integration.Integration, vhostTests []*data.VhostTest) {
+func alivenessTest(rabbitmqIntegration *integration.Integration, vhostTests []*data.VhostTest, clusterName string) {
 	if rabbitmqIntegration != nil {
 		for _, vhostTest := range vhostTests {
 			if vhostTest.Test.Status != success {
-				e, _, err := data.CreateEntity(rabbitmqIntegration, vhostTest.Vhost.Name, consts.VhostType, vhostTest.Vhost.Name)
+				e, _, err := data.CreateEntity(rabbitmqIntegration, vhostTest.Vhost.Name, consts.VhostType, vhostTest.Vhost.Name, clusterName)
 				if err != nil {
 					log.Error("Error creating vhost entity [%s]: %v", vhostTest.Vhost.Name, err)
 					continue
@@ -30,11 +30,11 @@ func alivenessTest(rabbitmqIntegration *integration.Integration, vhostTests []*d
 	}
 }
 
-func healthcheckTest(rabbitmqIntegration *integration.Integration, nodeTests []*data.NodeTest) {
+func healthcheckTest(rabbitmqIntegration *integration.Integration, nodeTests []*data.NodeTest, clusterName string) {
 	if rabbitmqIntegration != nil {
 		for _, nodeTest := range nodeTests {
 			if nodeTest.Test.Status != success {
-				e, _, err := nodeTest.Node.GetEntity(rabbitmqIntegration)
+				e, _, err := nodeTest.Node.GetEntity(rabbitmqIntegration, clusterName)
 				if err != nil {
 					log.Error("Error creating node entity [%s]: %v", nodeTest.Node.Name, err)
 					return
