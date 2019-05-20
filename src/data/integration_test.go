@@ -20,7 +20,7 @@ func TestCreateEntity(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, e1)
 	assert.Equal(t, expectedEntityName, e1.Metadata.Name)
-	assert.Equal(t, consts.QueueType, e1.Metadata.Namespace)
+	assert.Equal(t, "ra-queue", e1.Metadata.Namespace)
 	assert.Equal(t, 2, len(metricNS))
 	assert.Contains(t, metricNS, metric.Attribute{
 		Key: "displayName", Value: expectedEntityName,
@@ -36,7 +36,7 @@ func TestCreateEntity(t *testing.T) {
 	assert.NotNil(t, e2)
 	assert.NotNil(t, metricNS)
 	assert.Equal(t, expectedEntityName, e2.Metadata.Name)
-	assert.Equal(t, consts.ExchangeType, e2.Metadata.Namespace)
+	assert.Equal(t, "ra-exchange", e2.Metadata.Namespace)
 	assert.Equal(t, 2, len(metricNS))
 	assert.Contains(t, metricNS, metric.Attribute{
 		Key: "displayName", Value: expectedEntityName,
@@ -134,11 +134,11 @@ func TestCollectInventory_Exchange(t *testing.T) {
 
 	item, ok := e.Inventory.Item("exchange/bindings.source")
 	assert.True(t, ok)
-	assert.Equal(t, "ra-exchange:vhost1/exchange2, ra-exchange:vhost1/exchange3", item["value"])
+	assert.Equal(t, "exchange:vhost1/exchange2, exchange:vhost1/exchange3", item["value"])
 
 	item, ok = e.Inventory.Item("exchange/bindings.destination")
 	assert.True(t, ok)
-	assert.Equal(t, "ra-queue:vhost1/queue2, ra-exchange:vhost1/exchange4", item["value"])
+	assert.Equal(t, "queue:vhost1/queue2, exchange:vhost1/exchange4", item["value"])
 
 	item, ok = e.Inventory.Item("exchange/type")
 	assert.True(t, ok)
@@ -200,7 +200,7 @@ func TestCollectInventory_Queue(t *testing.T) {
 
 	item, ok := e.Inventory.Item("queue/bindings.source")
 	assert.True(t, ok)
-	assert.Equal(t, "ra-exchange:vhost1/exchange1, ra-exchange:vhost1/exchange2", item["value"])
+	assert.Equal(t, "exchange:vhost1/exchange1, exchange:vhost1/exchange2", item["value"])
 
 	item, ok = e.Inventory.Item("queue/bindings.destination")
 	assert.False(t, ok)

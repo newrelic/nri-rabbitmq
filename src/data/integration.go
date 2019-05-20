@@ -15,9 +15,11 @@ import (
 // CreateEntity will create an entity and metricNamespace attributes with appropriate name/namespace values if the entity isn't filtered
 func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, entityType, vhost, clusterName string) (entity *integration.Entity, metricNamespace []metric.Attribute, err error) {
 	name := cleanEntityName(entityName, entityType)
-	namespace := entityType
 
 	if !args.GlobalArgs.IncludeEntity(name, entityType, vhost) {
+    fmt.Printf("Name: %s\n", name)
+    fmt.Printf("EntityType: %s\n", entityType)
+    fmt.Printf("VHost: %s\n", vhost)
 		return nil, nil, nil
 	}
 
@@ -26,7 +28,7 @@ func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, enti
 	}
 	metricNamespace = []metric.Attribute{
 		{Key: "displayName", Value: name},
-		{Key: "entityName", Value: fmt.Sprintf("%s:%s", strings.TrimPrefix(namespace, "ra-"), name)},
+		{Key: "entityName", Value: fmt.Sprintf("%s:%s", entityType, name)},
 	}
 
 	clusterNameAttribute := integration.IDAttribute{Key: "clusterName", Value: clusterName}
@@ -35,7 +37,7 @@ func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, enti
 		return nil, nil, err
 	}
 
-	entity, err = rabbitmqIntegration.EntityReportedVia(endpoint, name, namespace, clusterNameAttribute)
+	entity, err = rabbitmqIntegration.EntityReportedVia(endpoint, name, fmt.Sprintf("ra-%s", entityType), clusterNameAttribute)
 	return
 }
 
@@ -74,10 +76,10 @@ func setInventoryBindings(entity *integration.Entity, data EntityData, bindingSt
 	if bindingStats != nil {
 		if stat := bindingStats[BindingKey{data.EntityVhost(), data.EntityName(), data.EntityType()}]; stat != nil {
 			if len(stat.Source) > 0 {
-				SetInventoryItem(entity, strings.TrimPrefix(data.EntityType(), "ra-"), "bindings.source", getKeyList(stat.Source))
+				SetInventoryItem(entity, data.EntityType(), "bindings.source", getKeyList(stat.Source))
 			}
 			if len(stat.Destination) > 0 {
-				SetInventoryItem(entity, strings.TrimPrefix(data.EntityType(), "ra-"), "bindings.destination", getKeyList(stat.Destination))
+				SetInventoryItem(entity, data.EntityType(), "bindings.destination", getKeyList(stat.Destination))
 			}
 		}
 	}

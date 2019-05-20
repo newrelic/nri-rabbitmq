@@ -66,7 +66,7 @@ func CollectVhostMetrics(rabbitmqIntegration *integration.Integration, vhosts []
 }
 
 func getSampleName(entityType string) string {
-	namespace := strings.TrimPrefix(entityType, "ra-")
+	namespace := entityType
 	return fmt.Sprintf("Rabbitmq%sSample", strings.Title(namespace))
 }
 

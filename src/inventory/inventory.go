@@ -48,7 +48,7 @@ func CollectInventory(rabbitmqIntegration *integration.Integration, nodesData []
 	}
 
 	if config := getConfigData(nodeData); len(config) > 0 {
-		localNode, _, err := data.CreateEntity(rabbitmqIntegration, nodeName, strings.TrimPrefix(consts.NodeType, "ra-"), "", clusterName)
+		localNode, _, err := data.CreateEntity(rabbitmqIntegration, nodeName, consts.NodeType, "", clusterName)
 		if err != nil {
 			log.Error("Error creating local node entity: %v", err)
 		}
