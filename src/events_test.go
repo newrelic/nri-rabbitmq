@@ -6,6 +6,7 @@ import (
 	"github.com/newrelic/nri-rabbitmq/src/data"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/newrelic/nri-rabbitmq/src/args"
 	"github.com/newrelic/nri-rabbitmq/src/testutils"
 )
 
@@ -54,6 +55,30 @@ func Test_alivenessTest_FailAliveness(t *testing.T) {
 	assert.Equal(t, 1, len(i.Entities[0].Events))
 }
 
+func Test_alivenessTest_SkipCollect(t *testing.T) {
+	i := testutils.GetTestingIntegration(t)
+
+	var argList = args.ArgumentList{
+		Exchanges: "[\"test1\"]",
+		Queues:    "[\"test1\"]",
+		Vhosts:    "[\"test1\"]",
+	}
+	err := args.SetGlobalArgs(argList)
+	assert.Nil(t, err)
+
+	vhostTests := []*data.VhostTest{
+		{
+			Vhost: &data.VhostData{Name: "vhost1"},
+			Test: &data.TestData{
+				Status: "failed",
+				Reason: "nodedown",
+			},
+		},
+	}
+	alivenessTest(i, vhostTests, "testClusterName")
+	assert.Equal(t, 0, len(i.Entities))
+}
+
 func Test_healthcheckTest_Pass(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
 
@@ -84,7 +109,6 @@ func Test_healthcheckTest_FailCreateEntity(t *testing.T) {
 
 func Test_healthcheckTest_FailAliveness(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
-
 	nodeTests := []*data.NodeTest{
 		{
 			Node: &data.NodeData{Name: "vhost1"},

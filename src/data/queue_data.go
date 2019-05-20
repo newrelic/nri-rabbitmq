@@ -1,8 +1,6 @@
 package data
 
 import (
-	"strings"
-
 	"github.com/newrelic/infra-integrations-sdk/data/metric"
 	"github.com/newrelic/infra-integrations-sdk/integration"
 	"github.com/newrelic/nri-rabbitmq/src/data/consts"
@@ -58,16 +56,16 @@ type QueueData struct {
 
 // CollectInventory collects inventory data and reports it to the integration.Entity
 func (q *QueueData) CollectInventory(entity *integration.Entity, bindingStats BindingStats) {
-	SetInventoryItem(entity, strings.TrimPrefix(consts.QueueType, "ra-"), "exclusive", ConvertBoolToInt(q.Exclusive))
-	SetInventoryItem(entity, strings.TrimPrefix(consts.QueueType, "ra-"), "durable", ConvertBoolToInt(q.Durable))
-	SetInventoryItem(entity, strings.TrimPrefix(consts.QueueType, "ra-"), "auto_delete", ConvertBoolToInt(q.AutoDelete))
-	setInventoryMap(entity, strings.TrimPrefix(consts.QueueType, "ra-"), "arguments", q.Arguments)
+	SetInventoryItem(entity, consts.QueueType, "exclusive", ConvertBoolToInt(q.Exclusive))
+	SetInventoryItem(entity, consts.QueueType, "durable", ConvertBoolToInt(q.Durable))
+	SetInventoryItem(entity, consts.QueueType, "auto_delete", ConvertBoolToInt(q.AutoDelete))
+	setInventoryMap(entity, consts.QueueType, "arguments", q.Arguments)
 	setInventoryBindings(entity, q, bindingStats)
 }
 
 // GetEntity creates an integration.Entity for this QueueData
 func (q *QueueData) GetEntity(integration *integration.Integration, clusterName string) (*integration.Entity, []metric.Attribute, error) {
-	return CreateEntity(integration, q.Name, strings.TrimPrefix(consts.QueueType, "ra-"), q.Vhost, clusterName)
+	return CreateEntity(integration, q.Name, consts.QueueType, q.Vhost, clusterName)
 }
 
 // EntityType returns the type of this entity
