@@ -6,8 +6,8 @@ import (
 	"github.com/newrelic/nri-rabbitmq/src/data"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/newrelic/nri-rabbitmq/src/testutils"
 	"github.com/newrelic/nri-rabbitmq/src/args"
+	"github.com/newrelic/nri-rabbitmq/src/testutils"
 )
 
 func Test_alivenessTest_Pass(t *testing.T) {
@@ -58,14 +58,13 @@ func Test_alivenessTest_FailAliveness(t *testing.T) {
 func Test_alivenessTest_SkipCollect(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
 
-
-  var argList = args.ArgumentList{
+	var argList = args.ArgumentList{
 		Exchanges: "[\"test1\"]",
-		Queues: "[\"test1\"]",
-		Vhosts: "[\"test1\"]",
+		Queues:    "[\"test1\"]",
+		Vhosts:    "[\"test1\"]",
 	}
-  err := args.SetGlobalArgs(argList)
-  assert.Nil(t, err)
+	err := args.SetGlobalArgs(argList)
+	assert.Nil(t, err)
 
 	vhostTests := []*data.VhostTest{
 		{

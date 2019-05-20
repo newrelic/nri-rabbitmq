@@ -24,11 +24,11 @@ func alivenessTest(rabbitmqIntegration *integration.Integration, vhostTests []*d
 					continue
 				}
 
-        // Don't add events for the entity if we are skipping its collection
-        if e != nil {
-          description := fmt.Sprintf("Response [%s] for vhost [%s]: %s", vhostTest.Test.Status, vhostTest.Vhost.Name, vhostTest.Test.Reason)
-          warnIfError(e.AddEvent(event.New(description, "integration")), "Error adding event: %v")
-        }
+				// Don't add events for the entity if we are skipping its collection
+				if e != nil {
+					description := fmt.Sprintf("Response [%s] for vhost [%s]: %s", vhostTest.Test.Status, vhostTest.Vhost.Name, vhostTest.Test.Reason)
+					warnIfError(e.AddEvent(event.New(description, "integration")), "Error adding event: %v")
+				}
 			}
 		}
 	}
@@ -44,11 +44,11 @@ func healthcheckTest(rabbitmqIntegration *integration.Integration, nodeTests []*
 					return
 				}
 
-        // Don't add events for the entity if we are skipping its collection
-        if e != nil {
-          description := fmt.Sprintf("Response [%s] for node [%s]: %s", nodeTest.Test.Status, nodeTest.Node.Name, nodeTest.Test.Reason)
-          warnIfError(e.AddEvent(event.New(description, "integration")), "Error adding event: %v")
-        }
+				// Don't add events for the entity if we are skipping its collection
+				if e != nil {
+					description := fmt.Sprintf("Response [%s] for node [%s]: %s", nodeTest.Test.Status, nodeTest.Node.Name, nodeTest.Test.Reason)
+					warnIfError(e.AddEvent(event.New(description, "integration")), "Error adding event: %v")
+				}
 			}
 		}
 	}
