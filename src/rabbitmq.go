@@ -25,9 +25,9 @@ func main() {
 	rabbitmqIntegration, err := integration.New(integrationName, integrationVersion, integration.Args(&argList))
 	exitOnError(err)
 
-	log.SetupLogging(args.GlobalArgs.Verbose)
-
 	exitOnError(args.SetGlobalArgs(argList))
+
+	log.SetupLogging(args.GlobalArgs.Verbose)
 
 	exitOnError(args.GlobalArgs.Validate())
 

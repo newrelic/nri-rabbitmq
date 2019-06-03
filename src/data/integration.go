@@ -17,9 +17,7 @@ func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, enti
 	name := cleanEntityName(entityName, entityType)
 
 	if !args.GlobalArgs.IncludeEntity(name, entityType, vhost) {
-		fmt.Printf("Name: %s\n", name)
-		fmt.Printf("EntityType: %s\n", entityType)
-		fmt.Printf("VHost: %s\n", vhost)
+		log.Debug("Skipping entity with name: %s, entity type: %s, vhost: %s", entityName, entityType, vhost)
 		return nil, nil, nil
 	}
 
