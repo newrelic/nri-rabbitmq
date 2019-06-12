@@ -63,7 +63,14 @@ func getLocalNodeName() (string, error) {
 	if len(args.GlobalArgs.NodeNameOverride) > 0 {
 		return args.GlobalArgs.NodeNameOverride, nil
 	}
-	output, err := execCommand("rabbitmqctl", "eval", "node().").Output()
+	cmd := execCommand("rabbitmqctl", "eval", "node().")
+	for _, env := range os.Environ() {
+		if strings.HasPrefix(env, "HOSTNAME") {
+			continue
+		}
+		cmd.Env = append(cmd.Env, env)
+	}
+	output, err := cmd.Output()
 	if err != nil {
 		return "", err
 	}
