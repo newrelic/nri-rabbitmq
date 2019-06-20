@@ -21,7 +21,7 @@ func TestCreateEntity(t *testing.T) {
 	assert.NotNil(t, e1)
 	assert.Equal(t, expectedEntityName, e1.Metadata.Name)
 	assert.Equal(t, "ra-queue", e1.Metadata.Namespace)
-	assert.Equal(t, 2, len(metricNS))
+	assert.Equal(t, 3, len(metricNS))
 	assert.Contains(t, metricNS, metric.Attribute{
 		Key: "displayName", Value: expectedEntityName,
 	})
@@ -37,7 +37,7 @@ func TestCreateEntity(t *testing.T) {
 	assert.NotNil(t, metricNS)
 	assert.Equal(t, expectedEntityName, e2.Metadata.Name)
 	assert.Equal(t, "ra-exchange", e2.Metadata.Namespace)
-	assert.Equal(t, 2, len(metricNS))
+	assert.Equal(t, 3, len(metricNS))
 	assert.Contains(t, metricNS, metric.Attribute{
 		Key: "displayName", Value: expectedEntityName,
 	})
