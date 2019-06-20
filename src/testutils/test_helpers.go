@@ -19,7 +19,7 @@ import (
 
 var (
 	// Update flag will update .golden files to the current actual
-	Update     = flag.Bool("update", true, "update .golden files")
+	Update     = flag.Bool("update", false, "update .golden files")
 	testLogger log.Logger
 )
 
