@@ -1,0 +1,24 @@
+name: com.newrelic.rabbitmq
+description: Reports status and metrics for rabbitmq service
+protocol_version: 2
+os: windows
+
+commands:
+  all:
+    command:
+      - .\bin\nr-rabbitmq.exe
+    prefix: config/rabbitmq
+    interval: 15
+
+  inventory:
+    command:
+      - .\bin\nr-rabbitmq.exe
+      - -inventory
+    prefix: config/rabbitmq
+    interval: 15
+  
+  events:
+    command:
+      - .\bin\nr-rabbitmq.exe
+      - -events
+    interval: 15
