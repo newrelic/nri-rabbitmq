@@ -2,6 +2,8 @@
 
 New Relic Infrastructure Integration for RabbitMQ captures critical performance metrics and inventory reported by the RabbitMQ Management Plugin. Inventory data is obtained from the configuration file, and metrics and additional inventory data is obtained from the management API.
 
+See our [documentation web site](https://docs.newrelic.com/docs/integrations/host-integrations/host-integrations-list/rabbitmq-monitoring-integration) for more details.
+
 ## Requirements
 
 The RabbitMQ integration requires that the [RabbitMQ Management Plugin](https://www.rabbitmq.com/management.html#getting-started) is enabled on the RabbitMQ host being monitored.
