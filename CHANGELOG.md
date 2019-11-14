@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.1.2 - 2019-11-14
+### Fixed
+- Exclude windows definition from linux build
+
 ## 2.1.1 - 2019-10-16
 ### Fixed
 - Windows installer GUIDs
