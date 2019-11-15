@@ -4,7 +4,7 @@ TARGET_DIR    = $(WORKDIR)/$(TARGET)
 NATIVEOS	 := $(shell go version | awk -F '[ /]' '{print $$4}')
 NATIVEARCH	 := $(shell go version | awk -F '[ /]' '{print $$5}')
 INTEGRATION  := rabbitmq
-BINARY_NAME   = nr-$(INTEGRATION)
+BINARY_NAME   = nri-$(INTEGRATION)
 GOTOOLS       = github.com/kardianos/govendor \
 		gopkg.in/alecthomas/gometalinter.v2 \
 		github.com/axw/gocov/gocov \

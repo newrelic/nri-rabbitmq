@@ -6,19 +6,19 @@ os: linux
 commands:
   all:
     command:
-      - ./bin/nr-rabbitmq
+      - ./bin/nri-rabbitmq
     prefix: config/rabbitmq
     interval: 15
 
   inventory:
     command:
-      - ./bin/nr-rabbitmq
+      - ./bin/nri-rabbitmq
       - -inventory
     prefix: config/rabbitmq
     interval: 15
   
   events:
     command:
-      - ./bin/nr-rabbitmq
+      - ./bin/nri-rabbitmq
       - -events
     interval: 15
