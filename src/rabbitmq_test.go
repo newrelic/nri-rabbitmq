@@ -32,7 +32,7 @@ func Test_main(t *testing.T) {
 	})
 	origArgs := os.Args
 	os.Args = []string{
-		"nr-rabbitmq",
+		"nri-rabbitmq",
 		"-node_name_override", "node1",
 		"-config_path", "",
 		"-hostname", args.GlobalArgs.Hostname,
