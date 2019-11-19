@@ -12,7 +12,7 @@ The RabbitMQ integration requires that the [RabbitMQ Management Plugin](https://
 
 * download an archive file for the RabbitMQ Integration
 * extract `rabbitmq-definition.yml` and `/bin` directory into `/var/db/newrelic-infra/newrelic-integrations`
-* add execute permissions for the binary file `nr-rabbitmq` (if necessary)
+* add execute permissions for the binary file `nri-rabbitmq` (if necessary)
 * extract `rabbitmq-config.yml.sample` into `/etc/newrelic-infra/integrations.d`
 
 ## Usage
@@ -33,11 +33,11 @@ For managing external dependencies [govendor tool](https://github.com/kardianos/
 ```bash
 $ make
 ```
-* The above command will run tests for the integration and build an executable file called `nr-rabbitmq` in the `/bin` directory. This executable can be run by itself:
+* The above command will run tests for the integration and build an executable file called `nri-rabbitmq` in the `/bin` directory. This executable can be run by itself:
 ```bash
-$ ./bin/nr-rabbitmq
+$ ./bin/nri-rabbitmq
 ```
 * For additional usage information use the `-help` flag:
 ```bash
-$ ./bin/nr-rabbitmq -help
+$ ./bin/nri-rabbitmq -help
 ```

@@ -6,19 +6,19 @@ os: windows
 commands:
   all:
     command:
-      - .\bin\nr-rabbitmq.exe
+      - .\bin\nri-rabbitmq.exe
     prefix: config/rabbitmq
     interval: 15
 
   inventory:
     command:
-      - .\bin\nr-rabbitmq.exe
+      - .\bin\nri-rabbitmq.exe
       - -inventory
     prefix: config/rabbitmq
     interval: 15
   
   events:
     command:
-      - .\bin\nr-rabbitmq.exe
+      - .\bin\nri-rabbitmq.exe
       - -events
     interval: 15
