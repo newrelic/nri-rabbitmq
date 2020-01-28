@@ -37,25 +37,27 @@ func CollectInventory(rabbitmqIntegration *integration.Integration, nodesData []
 
 	nodeName, err := getLocalNodeName()
 	if err != nil {
-		log.Error("Error getting local node name: %v", err)
+		log.Error("Error getting local node name: %s", err)
 		return
 	}
 
 	nodeData, err := findNodeData(nodeName, nodesData)
 	if err != nil {
-		log.Error("Error finding node: %v", err)
+		log.Error("Error finding node: %s", err)
 		return
 	}
 
-	if config := getConfigData(nodeData); len(config) > 0 {
-		localNode, _, err := data.CreateEntity(rabbitmqIntegration, nodeName, consts.NodeType, "", clusterName)
-		if err != nil {
-			log.Error("Error creating local node entity: %v", err)
-		}
+	localNode, _, err := data.CreateEntity(rabbitmqIntegration, nodeName, consts.NodeType, "", clusterName)
+	if err != nil {
+		log.Error("Error creating local node entity: %s", err)
+	}
 
+	if config := getConfigData(nodeData); len(config) > 0 {
 		for k, v := range config {
 			data.SetInventoryItem(localNode, k.category, k.key, v)
 		}
+	} else {
+		data.SetInventoryItem(localNode, "config", "nodeName", nodeName)
 	}
 }
 

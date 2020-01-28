@@ -60,7 +60,7 @@ func Test_main(t *testing.T) {
 	os.Stdout = origStdout
 	out := <-outC
 
-	assert.Equal(t, fmt.Sprintf(`{"name":%q,"protocol_version":"3","integration_version":%q,"data":[{"entity":{"name":"node1","type":"ra-node","id_attributes":[{"Key":"clusterName","Value":""}]},"metrics":[{"clusterName":"","displayName":"node1","entityName":"node:node1","event_type":"RabbitmqNodeSample","node.partitionsSeen":0,"reportingEndpoint":"127.0.0.1:%d"}],"inventory":{},"events":[]}]}%s`, integrationName, integrationVersion, args.GlobalArgs.Port, "\n"), out)
+	assert.Equal(t, fmt.Sprintf(`{"name":%q,"protocol_version":"3","integration_version":%q,"data":[{"entity":{"name":"node1","type":"ra-node","id_attributes":[{"Key":"clusterName","Value":""}]},"metrics":[{"clusterName":"","displayName":"node1","entityName":"node:node1","event_type":"RabbitmqNodeSample","node.partitionsSeen":0,"reportingEndpoint":"127.0.0.1:%d"}],"inventory":{"config/nodeName":{"value":"node1"}},"events":[]}]}%s`, integrationName, integrationVersion, args.GlobalArgs.Port, "\n"), out)
 }
 
 func Test_getNeededData(t *testing.T) {
