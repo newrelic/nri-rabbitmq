@@ -1,0 +1,33 @@
+  haproxy-config.yml: |
+    ---
+    # Run auto discovery to find pods with label "app=rabbitmq"
+    # https://docs.newrelic.com/docs/integrations/host-integrations/installation/container-auto-discovery
+    discovery:
+      command:
+        # Run NRI Discovery for Kubernetes
+        # https://github.com/newrelic/nri-discovery-kubernetes
+        exec: /var/db/newrelic-infra/nri-discovery-kubernetes
+        match:
+          label.app: rabbitmq
+    integrations:
+      - name: nri-rabbitmq
+        env:
+          # using the discovered IP as the hostname address
+          HOSTNAME: ${discovery.ip}
+          PORT: 15672
+          USERNAME: <management UI username>
+          PASSWORD: <management UI password>
+          CA_BUNDLE_DIR: <(Optional) ca bundle directory>
+          CA_BUNDLE_FILE: <(Optional)ca bundle file>
+          NODE_NAME_OVERRIDE: <(Optional) local node name>
+          CONFIG_PATH: <(Optional) /path/to/config/file/rabbitmq.conf>
+          USE_SSL: <(Optional) bool>
+          QUEUES: <(Optional) json array of queue names to collect>
+          QUEUES_REGEXES: <(Optional) json array of regexes, matching queue names will be collected>
+          EXCHANGES: <(Optional) json array of exchange names to collect>
+          EXCHANGES_REGEXES: <(Optional) json array of regexes, matching exchange names will be collected>
+          VHOSTS: <(Optional) json array of vhost names to collect>
+          VHOSTS_REGGEXES: <(Optional) json array of regexes, entities assigned to vhosts matching a regex will be collected>
+        labels:
+          env: production
+          role: rabbitmq
