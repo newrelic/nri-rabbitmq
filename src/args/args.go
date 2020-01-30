@@ -12,7 +12,7 @@ type ArgumentList struct {
 	CABundleFile     string `default:"" help:"Alternative Certificate Authority bundle file"`
 	CABundleDir      string `default:"" help:"Alternative Certificate Authority bundle directory"`
 	NodeNameOverride string `default:"" help:"Overrides the local node name instead of retrieving it from RabbitMQ."`
-	ConfigPath       string `default:"" help:"RabbitMQ configuration file path. Set 'none' to ignore configuration inventory"`
+	ConfigPath       string `default:"" help:"RabbitMQ configuration file path."`
 	UseSSL           bool   `default:"false" help:"configure whether to use an SSL connection or not."`
 	Queues           string `default:"" help:"JSON array of queue names from which to collect metrics."`
 	QueuesRegexes    string `default:"" help:"JSON array of queue name regexes from which to collect metrics."`

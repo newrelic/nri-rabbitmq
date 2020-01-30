@@ -97,9 +97,6 @@ func findNodeData(nodeName string, nodesData []*data.NodeData) (nodeData *data.N
 }
 
 func getConfigData(nodeData *data.NodeData) map[inventoryKey]string {
-	if args.GlobalArgs.ConfigPath == args.ConfigPathNone {
-		return nil
-	}
 	configPath := getConfigPath(nodeData)
 	if len(configPath) > 0 {
 		file, err := osOpen(configPath)

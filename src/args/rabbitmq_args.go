@@ -14,15 +14,6 @@ import (
 // GlobalArgs are the global set of arguments
 var GlobalArgs RabbitMQArguments
 
-const (
-	// ConfigPathNone disables the config path inventory
-	ConfigPathNone = "none"
-	// ConfigModeClusterOnly makes the application reporting only cluster metrics
-	ConfigModeClusterOnly = "cluster"
-	// ConfigModeNodeOnly makes the application reporting only node metrics
-	ConfigModeNodeOnly = "node"
-)
-
 // RabbitMQArguments is the fully parsed arguments, converting the JSON string into actual types
 type RabbitMQArguments struct {
 	sdkArgs.DefaultArgumentList
