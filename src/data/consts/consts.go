@@ -15,3 +15,11 @@ const (
 	// ClusterType name
 	ClusterType = "cluster"
 )
+
+var ValidTypes = map[string]struct{}{
+	NodeType:     {},
+	VhostType:    {},
+	QueueType:    {},
+	ExchangeType: {},
+	ClusterType:  {},
+}

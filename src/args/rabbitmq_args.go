@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"regexp"
+	"strings"
 
 	sdkArgs "github.com/newrelic/infra-integrations-sdk/args"
 	"github.com/newrelic/infra-integrations-sdk/log"
@@ -12,6 +13,15 @@ import (
 
 // GlobalArgs are the global set of arguments
 var GlobalArgs RabbitMQArguments
+
+const (
+	// ConfigPathNone disables the config path inventory
+	ConfigPathNone = "none"
+	// ConfigModeClusterOnly makes the application reporting only cluster metrics
+	ConfigModeClusterOnly = "cluster"
+	// ConfigModeNodeOnly makes the application reporting only node metrics
+	ConfigModeNodeOnly = "node"
+)
 
 // RabbitMQArguments is the fully parsed arguments, converting the JSON string into actual types
 type RabbitMQArguments struct {
@@ -24,6 +34,7 @@ type RabbitMQArguments struct {
 	CABundleDir      string
 	NodeNameOverride string
 	ConfigPath       string
+	Types            map[string]struct{} // node, vhost, queue, exchange, cluster
 	UseSSL           bool
 	Queues           []string
 	QueuesRegexes    []*regexp.Regexp
@@ -109,6 +120,23 @@ func SetGlobalArgs(args ArgumentList) error {
 		Username:            args.Username,
 		UseSSL:              args.UseSSL,
 	}
+
+
+	if strings.TrimSpace(args.Types) == "" {
+		rabbitArgs.Types = consts.ValidTypes
+		log.Debug("fetching data from all the types: node, vhost, queue, exchange, cluster")
+	} else {
+		rabbitArgs.Types = map[string]struct{}{}
+		for _, typeName := range strings.Split(args.Types, ",") {
+			typeName = strings.TrimSpace(args.Types)
+			if _, ok := consts.ValidTypes[typeName]; !ok {
+				log.Warn("Ignoring invalid 'type' %q. Valid types are: node, vhost, queue, exchange, cluster.")
+				continue
+			}
+			rabbitArgs.Types[typeName] = struct{}{}
+		}
+	}
+
 	var err error
 	if err = parseStrings(args.Exchanges, &rabbitArgs.Exchanges); err != nil {
 		log.Error("Error parsing arguments [Exchanges]: %v", err)

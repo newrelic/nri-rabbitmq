@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"os"
 
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
+
 	"github.com/newrelic/infra-integrations-sdk/integration"
 	"github.com/newrelic/infra-integrations-sdk/log"
 	"github.com/newrelic/nri-rabbitmq/src/args"
@@ -41,10 +43,12 @@ func main() {
 		metricEntities := getMetricEntities(rabbitData)
 		metrics.CollectEntityMetrics(rabbitmqIntegration, rabbitData.bindings, clusterName, metricEntities...)
 
-		inventory.PopulateClusterInventory(rabbitmqIntegration, rabbitData.overview)
+		if _, ok := args.GlobalArgs.Types[consts.ClusterType]; ok {
+			inventory.PopulateClusterInventory(rabbitmqIntegration, rabbitData.overview)
+		}
 	}
 
-	if args.GlobalArgs.HasInventory() {
+	if _, ok := args.GlobalArgs.Types[consts.NodeType]; ok && args.GlobalArgs.HasInventory() {
 		inventory.CollectInventory(rabbitmqIntegration, rabbitData.nodes, clusterName)
 	}
 
@@ -76,16 +80,36 @@ type allData struct {
 
 func getNeededData() *allData {
 	rabbitData := new(allData)
-	warnIfError(client.CollectEndpoint(client.NodesEndpoint, &rabbitData.nodes), "Error collecting Node data: %v")
+
+	_, doNodes := args.GlobalArgs.Types[consts.NodeType]
+	_, doExchanges := args.GlobalArgs.Types[consts.ExchangeType]
+	_, doQueues := args.GlobalArgs.Types[consts.QueueType]
+	_, doVhosts := args.GlobalArgs.Types[consts.VhostType]
+
+	if doNodes {
+		warnIfError(client.CollectEndpoint(client.NodesEndpoint, &rabbitData.nodes), "Error collecting Node data: %v")
+	}
 	warnIfError(client.CollectEndpoint(client.OverviewEndpoint, &rabbitData.overview), "Error collecting Overview data: %v")
 	if args.GlobalArgs.HasMetrics() {
-		warnIfError(client.CollectEndpoint(client.ConnectionsEndpoint, &rabbitData.connections), "Error collecting Connections data: %v")
-		warnIfError(client.CollectEndpoint(client.BindingsEndpoint, &rabbitData.bindings), "Error collecting Bindings data: %v")
-		warnIfError(client.CollectEndpoint(client.VhostsEndpoint, &rabbitData.vhosts), "Error collecting Vhost data: %v")
-		warnIfError(client.CollectEndpoint(client.QueuesEndpoint, &rabbitData.queues), "Error collecting Queue data: %v")
-		warnIfError(client.CollectEndpoint(client.ExchangesEndpoint, &rabbitData.exchanges), "Error collecting Exchange data: %v")
+		if doVhosts {
+			warnIfError(client.CollectEndpoint(client.ConnectionsEndpoint, &rabbitData.connections), "Error collecting Connections data: %v")
+		}
+		if doExchanges && doQueues {
+			warnIfError(client.CollectEndpoint(client.BindingsEndpoint, &rabbitData.bindings), "Error collecting Bindings data: %v")
+		}
+		if doVhosts {
+			warnIfError(client.CollectEndpoint(client.VhostsEndpoint, &rabbitData.vhosts), "Error collecting Vhost data: %v")
+		}
+		if doQueues {
+			warnIfError(client.CollectEndpoint(client.QueuesEndpoint, &rabbitData.queues), "Error collecting Queue data: %v")
+		}
+		if doExchanges {
+			warnIfError(client.CollectEndpoint(client.ExchangesEndpoint, &rabbitData.exchanges), "Error collecting Exchange data: %v")
+		}
 	} else if args.GlobalArgs.HasEvents() {
-		warnIfError(client.CollectEndpoint(client.VhostsEndpoint, &rabbitData.vhosts), "Error collecting Vhost data: %v")
+		if doVhosts {
+			warnIfError(client.CollectEndpoint(client.VhostsEndpoint, &rabbitData.vhosts), "Error collecting Vhost data: %v")
+		}
 	}
 	if args.GlobalArgs.HasEvents() {
 		getEventData(rabbitData)

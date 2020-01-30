@@ -12,7 +12,7 @@ type ArgumentList struct {
 	CABundleFile     string `default:"" help:"Alternative Certificate Authority bundle file"`
 	CABundleDir      string `default:"" help:"Alternative Certificate Authority bundle directory"`
 	NodeNameOverride string `default:"" help:"Overrides the local node name instead of retrieving it from RabbitMQ."`
-	ConfigPath       string `default:"" help:"RabbitMQ configuration file path."`
+	ConfigPath       string `default:"" help:"RabbitMQ configuration file path. Set 'none' to ignore configuration inventory"`
 	UseSSL           bool   `default:"false" help:"configure whether to use an SSL connection or not."`
 	Queues           string `default:"" help:"JSON array of queue names from which to collect metrics."`
 	QueuesRegexes    string `default:"" help:"JSON array of queue name regexes from which to collect metrics."`
@@ -20,4 +20,5 @@ type ArgumentList struct {
 	ExchangesRegexes string `default:"" help:"JSON array of exchange name regexes from which to collect metrics."`
 	Vhosts           string `default:"" help:"JSON array of vhost names from which to collect metrics."`
 	VhostsRegexes    string `default:"" help:"JSON array of vhost name regexes from which to collect metrics."`
+	Types            string `default:"" help:"Comma-separated list of the entities to collect metrics and inventory from: node, vhost, queue, exchange, cluster. By default, collects all the metrics"`
 }
