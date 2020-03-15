@@ -8,6 +8,7 @@ instances:
       port: <management UI port>
       username: <management UI username>
       password: <management UI password>
+      management_path_prefix: <rabbitmq management path prefix>
       ca_bundle_dir: <ca bundle directory>
       ca_bundle_file: <ca bundle file>
       node_name_override: <local node name>

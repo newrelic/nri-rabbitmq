@@ -17,6 +17,7 @@
           PORT: 15672
           USERNAME: <management UI username>
           PASSWORD: <management UI password>
+          MANAGEMENT_PATH_PREFIX: <(Optional) rabbitmq management path prefix>
           CA_BUNDLE_DIR: <(Optional) ca bundle directory>
           CA_BUNDLE_FILE: <(Optional)ca bundle file>
           NODE_NAME_OVERRIDE: <(Optional) local node name>

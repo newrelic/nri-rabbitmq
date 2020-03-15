@@ -158,12 +158,13 @@ func Test_createRequest(t *testing.T) {
 	args.GlobalArgs.UseSSL = true
 	args.GlobalArgs.Hostname = "test-hostname"
 	args.GlobalArgs.Port = 3000
+	args.GlobalArgs.ManagementPathPrefix = "/test-management-prefix"
 	endpoint := "/test-endpoint"
 	r, err := createRequest(endpoint)
 	assert.NoError(t, err)
 
 	actualURL := r.URL.String()
-	expectedURL := fmt.Sprintf("https://%v:%v%v", args.GlobalArgs.Hostname, args.GlobalArgs.Port, endpoint)
+	expectedURL := fmt.Sprintf("https://%v:%v%v%v", args.GlobalArgs.Hostname, args.GlobalArgs.Port, args.GlobalArgs.ManagementPathPrefix, endpoint)
 	assert.Equal(t, expectedURL, actualURL, "expect url to use https")
 	if r.Method != http.MethodGet {
 		t.Error("Expected GET method, got POST method.")

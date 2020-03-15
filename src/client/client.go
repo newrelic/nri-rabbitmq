@@ -102,9 +102,9 @@ func ensureClient() {
 func createRequest(endpoint string) (*http.Request, error) {
 	var fullURL string
 	if args.GlobalArgs.UseSSL {
-		fullURL = fmt.Sprintf("https://%s:%d%s", args.GlobalArgs.Hostname, args.GlobalArgs.Port, endpoint)
+		fullURL = fmt.Sprintf("https://%s:%d%s%s", args.GlobalArgs.Hostname, args.GlobalArgs.Port, args.GlobalArgs.ManagementPathPrefix, endpoint)
 	} else {
-		fullURL = fmt.Sprintf("http://%s:%d%s", args.GlobalArgs.Hostname, args.GlobalArgs.Port, endpoint)
+		fullURL = fmt.Sprintf("http://%s:%d%s%s", args.GlobalArgs.Hostname, args.GlobalArgs.Port, args.GlobalArgs.ManagementPathPrefix, endpoint)
 	}
 	req, err := http.NewRequest("GET", fullURL, nil)
 	if err != nil {

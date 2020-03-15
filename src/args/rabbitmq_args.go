@@ -16,21 +16,22 @@ var GlobalArgs RabbitMQArguments
 // RabbitMQArguments is the fully parsed arguments, converting the JSON string into actual types
 type RabbitMQArguments struct {
 	sdkArgs.DefaultArgumentList
-	Hostname         string
-	Port             int
-	Username         string
-	Password         string
-	CABundleFile     string
-	CABundleDir      string
-	NodeNameOverride string
-	ConfigPath       string
-	UseSSL           bool
-	Queues           []string
-	QueuesRegexes    []*regexp.Regexp
-	Exchanges        []string
-	ExchangesRegexes []*regexp.Regexp
-	Vhosts           []string
-	VhostsRegexes    []*regexp.Regexp
+	Hostname             string
+	Port                 int
+	Username             string
+	Password             string
+	ManagementPathPrefix string
+	CABundleFile         string
+	CABundleDir          string
+	NodeNameOverride     string
+	ConfigPath           string
+	UseSSL               bool
+	Queues               []string
+	QueuesRegexes        []*regexp.Regexp
+	Exchanges            []string
+	ExchangesRegexes     []*regexp.Regexp
+	Vhosts               []string
+	VhostsRegexes        []*regexp.Regexp
 }
 
 // Validate checks that valid collection arguments were specified
@@ -98,16 +99,17 @@ func includeName(itemName string, names []string, namesRegex []*regexp.Regexp) b
 // SetGlobalArgs validates the arguments in ArgumentList and sets GlobalArgs to the result
 func SetGlobalArgs(args ArgumentList) error {
 	rabbitArgs := RabbitMQArguments{
-		CABundleDir:         args.CABundleDir,
-		CABundleFile:        args.CABundleFile,
-		ConfigPath:          args.ConfigPath,
-		DefaultArgumentList: args.DefaultArgumentList,
-		Hostname:            args.Hostname,
-		NodeNameOverride:    args.NodeNameOverride,
-		Password:            args.Password,
-		Port:                args.Port,
-		Username:            args.Username,
-		UseSSL:              args.UseSSL,
+		ManagementPathPrefix: args.ManagementPathPrefix,
+		CABundleDir:          args.CABundleDir,
+		CABundleFile:         args.CABundleFile,
+		ConfigPath:           args.ConfigPath,
+		DefaultArgumentList:  args.DefaultArgumentList,
+		Hostname:             args.Hostname,
+		NodeNameOverride:     args.NodeNameOverride,
+		Password:             args.Password,
+		Port:                 args.Port,
+		Username:             args.Username,
+		UseSSL:               args.UseSSL,
 	}
 	var err error
 	if err = parseStrings(args.Exchanges, &rabbitArgs.Exchanges); err != nil {
