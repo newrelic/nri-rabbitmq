@@ -5,9 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 2.2.2 (2020-03-15)
+## 2.2.2 (2020-03-23)
 ### Changed
-- Added variable (management_path_prefix) to support custom prefix for all HTTP request to the rabbitmq management plugin as detailed [here](https://www.rabbitmq.com/management.html#path-prefix).
+- Added argument `management_path_prefix` to support custom prefix for all HTTP request to the rabbitmq management plugin as detailed [here](https://www.rabbitmq.com/management.html#path-prefix).
 
 ## 2.2.1 (2020-01-28)
 ### Changed
@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## 2.2.0 (2019-11-18)
 ### Changed
 - Renamed the integration executable from nr-rabbitmq to nri-rabbitmq in order to be consistent with the package naming. **Important Note:** if you have any security module rules (eg. SELinux), alerts or automation that depends on the name of this binary, these will have to be updated.
- 
+
 ## 2.1.2 - 2019-11-14
 ### Fixed
 - Exclude windows definition from linux build
