@@ -51,7 +51,7 @@ func TestQueueData_UnmarshalJSON_MarshalMetrics(t *testing.T) {
 
 	assert.NoError(t, ms.MarshalMetrics(queueData))
 	expectedMetrics := map[string]interface{}{
-		"queue.consumers": float64(9),
+		"queue.consumers":                             float64(9),
 		"queue.consumerMessageUtilizationPerSecond":   float64(11.11),
 		"queue.countActiveConsumersReceiveMessages":   float64(10),
 		"queue.erlangBytesConsumedInBytes":            float64(1024),
