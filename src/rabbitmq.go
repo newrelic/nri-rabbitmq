@@ -131,7 +131,7 @@ func getEventData(rabbitData *allData) {
 // maxQueues is the maximum amount of Queues that can be collect.
 // If there are more than this number of Queues then collection of
 // Queues will fail.
-const maxQueues = 500
+const maxQueues = 2000
 
 func getMetricEntities(apiData *allData) []data.EntityData {
 	i := 0
