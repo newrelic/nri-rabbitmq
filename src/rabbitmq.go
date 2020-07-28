@@ -17,7 +17,7 @@ import (
 
 const (
 	integrationName    = "com.newrelic.rabbitmq"
-	integrationVersion = "2.2.2"
+	integrationVersion = "2.2.3"
 )
 
 func main() {
