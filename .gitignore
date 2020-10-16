@@ -44,3 +44,7 @@ Session.vim
 debug
 conf.yaml
 Makefile-deploy.mk
+
+.idea
+dist
+*.gpg
