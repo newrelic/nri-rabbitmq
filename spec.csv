@@ -1,9 +1,13 @@
 integration,metric_name,metric_type,metric_enabled,metric_description
 RabbitMQ,node.fileDescriptorsTotalUsed,Gauge,true,Count of File Descriptors Used
+RabbitMQ,node.fileDescriptorsTotal,Gauge,true,File Descriptors Available
+RabbitMQ,node.processesTotal,Gauge,true,Erlang process limit
+RabbitMQ,node.processesUsed,Gauge,true,Erlang processes used
 RabbitMQ,node.diskSpaceFreeInBytes,Gauge,true,Current free disk space
 RabbitMQ,node.totalMemoryUsedInBytes,Gauge,true,Memory used in bytes
 RabbitMQ,node.averageErlangProcessesWaiting,Gauge,true,Average number of Erlang processes waiting to run
 RabbitMQ,node.fileDescriptorsUsedSockets,Gauge,true,Number of file descriptors used as sockets
+RabbitMQ,node.fileDescriptorsTotalSockets,Gauge,true,Number of file descriptors available as sockets
 RabbitMQ,node.partitionsSeen,Gauge,true,Number of network partitions seen per node
 RabbitMQ,node.running,Gauge,true,Node Running 
 RabbitMQ,node.hostMemoryAlarm,Gauge,true,Host Memory Alarm
