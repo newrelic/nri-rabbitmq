@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"runtime"
+	"strings"
 
 	"github.com/newrelic/infra-integrations-sdk/integration"
 	"github.com/newrelic/infra-integrations-sdk/log"
@@ -16,8 +18,13 @@ import (
 )
 
 const (
-	integrationName    = "com.newrelic.rabbitmq"
-	integrationVersion = "2.2.4"
+	integrationName = "com.newrelic.rabbitmq"
+)
+
+var (
+	integrationVersion = "0.0.0"
+	gitCommit          = ""
+	buildDate          = ""
 )
 
 func main() {
@@ -27,6 +34,18 @@ func main() {
 	exitOnError(err)
 
 	exitOnError(args.SetGlobalArgs(argList))
+
+	if argList.ShowVersion {
+		fmt.Printf(
+			"New Relic %s integration Version: %s, Platform: %s, GoVersion: %s, GitCommit: %s, BuildDate: %s\n",
+			strings.Title(strings.Replace(integrationName, "com.newrelic.", "", 1)),
+			integrationVersion,
+			fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH),
+			runtime.Version(),
+			gitCommit,
+			buildDate)
+		os.Exit(0)
+	}
 
 	log.SetupLogging(args.GlobalArgs.Verbose)
 
