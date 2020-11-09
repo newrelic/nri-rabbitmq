@@ -76,16 +76,16 @@ type allData struct {
 
 func getNeededData() *allData {
 	rabbitData := new(allData)
-	warnIfError(client.CollectEndpoint(client.NodesEndpoint, &rabbitData.nodes), "Error collecting Node data: %v")
-	warnIfError(client.CollectEndpoint(client.OverviewEndpoint, &rabbitData.overview), "Error collecting Overview data: %v")
+	exitIfError(client.CollectEndpoint(client.NodesEndpoint, &rabbitData.nodes), "Error collecting Node data: %v")
+	exitIfError(client.CollectEndpoint(client.OverviewEndpoint, &rabbitData.overview), "Error collecting Overview data: %v")
 	if args.GlobalArgs.HasMetrics() {
-		warnIfError(client.CollectEndpoint(client.ConnectionsEndpoint, &rabbitData.connections), "Error collecting Connections data: %v")
-		warnIfError(client.CollectEndpoint(client.BindingsEndpoint, &rabbitData.bindings), "Error collecting Bindings data: %v")
-		warnIfError(client.CollectEndpoint(client.VhostsEndpoint, &rabbitData.vhosts), "Error collecting Vhost data: %v")
-		warnIfError(client.CollectEndpoint(client.QueuesEndpoint, &rabbitData.queues), "Error collecting Queue data: %v")
-		warnIfError(client.CollectEndpoint(client.ExchangesEndpoint, &rabbitData.exchanges), "Error collecting Exchange data: %v")
+		exitIfError(client.CollectEndpoint(client.ConnectionsEndpoint, &rabbitData.connections), "Error collecting Connections data: %v")
+		exitIfError(client.CollectEndpoint(client.BindingsEndpoint, &rabbitData.bindings), "Error collecting Bindings data: %v")
+		exitIfError(client.CollectEndpoint(client.VhostsEndpoint, &rabbitData.vhosts), "Error collecting Vhost data: %v")
+		exitIfError(client.CollectEndpoint(client.QueuesEndpoint, &rabbitData.queues), "Error collecting Queue data: %v")
+		exitIfError(client.CollectEndpoint(client.ExchangesEndpoint, &rabbitData.exchanges), "Error collecting Exchange data: %v")
 	} else if args.GlobalArgs.HasEvents() {
-		warnIfError(client.CollectEndpoint(client.VhostsEndpoint, &rabbitData.vhosts), "Error collecting Vhost data: %v")
+		exitIfError(client.CollectEndpoint(client.VhostsEndpoint, &rabbitData.vhosts), "Error collecting Vhost data: %v")
 	}
 	if args.GlobalArgs.HasEvents() {
 		getEventData(rabbitData)
@@ -170,9 +170,10 @@ func getFilteredQueueCount(queuesData []*data.QueueData) int {
 	return queueCount
 }
 
-func warnIfError(err error, format string, args ...interface{}) {
+func exitIfError(err error, format string, args ...interface{}) {
 	if err != nil {
-		log.Warn(format, append(args, err))
+		log.Error(format, append(args, err))
+		os.Exit(1)
 	}
 }
 
