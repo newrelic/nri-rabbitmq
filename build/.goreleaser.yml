@@ -45,13 +45,18 @@ nfpms:
     formats:
       - deb
     bindir: "/var/db/newrelic-infra/newrelic-integrations/bin"
-    files:
-      "rabbitmq-config.yml.sample": "/etc/newrelic-infra/integrations.d/rabbitmq-config.yml.sample"
-      "CHANGELOG.md": "/usr/share/doc/nri-rabbitmq/CHANGELOG.md"
-      "README.md":  "/usr/share/doc/nri-rabbitmq/README.md"
-      "LICENSE": "/usr/share/doc/nri-rabbitmq/LICENSE"
-    config_files:
-      "rabbitmq-definition.yml": "/var/db/newrelic-infra/newrelic-integrations/rabbitmq-definition.yml"
+    contents:
+      - src: rabbitmq-config.yml.sample
+        dst: /etc/newrelic-infra/integrations.d/rabbitmq-config.yml.sample
+      - src: CHANGELOG.md
+        dst: /usr/share/doc/nri-rabbitmq/CHANGELOG.md
+      - src: README.md
+        dst: /usr/share/doc/nri-rabbitmq/README.md
+      - src: LICENSE
+        dst: /usr/share/doc/nri-rabbitmq/LICENSE
+      - src: rabbitmq-definition.yml
+        dst: /var/db/newrelic-infra/newrelic-integrations/rabbitmq-definition.yml
+        type: config
     dependencies:
       - "newrelic-infra"
 
@@ -68,13 +73,18 @@ nfpms:
     formats:
       - rpm
     bindir: "/var/db/newrelic-infra/newrelic-integrations/bin"
-    files:
-      "rabbitmq-config.yml.sample": "/etc/newrelic-infra/integrations.d/rabbitmq-config.yml.sample"
-      "CHANGELOG.md": "/usr/share/doc/nri-rabbitmq/CHANGELOG.md"
-      "README.md":  "/usr/share/doc/nri-rabbitmq/README.md"
-      "LICENSE": "/usr/share/doc/nri-rabbitmq/LICENSE"
-    config_files:
-      "rabbitmq-definition.yml": "/var/db/newrelic-infra/newrelic-integrations/rabbitmq-definition.yml"
+    contents:
+      - src: rabbitmq-config.yml.sample
+        dst: /etc/newrelic-infra/integrations.d/rabbitmq-config.yml.sample
+      - src: CHANGELOG.md
+        dst: /usr/share/doc/nri-rabbitmq/CHANGELOG.md
+      - src: README.md
+        dst: /usr/share/doc/nri-rabbitmq/README.md
+      - src: LICENSE
+        dst: /usr/share/doc/nri-rabbitmq/LICENSE
+      - src: rabbitmq-definition.yml
+        dst: /var/db/newrelic-infra/newrelic-integrations/rabbitmq-definition.yml
+        type: config
     dependencies:
       - "newrelic-infra"
     overrides:
