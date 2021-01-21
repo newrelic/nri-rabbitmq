@@ -21,4 +21,5 @@ type ArgumentList struct {
 	ExchangesRegexes     string `default:"" help:"JSON array of exchange name regexes from which to collect metrics."`
 	Vhosts               string `default:"" help:"JSON array of vhost names from which to collect metrics."`
 	VhostsRegexes        string `default:"" help:"JSON array of vhost name regexes from which to collect metrics."`
+	ShowVersion          bool   `default:"false" help:"Print build information and exit"`
 }
