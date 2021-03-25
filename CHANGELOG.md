@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.2.5 (2021-03-25)
+### Changed
+- Moved release pipeline to Github Actions
+
 ## 2.2.4 (2020-11-09)
 ### Changed
 - Exit rather than warn on API errors to avoid nil pointer error

@@ -107,7 +107,7 @@ archives:
       - nri-win
     name_template: "{{ .ProjectName }}-{{ .Arch }}.{{ .Version }}_dirty"
     files:
-      - rabbitmq-win-config.yml.sample
+      - rabbitmq-config.yml.sample
       - rabbitmq-win-definition.yml
     format: zip
 
