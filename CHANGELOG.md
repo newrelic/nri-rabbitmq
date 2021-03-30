@@ -5,13 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 2.2.5 (2021-03-25)
-### Changed
-- Moved release pipeline to Github Actions
-
-## 2.2.4 (2020-11-09)
+## 2.2.4 (2021-03-30)
+### Added
+- ARM and ARM64 packages for Linux
 ### Changed
 - Exit rather than warn on API errors to avoid nil pointer error
+- Moved release pipeline to Github Actions
 
 ## 2.2.3 (2020-07-28)
 ### Changed
