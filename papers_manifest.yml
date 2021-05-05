@@ -1,28 +1,28 @@
 golang:
-  github.com/newrelic/nri-rabbitmq/src/args:
+  github.com/newrelic/nri-rabbitmq/internal/args:
     license: MIT
     license_url: github.com/newrelic/nri-rabbitmq/LICENSE
-    project_url: github.com/newrelic/nri-rabbitmq/src/args
-  github.com/newrelic/nri-rabbitmq/src/client:
+    project_url: github.com/newrelic/nri-rabbitmq/internal/args
+  github.com/newrelic/nri-rabbitmq/internal/client:
     license: MIT
     license_url: github.com/newrelic/nri-rabbitmq/LICENSE
-    project_url: github.com/newrelic/nri-rabbitmq/src/client
-  github.com/newrelic/nri-rabbitmq/src/data:
+    project_url: github.com/newrelic/nri-rabbitmq/internal/client
+  github.com/newrelic/nri-rabbitmq/internal/data:
     license: MIT
     license_url: github.com/newrelic/nri-rabbitmq/LICENSE
-    project_url: github.com/newrelic/nri-rabbitmq/src/data
-  github.com/newrelic/nri-rabbitmq/src/data/consts:
+    project_url: github.com/newrelic/nri-rabbitmq/internal/data
+  github.com/newrelic/nri-rabbitmq/internal/data/consts:
     license: MIT
     license_url: github.com/newrelic/nri-rabbitmq/LICENSE
-    project_url: github.com/newrelic/nri-rabbitmq/src/data/consts
-  github.com/newrelic/nri-rabbitmq/src/inventory:
+    project_url: github.com/newrelic/nri-rabbitmq/internal/data/consts
+  github.com/newrelic/nri-rabbitmq/internal/inventory:
     license: MIT
     license_url: github.com/newrelic/nri-rabbitmq/LICENSE
-    project_url: github.com/newrelic/nri-rabbitmq/src/inventory
-  github.com/newrelic/nri-rabbitmq/src/metrics:
+    project_url: github.com/newrelic/nri-rabbitmq/internal/inventory
+  github.com/newrelic/nri-rabbitmq/internal/metrics:
     license: MIT
     license_url: github.com/newrelic/nri-rabbitmq/LICENSE
-    project_url: github.com/newrelic/nri-rabbitmq/src/metrics
+    project_url: github.com/newrelic/nri-rabbitmq/internal/metrics
   github.com/newrelic/nri-rabbitmq/vendor/github.com/davecgh/go-spew/spew:
     license: ISC
     license_url: github.com/newrelic/nri-rabbitmq/vendor/github.com/davecgh/go-spew/LICENSE
