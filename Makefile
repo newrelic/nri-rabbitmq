@@ -1,4 +1,5 @@
 INTEGRATION  := rabbitmq
+GO_FILES      := ./src/
 BINARY_NAME   = nri-$(INTEGRATION)
 GOFLAGS		  = -mod=readonly
 GOLANGCI_LINT = github.com/golangci/golangci-lint/cmd/golangci-lint
@@ -21,9 +22,13 @@ format:
 	sh scripts/format.sh
 
 validate:
+ifeq ($(strip $(GO_FILES)),)
+	@echo "=== $(INTEGRATION) === [ validate ]: no Go files found. Skipping validation."
+else
 	@printf "=== $(INTEGRATION) === [ validate ]: running golangci-lint & semgrep... "
 	go run  $(GOFLAGS) github.com/golangci/golangci-lint/cmd/golangci-lint run --verbose
 	docker run --rm -v "${PWD}:/src:ro" --workdir /src returntocorp/semgrep -c .semgrep.yml
+endif
 
 
 bin/$(BINARY_NAME):
