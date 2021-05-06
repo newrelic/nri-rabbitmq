@@ -55,8 +55,39 @@ func TestCollectEndpoint(t *testing.T) {
 	assert.Equal(t, "test-vhost", actualConnections[0].Vhost, "Vhost is different")
 	assert.Equal(t, "running", actualConnections[0].State, "State is different")
 	var actualQueues []data.QueueData
-
 	err = CollectEndpoint(QueuesEndpoint, &actualQueues)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(actualQueues))
+	f := float64(0.1)
+	assert.Equal(t, &f, actualQueues[0].MessagesDetails.Rate, "MessageDetails.Rate is different")
+	i := int64(10)
+	assert.Equal(t, &i, actualQueues[0].Messages, "Messages is different")
+	assert.Equal(t, "test-queue", actualQueues[0].Name, "Name is different")
+	assert.Equal(t, "test-vhost", actualQueues[0].Vhost, "Vhost is different")
+}
+
+func TestCollectEndpointOldRabbitMQVersion(t *testing.T) {
+	defaultClient = nil
+	args.GlobalArgs = args.RabbitMQArguments{}
+	mux, teardown := testutils.GetTestServer(false)
+	defer teardown()
+
+	mux.HandleFunc(QueuesEndpoint, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("content-type", "application/json")
+		fmt.Fprint(w, `[
+			{
+				"messages_details": {
+					"rate": 0.1
+				},
+				"messages": 10,
+				"name": "test-queue",
+				"vhost": "test-vhost",
+				"consumer_utilisation":""
+			}
+		]`)
+	})
+	var actualQueues []data.QueueData
+	err := CollectEndpoint(QueuesEndpoint, &actualQueues)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(actualQueues))
 	f := float64(0.1)

@@ -1,6 +1,8 @@
 package data
 
 import (
+	"encoding/json"
+
 	"github.com/newrelic/infra-integrations-sdk/data/attribute"
 	"github.com/newrelic/infra-integrations-sdk/integration"
 	"github.com/newrelic/nri-rabbitmq/internal/data/consts"
@@ -81,4 +83,25 @@ func (q *QueueData) EntityName() string {
 // EntityVhost returns the vhost of this entity
 func (q *QueueData) EntityVhost() string {
 	return q.Vhost
+}
+
+func (q *QueueData) UnmarshalJSON(data []byte) error {
+	type QueueDataAlias QueueData
+	aux := &struct {
+		ConsumerUtilisation interface{} `json:"consumer_utilisation"`
+		*QueueDataAlias
+	}{
+		QueueDataAlias: (*QueueDataAlias)(q),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	if aux.ConsumerUtilisation != nil {
+		if value, ok := aux.ConsumerUtilisation.(float64); ok {
+			q.ConsumerUtilisation = &value
+		} else {
+			q.ConsumerUtilisation = nil
+		}
+	}
+	return nil
 }
