@@ -1,7 +1,0 @@
-on: [push]
-jobs:
-  static-analysis:
-    name: Static Code analysis
-    steps:
-      -
-
