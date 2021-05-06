@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/newrelic/infra-integrations-sdk/data/metric"
+	"github.com/newrelic/infra-integrations-sdk/data/attribute"
+
 	"github.com/newrelic/infra-integrations-sdk/integration"
 	"github.com/newrelic/infra-integrations-sdk/log"
 	"github.com/newrelic/nri-rabbitmq/internal/args"
@@ -13,7 +14,7 @@ import (
 )
 
 // CreateEntity will create an entity and metricNamespace attributes with appropriate name/namespace values if the entity isn't filtered
-func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, entityType, vhost, clusterName string) (entity *integration.Entity, metricNamespace []metric.Attribute, err error) {
+func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, entityType, vhost, clusterName string) (entity *integration.Entity, metricNamespace []attribute.Attribute, err error) {
 	name := cleanEntityName(entityName, entityType)
 
 	if !args.GlobalArgs.IncludeEntity(name, entityType, vhost) {
@@ -24,7 +25,7 @@ func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, enti
 	if entityType == consts.QueueType || entityType == consts.ExchangeType {
 		name = joinVhostName(vhost, name)
 	}
-	metricNamespace = []metric.Attribute{
+	metricNamespace = []attribute.Attribute{
 		{Key: "displayName", Value: name},
 		{Key: "entityName", Value: fmt.Sprintf("%s:%s", entityType, name)},
 		{Key: "clusterName", Value: clusterName},

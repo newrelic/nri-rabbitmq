@@ -47,7 +47,6 @@ func (args *RabbitMQArguments) Validate() error {
 // IncludeEntity returns true if the entity should be included; false otherwise
 func (args *RabbitMQArguments) IncludeEntity(entityName string, entityType string, vhostName string) bool {
 	if entityType == consts.NodeType {
-
 		return true
 	}
 

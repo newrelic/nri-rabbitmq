@@ -3,7 +3,8 @@ package data
 import (
 	"testing"
 
-	"github.com/newrelic/infra-integrations-sdk/data/metric"
+	"github.com/newrelic/infra-integrations-sdk/data/attribute"
+
 	"github.com/newrelic/nri-rabbitmq/internal/args"
 	"github.com/newrelic/nri-rabbitmq/internal/data/consts"
 	"github.com/newrelic/nri-rabbitmq/internal/testutils"
@@ -22,10 +23,10 @@ func TestCreateEntity(t *testing.T) {
 	assert.Equal(t, expectedEntityName, e1.Metadata.Name)
 	assert.Equal(t, "ra-queue", e1.Metadata.Namespace)
 	assert.Equal(t, 3, len(metricNS))
-	assert.Contains(t, metricNS, metric.Attribute{
+	assert.Contains(t, metricNS, attribute.Attribute{
 		Key: "displayName", Value: expectedEntityName,
 	})
-	assert.Contains(t, metricNS, metric.Attribute{
+	assert.Contains(t, metricNS, attribute.Attribute{
 		Key: "entityName", Value: expectedMetricEntityName,
 	})
 
@@ -38,10 +39,10 @@ func TestCreateEntity(t *testing.T) {
 	assert.Equal(t, expectedEntityName, e2.Metadata.Name)
 	assert.Equal(t, "ra-exchange", e2.Metadata.Namespace)
 	assert.Equal(t, 3, len(metricNS))
-	assert.Contains(t, metricNS, metric.Attribute{
+	assert.Contains(t, metricNS, attribute.Attribute{
 		Key: "displayName", Value: expectedEntityName,
 	})
-	assert.Contains(t, metricNS, metric.Attribute{
+	assert.Contains(t, metricNS, attribute.Attribute{
 		Key: "entityName", Value: expectedMetricEntityName,
 	})
 
@@ -202,7 +203,7 @@ func TestCollectInventory_Queue(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, "exchange:vhost1/exchange1, exchange:vhost1/exchange2", item["value"])
 
-	item, ok = e.Inventory.Item("queue/bindings.destination")
+	_, ok = e.Inventory.Item("queue/bindings.destination")
 	assert.False(t, ok)
 
 	item, ok = e.Inventory.Item("queue/exclusive")

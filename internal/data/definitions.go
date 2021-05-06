@@ -1,13 +1,13 @@
 package data
 
 import (
-	"github.com/newrelic/infra-integrations-sdk/data/metric"
+	"github.com/newrelic/infra-integrations-sdk/data/attribute"
 	"github.com/newrelic/infra-integrations-sdk/integration"
 )
 
 // EntityData is capable of reporting it's own data to inventory
 type EntityData interface {
-	GetEntity(integration *integration.Integration, entityName string) (*integration.Entity, []metric.Attribute, error)
+	GetEntity(integration *integration.Integration, entityName string) (*integration.Entity, []attribute.Attribute, error)
 	EntityVhost() string
 	EntityName() string
 	EntityType() string

@@ -58,3 +58,5 @@ dist/
 # build files
 internal/versioninfo.json
 internal/resource.syso
+
+vendor

@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/newrelic/infra-integrations-sdk/log"
+
 	"github.com/newrelic/nri-rabbitmq/internal/data/consts"
 
 	"github.com/newrelic/infra-integrations-sdk/data/metric"
@@ -49,7 +51,9 @@ func TestCollectEntityMetrics_Node(t *testing.T) {
 		goldenFile := sourceFile + ".golden"
 		actual, _ := i.Entities[0].Metrics[0].MarshalJSON()
 		if *testutils.Update {
-			ioutil.WriteFile(goldenFile, actual, 0644)
+			if err := ioutil.WriteFile(goldenFile, actual, 0o644); err != nil {
+				log.Error(err.Error())
+			}
 		}
 		expected, _ := ioutil.ReadFile(goldenFile)
 		assert.Equal(t, string(expected), string(actual))
@@ -88,7 +92,9 @@ func TestCollectEntityMetrics_Queue(t *testing.T) {
 		goldenFile := sourceFile + ".golden"
 		actual, _ := i.Entities[0].Metrics[0].MarshalJSON()
 		if *testutils.Update {
-			ioutil.WriteFile(goldenFile, actual, 0644)
+			if err := ioutil.WriteFile(goldenFile, actual, 0o644); err != nil {
+				log.Error(err.Error())
+			}
 		}
 		expected, _ := ioutil.ReadFile(goldenFile)
 		assert.Equal(t, string(expected), string(actual))
@@ -114,7 +120,9 @@ func TestCollectEntityMetrics_Exchange(t *testing.T) {
 		goldenFile := sourceFile + ".golden"
 		actual, _ := i.Entities[0].Metrics[0].MarshalJSON()
 		if *testutils.Update {
-			ioutil.WriteFile(goldenFile, actual, 0644)
+			if err := ioutil.WriteFile(goldenFile, actual, 0o644); err != nil {
+				log.Error(err.Error())
+			}
 		}
 		expected, _ := ioutil.ReadFile(goldenFile)
 		assert.Equal(t, string(expected), string(actual))
@@ -134,7 +142,9 @@ func TestCollectVhostMetrics(t *testing.T) {
 		goldenFile := sourceFile + ".golden"
 		actual, _ := i.Entities[0].Metrics[0].MarshalJSON()
 		if *testutils.Update {
-			ioutil.WriteFile(goldenFile, actual, 0644)
+			if err := ioutil.WriteFile(goldenFile, actual, 0o644); err != nil {
+				log.Error(err.Error())
+			}
 		}
 		expected, _ := ioutil.ReadFile(goldenFile)
 		assert.Equal(t, string(expected), string(actual))

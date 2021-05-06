@@ -102,10 +102,6 @@ func getBool(b bool) *bool {
 	return &b
 }
 
-func getInt(i int) *int {
-	return &i
-}
-
 func getInt64(i int64) *int64 {
 	return &i
 }

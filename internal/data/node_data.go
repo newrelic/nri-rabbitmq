@@ -3,7 +3,8 @@ package data
 import (
 	"encoding/json"
 
-	"github.com/newrelic/infra-integrations-sdk/data/metric"
+	"github.com/newrelic/infra-integrations-sdk/data/attribute"
+
 	"github.com/newrelic/infra-integrations-sdk/integration"
 	"github.com/newrelic/nri-rabbitmq/internal/data/consts"
 )
@@ -28,7 +29,7 @@ type NodeData struct {
 }
 
 // GetEntity creates an integration.Entity for this NodeData
-func (n *NodeData) GetEntity(integration *integration.Integration, clusterName string) (*integration.Entity, []metric.Attribute, error) {
+func (n *NodeData) GetEntity(integration *integration.Integration, clusterName string) (*integration.Entity, []attribute.Attribute, error) {
 	return CreateEntity(integration, n.Name, consts.NodeType, "", clusterName)
 }
 

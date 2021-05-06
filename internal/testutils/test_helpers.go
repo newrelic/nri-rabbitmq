@@ -11,17 +11,13 @@ import (
 	"testing"
 
 	"github.com/newrelic/infra-integrations-sdk/integration"
-	"github.com/newrelic/infra-integrations-sdk/log"
 	"github.com/newrelic/nri-rabbitmq/internal/args"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-var (
-	// Update flag will update .golden files to the current actual
-	Update     = flag.Bool("update", false, "update .golden files")
-	testLogger log.Logger
-)
+// Update flag will update .golden files to the current actual
+var Update = flag.Bool("update", false, "update .golden files")
 
 // GetTestingIntegration creates an Integration used for testing and sets the logger to the integration's logger
 func GetTestingIntegration(t *testing.T) (payload *integration.Integration) {

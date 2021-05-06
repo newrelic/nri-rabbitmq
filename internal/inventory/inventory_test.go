@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/newrelic/infra-integrations-sdk/log"
+
 	"github.com/newrelic/nri-rabbitmq/internal/args"
 	"github.com/newrelic/nri-rabbitmq/internal/data"
 	"github.com/newrelic/nri-rabbitmq/internal/testutils"
@@ -77,7 +79,9 @@ func TestCollectInventory(t *testing.T) {
 	golden := testConfigPath + ".golden"
 	if *testutils.Update {
 		t.Log("Writing .golden file")
-		ioutil.WriteFile(golden, actual, 0644)
+		if err := ioutil.WriteFile(golden, actual, 0o644); err != nil {
+			log.Error(err.Error())
+		}
 	}
 
 	expected, _ := ioutil.ReadFile(golden)
@@ -131,7 +135,7 @@ func Test_getLocalNodeName(t *testing.T) {
 }
 
 func Test_findNodeData(t *testing.T) {
-	actualNodeData, err := findNodeData("node1", nil)
+	_, err := findNodeData("node1", nil)
 	assert.EqualError(t, err, "node name [node1] not found in RabbitMQ")
 
 	nodeData := []*data.NodeData{
@@ -139,7 +143,7 @@ func Test_findNodeData(t *testing.T) {
 		{Name: "node2"},
 	}
 
-	actualNodeData, err = findNodeData("node1", nodeData)
+	actualNodeData, err := findNodeData("node1", nodeData)
 	assert.NoError(t, err)
 	assert.Equal(t, nodeData[0], actualNodeData)
 
@@ -258,6 +262,7 @@ func fakeRabbitmqctl(args []string) {
 		if os.Getenv("GET_NODE_NAME_EMPTY") == "1" {
 			fmt.Fprintf(os.Stdout, "")
 		} else {
+			// nolint
 			fmt.Fprintf(os.Stdout, expectedNodeCmdOutput)
 		}
 	}

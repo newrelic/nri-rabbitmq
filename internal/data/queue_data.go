@@ -1,7 +1,7 @@
 package data
 
 import (
-	"github.com/newrelic/infra-integrations-sdk/data/metric"
+	"github.com/newrelic/infra-integrations-sdk/data/attribute"
 	"github.com/newrelic/infra-integrations-sdk/integration"
 	"github.com/newrelic/nri-rabbitmq/internal/data/consts"
 )
@@ -64,7 +64,7 @@ func (q *QueueData) CollectInventory(entity *integration.Entity, bindingStats Bi
 }
 
 // GetEntity creates an integration.Entity for this QueueData
-func (q *QueueData) GetEntity(integration *integration.Integration, clusterName string) (*integration.Entity, []metric.Attribute, error) {
+func (q *QueueData) GetEntity(integration *integration.Integration, clusterName string) (*integration.Entity, []attribute.Attribute, error) {
 	return CreateEntity(integration, q.Name, consts.QueueType, q.Vhost, clusterName)
 }
 

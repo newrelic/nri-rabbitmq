@@ -9,13 +9,13 @@ import (
 )
 
 func TestSetGlobalArgs_Default(t *testing.T) {
-	var argList = ArgumentList{}
+	argList := ArgumentList{}
 	err := SetGlobalArgs(argList)
 	assert.NoError(t, err, "err should be nil")
 }
 
 func TestSetGlobalArgs_BadArgs(t *testing.T) {
-	var argList = ArgumentList{
+	argList := ArgumentList{
 		Exchanges: "invalid",
 	}
 	err := SetGlobalArgs(argList)
@@ -52,7 +52,7 @@ func TestSetGlobalArgs_BadArgs(t *testing.T) {
 }
 
 func TestSetGlobalArgs_ValidJson(t *testing.T) {
-	var argList = ArgumentList{
+	argList := ArgumentList{
 		Queues:        `["test-1", "test-2", "test-3"]`,
 		QueuesRegexes: `["one-.*", "two-.*"]`,
 	}
@@ -121,7 +121,7 @@ func TestRabbitMQArguments_Validate_Success(t *testing.T) {
 
 func TestRabbitMQArguments_include(t *testing.T) {
 	testRegex, _ := regexp.Compile("four-.*")
-	var testArgs = RabbitMQArguments{
+	testArgs := RabbitMQArguments{
 		Exchanges:        []string{"one"},
 		ExchangesRegexes: []*regexp.Regexp{testRegex},
 		Queues:           []string{"two"},

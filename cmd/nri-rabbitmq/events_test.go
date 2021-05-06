@@ -58,7 +58,7 @@ func Test_alivenessTest_FailAliveness(t *testing.T) {
 func Test_alivenessTest_SkipCollect(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
 
-	var argList = args.ArgumentList{
+	argList := args.ArgumentList{
 		Exchanges: "[\"test1\"]",
 		Queues:    "[\"test1\"]",
 		Vhosts:    "[\"test1\"]",

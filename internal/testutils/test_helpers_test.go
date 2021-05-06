@@ -26,6 +26,7 @@ func TestGetTestingEntity(t *testing.T) {
 type subStruct struct {
 	SubString string `json:"sub-string"`
 }
+
 type topStruct struct {
 	String string
 	Number int64

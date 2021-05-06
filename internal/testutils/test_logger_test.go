@@ -10,7 +10,7 @@ import (
 func TestTestLogger(t *testing.T) {
 	topFormat := "%v"
 	logLevel := "debug"
-	var x = func(format string, args ...interface{}) {
+	x := func(format string, args ...interface{}) {
 		switch logLevel {
 		case "debug":
 			assert.Equal(t, strings.ToUpper(logLevel)+": "+topFormat, format)
