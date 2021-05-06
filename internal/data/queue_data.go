@@ -2,6 +2,7 @@ package data
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"github.com/newrelic/infra-integrations-sdk/data/attribute"
 	"github.com/newrelic/infra-integrations-sdk/integration"
@@ -99,8 +100,8 @@ func (q *QueueData) UnmarshalJSON(data []byte) error {
 	if aux.ConsumerUtilisation != nil {
 		if value, ok := aux.ConsumerUtilisation.(float64); ok {
 			q.ConsumerUtilisation = &value
-		} else {
-			q.ConsumerUtilisation = nil
+		} else if s, err := strconv.ParseFloat(aux.ConsumerUtilisation.(string), 64); err == nil {
+			q.ConsumerUtilisation = &s
 		}
 	}
 	return nil
