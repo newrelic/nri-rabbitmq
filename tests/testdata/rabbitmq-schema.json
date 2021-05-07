@@ -1,0 +1,886 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "title": "The root schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": {},
+  "examples": [
+    {
+      "name": "com.newrelic.rabbitmq",
+      "protocol_version": "3",
+      "integration_version": "0.0.0",
+      "data": [
+        {
+          "entity": {
+            "name": "/",
+            "type": "ra-vhost",
+            "id_attributes": [
+              {
+                "Key": "clusterName",
+                "Value": "rabbit@2abbf237037c"
+              }
+            ]
+          },
+          "metrics": [
+            {
+              "clusterName": "rabbit@2abbf237037c",
+              "displayName": "/",
+              "entityName": "vhost:/",
+              "event_type": "RabbitmqVhostSample",
+              "reportingEndpoint": "rabbitmq:15672",
+              "vhost.connectionsBlocked": 0,
+              "vhost.connectionsBlocking": 0,
+              "vhost.connectionsClosed": 0,
+              "vhost.connectionsClosing": 0,
+              "vhost.connectionsFlow": 0,
+              "vhost.connectionsOpening": 0,
+              "vhost.connectionsRunning": 0,
+              "vhost.connectionsStarting": 0,
+              "vhost.connectionsTotal": 0,
+              "vhost.connectionsTuning": 0
+            }
+          ],
+          "inventory": {},
+          "events": []
+        },
+        {
+          "entity": {
+            "name": "rabbit@2abbf237037c",
+            "type": "ra-node",
+            "id_attributes": [
+              {
+                "Key": "clusterName",
+                "Value": "rabbit@2abbf237037c"
+              }
+            ]
+          },
+          "metrics": [
+            {
+              "clusterName": "rabbit@2abbf237037c",
+              "displayName": "rabbit@2abbf237037c",
+              "entityName": "node:rabbit@2abbf237037c",
+              "event_type": "RabbitmqNodeSample",
+              "node.averageErlangProcessesWaiting": 1,
+              "node.diskAlarm": 0,
+              "node.diskSpaceFreeInBytes": 78779854848,
+              "node.fileDescriptorsTotal": 1048576,
+              "node.fileDescriptorsTotalSockets": 943629,
+              "node.fileDescriptorsTotalUsed": 95,
+              "node.fileDescriptorsUsedSockets": 0,
+              "node.hostMemoryAlarm": 0,
+              "node.partitionsSeen": 0,
+              "node.processesTotal": 1048576,
+              "node.processesUsed": 405,
+              "node.running": 1,
+              "node.totalMemoryUsedInBytes": 122597376,
+              "reportingEndpoint": "rabbitmq:15672"
+            }
+          ],
+          "inventory": {},
+          "events": []
+        },
+        {
+          "entity": {
+            "name": "/amq.default",
+            "type": "ra-exchange",
+            "id_attributes": [
+              {
+                "Key": "clusterName",
+                "Value": "rabbit@2abbf237037c"
+              }
+            ]
+          },
+          "metrics": [
+            {
+              "clusterName": "rabbit@2abbf237037c",
+              "displayName": "/amq.default",
+              "entityName": "exchange:/amq.default",
+              "event_type": "RabbitmqExchangeSample",
+              "exchange.bindings": 0,
+              "reportingEndpoint": "rabbitmq:15672"
+            }
+          ],
+          "inventory": {
+            "exchange/auto_delete": {
+              "value": 0
+            },
+            "exchange/durable": {
+              "value": 1
+            },
+            "exchange/type": {
+              "value": "direct"
+            }
+          },
+          "events": []
+        },
+        {
+          "entity": {
+            "name": "/amq.direct",
+            "type": "ra-exchange",
+            "id_attributes": [
+              {
+                "Key": "clusterName",
+                "Value": "rabbit@2abbf237037c"
+              }
+            ]
+          },
+          "metrics": [
+            {
+              "clusterName": "rabbit@2abbf237037c",
+              "displayName": "/amq.direct",
+              "entityName": "exchange:/amq.direct",
+              "event_type": "RabbitmqExchangeSample",
+              "exchange.bindings": 0,
+              "reportingEndpoint": "rabbitmq:15672"
+            }
+          ],
+          "inventory": {
+            "exchange/auto_delete": {
+              "value": 0
+            },
+            "exchange/durable": {
+              "value": 1
+            },
+            "exchange/type": {
+              "value": "direct"
+            }
+          },
+          "events": []
+        },
+        {
+          "entity": {
+            "name": "/amq.fanout",
+            "type": "ra-exchange",
+            "id_attributes": [
+              {
+                "Key": "clusterName",
+                "Value": "rabbit@2abbf237037c"
+              }
+            ]
+          },
+          "metrics": [
+            {
+              "clusterName": "rabbit@2abbf237037c",
+              "displayName": "/amq.fanout",
+              "entityName": "exchange:/amq.fanout",
+              "event_type": "RabbitmqExchangeSample",
+              "exchange.bindings": 0,
+              "reportingEndpoint": "rabbitmq:15672"
+            }
+          ],
+          "inventory": {
+            "exchange/auto_delete": {
+              "value": 0
+            },
+            "exchange/durable": {
+              "value": 1
+            },
+            "exchange/type": {
+              "value": "fanout"
+            }
+          },
+          "events": []
+        },
+        {
+          "entity": {
+            "name": "/amq.headers",
+            "type": "ra-exchange",
+            "id_attributes": [
+              {
+                "Key": "clusterName",
+                "Value": "rabbit@2abbf237037c"
+              }
+            ]
+          },
+          "metrics": [
+            {
+              "clusterName": "rabbit@2abbf237037c",
+              "displayName": "/amq.headers",
+              "entityName": "exchange:/amq.headers",
+              "event_type": "RabbitmqExchangeSample",
+              "exchange.bindings": 0,
+              "reportingEndpoint": "rabbitmq:15672"
+            }
+          ],
+          "inventory": {
+            "exchange/auto_delete": {
+              "value": 0
+            },
+            "exchange/durable": {
+              "value": 1
+            },
+            "exchange/type": {
+              "value": "headers"
+            }
+          },
+          "events": []
+        },
+        {
+          "entity": {
+            "name": "/amq.match",
+            "type": "ra-exchange",
+            "id_attributes": [
+              {
+                "Key": "clusterName",
+                "Value": "rabbit@2abbf237037c"
+              }
+            ]
+          },
+          "metrics": [
+            {
+              "clusterName": "rabbit@2abbf237037c",
+              "displayName": "/amq.match",
+              "entityName": "exchange:/amq.match",
+              "event_type": "RabbitmqExchangeSample",
+              "exchange.bindings": 0,
+              "reportingEndpoint": "rabbitmq:15672"
+            }
+          ],
+          "inventory": {
+            "exchange/auto_delete": {
+              "value": 0
+            },
+            "exchange/durable": {
+              "value": 1
+            },
+            "exchange/type": {
+              "value": "headers"
+            }
+          },
+          "events": []
+        },
+        {
+          "entity": {
+            "name": "/amq.rabbitmq.trace",
+            "type": "ra-exchange",
+            "id_attributes": [
+              {
+                "Key": "clusterName",
+                "Value": "rabbit@2abbf237037c"
+              }
+            ]
+          },
+          "metrics": [
+            {
+              "clusterName": "rabbit@2abbf237037c",
+              "displayName": "/amq.rabbitmq.trace",
+              "entityName": "exchange:/amq.rabbitmq.trace",
+              "event_type": "RabbitmqExchangeSample",
+              "exchange.bindings": 0,
+              "reportingEndpoint": "rabbitmq:15672"
+            }
+          ],
+          "inventory": {
+            "exchange/auto_delete": {
+              "value": 0
+            },
+            "exchange/durable": {
+              "value": 1
+            },
+            "exchange/type": {
+              "value": "topic"
+            }
+          },
+          "events": []
+        },
+        {
+          "entity": {
+            "name": "/amq.topic",
+            "type": "ra-exchange",
+            "id_attributes": [
+              {
+                "Key": "clusterName",
+                "Value": "rabbit@2abbf237037c"
+              }
+            ]
+          },
+          "metrics": [
+            {
+              "clusterName": "rabbit@2abbf237037c",
+              "displayName": "/amq.topic",
+              "entityName": "exchange:/amq.topic",
+              "event_type": "RabbitmqExchangeSample",
+              "exchange.bindings": 0,
+              "reportingEndpoint": "rabbitmq:15672"
+            }
+          ],
+          "inventory": {
+            "exchange/auto_delete": {
+              "value": 0
+            },
+            "exchange/durable": {
+              "value": 1
+            },
+            "exchange/type": {
+              "value": "topic"
+            }
+          },
+          "events": []
+        },
+        {
+          "entity": {
+            "name": "rabbit@2abbf237037c",
+            "type": "ra-cluster",
+            "id_attributes": [
+              {
+                "Key": "clusterName",
+                "Value": "rabbit@2abbf237037c"
+              }
+            ]
+          },
+          "metrics": [],
+          "inventory": {
+            "version/management": {
+              "value": "3.8.16"
+            },
+            "version/rabbitmq": {
+              "value": "3.8.16"
+            }
+          },
+          "events": []
+        }
+      ]
+    }
+  ],
+  "required": [
+    "name",
+    "protocol_version",
+    "integration_version",
+    "data"
+  ],
+  "properties": {
+    "name": {
+      "$id": "#/properties/name",
+      "type": "string",
+      "title": "The name schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": "",
+      "examples": [
+        "com.newrelic.rabbitmq"
+      ]
+    },
+    "protocol_version": {
+      "$id": "#/properties/protocol_version",
+      "type": "string",
+      "title": "The protocol_version schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": "",
+      "examples": [
+        "3"
+      ]
+    },
+    "integration_version": {
+      "$id": "#/properties/integration_version",
+      "type": "string",
+      "title": "The integration_version schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": "",
+      "examples": [
+        "0.0.0"
+      ]
+    },
+    "data": {
+      "$id": "#/properties/data",
+      "type": "array",
+      "title": "The data schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": [],
+      "examples": [
+        [
+          {
+            "entity": {
+              "name": "/",
+              "type": "ra-vhost",
+              "id_attributes": [
+                {
+                  "Key": "clusterName",
+                  "Value": "rabbit@2abbf237037c"
+                }
+              ]
+            },
+            "metrics": [
+              {
+                "clusterName": "rabbit@2abbf237037c",
+                "displayName": "/",
+                "entityName": "vhost:/",
+                "event_type": "RabbitmqVhostSample",
+                "reportingEndpoint": "rabbitmq:15672",
+                "vhost.connectionsBlocked": 0,
+                "vhost.connectionsBlocking": 0,
+                "vhost.connectionsClosed": 0,
+                "vhost.connectionsClosing": 0,
+                "vhost.connectionsFlow": 0,
+                "vhost.connectionsOpening": 0,
+                "vhost.connectionsRunning": 0,
+                "vhost.connectionsStarting": 0,
+                "vhost.connectionsTotal": 0,
+                "vhost.connectionsTuning": 0
+              }
+            ],
+            "inventory": {},
+            "events": []
+          },
+          {
+            "entity": {
+              "name": "rabbit@2abbf237037c",
+              "type": "ra-node",
+              "id_attributes": [
+                {
+                  "Key": "clusterName",
+                  "Value": "rabbit@2abbf237037c"
+                }
+              ]
+            },
+            "metrics": [
+              {
+                "clusterName": "rabbit@2abbf237037c",
+                "displayName": "rabbit@2abbf237037c",
+                "entityName": "node:rabbit@2abbf237037c",
+                "event_type": "RabbitmqNodeSample",
+                "node.averageErlangProcessesWaiting": 1,
+                "node.diskAlarm": 0,
+                "node.diskSpaceFreeInBytes": 78779854848,
+                "node.fileDescriptorsTotal": 1048576,
+                "node.fileDescriptorsTotalSockets": 943629,
+                "node.fileDescriptorsTotalUsed": 95,
+                "node.fileDescriptorsUsedSockets": 0,
+                "node.hostMemoryAlarm": 0,
+                "node.partitionsSeen": 0,
+                "node.processesTotal": 1048576,
+                "node.processesUsed": 405,
+                "node.running": 1,
+                "node.totalMemoryUsedInBytes": 122597376,
+                "reportingEndpoint": "rabbitmq:15672"
+              }
+            ],
+            "inventory": {},
+            "events": []
+          }
+        ]
+      ],
+      "additionalItems": true,
+      "items": {
+        "$id": "#/properties/data/items",
+        "anyOf": [
+          {
+            "$id": "#/properties/data/items/anyOf/0",
+            "type": "object",
+            "title": "The first anyOf schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+              {
+                "entity": {
+                  "name": "/",
+                  "type": "ra-vhost",
+                  "id_attributes": [
+                    {
+                      "Key": "clusterName",
+                      "Value": "rabbit@2abbf237037c"
+                    }
+                  ]
+                },
+                "metrics": [
+                  {
+                    "clusterName": "rabbit@2abbf237037c",
+                    "displayName": "/",
+                    "entityName": "vhost:/",
+                    "event_type": "RabbitmqVhostSample",
+                    "reportingEndpoint": "rabbitmq:15672",
+                    "vhost.connectionsBlocked": 0,
+                    "vhost.connectionsBlocking": 0,
+                    "vhost.connectionsClosed": 0,
+                    "vhost.connectionsClosing": 0,
+                    "vhost.connectionsFlow": 0,
+                    "vhost.connectionsOpening": 0,
+                    "vhost.connectionsRunning": 0,
+                    "vhost.connectionsStarting": 0,
+                    "vhost.connectionsTotal": 0,
+                    "vhost.connectionsTuning": 0
+                  }
+                ],
+                "inventory": {},
+                "events": []
+              }
+            ],
+            "required": [
+              "entity",
+              "metrics",
+              "inventory",
+              "events"
+            ],
+            "properties": {
+              "entity": {
+                "$id": "#/properties/data/items/anyOf/0/properties/entity",
+                "type": "object",
+                "title": "The entity schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": {},
+                "examples": [
+                  {
+                    "name": "/",
+                    "type": "ra-vhost",
+                    "id_attributes": [
+                      {
+                        "Key": "clusterName",
+                        "Value": "rabbit@2abbf237037c"
+                      }
+                    ]
+                  }
+                ],
+                "required": [
+                  "name",
+                  "type",
+                  "id_attributes"
+                ],
+                "properties": {
+                  "name": {
+                    "$id": "#/properties/data/items/anyOf/0/properties/entity/properties/name",
+                    "type": "string",
+                    "title": "The name schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                      "/"
+                    ]
+                  },
+                  "type": {
+                    "$id": "#/properties/data/items/anyOf/0/properties/entity/properties/type",
+                    "type": "string",
+                    "title": "The type schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                      "ra-vhost"
+                    ]
+                  },
+                  "id_attributes": {
+                    "$id": "#/properties/data/items/anyOf/0/properties/entity/properties/id_attributes",
+                    "type": "array",
+                    "title": "The id_attributes schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": [],
+                    "examples": [
+                      [
+                        {
+                          "Key": "clusterName",
+                          "Value": "rabbit@2abbf237037c"
+                        }
+                      ]
+                    ],
+                    "additionalItems": true,
+                    "items": {
+                      "$id": "#/properties/data/items/anyOf/0/properties/entity/properties/id_attributes/items",
+                      "anyOf": [
+                        {
+                          "$id": "#/properties/data/items/anyOf/0/properties/entity/properties/id_attributes/items/anyOf/0",
+                          "type": "object",
+                          "title": "The first anyOf schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": {},
+                          "examples": [
+                            {
+                              "Key": "clusterName",
+                              "Value": "rabbit@2abbf237037c"
+                            }
+                          ],
+                          "required": [
+                            "Key",
+                            "Value"
+                          ],
+                          "properties": {
+                            "Key": {
+                              "$id": "#/properties/data/items/anyOf/0/properties/entity/properties/id_attributes/items/anyOf/0/properties/Key",
+                              "type": "string",
+                              "title": "The Key schema",
+                              "description": "An explanation about the purpose of this instance.",
+                              "default": "",
+                              "examples": [
+                                "clusterName"
+                              ]
+                            },
+                            "Value": {
+                              "$id": "#/properties/data/items/anyOf/0/properties/entity/properties/id_attributes/items/anyOf/0/properties/Value",
+                              "type": "string",
+                              "title": "The Value schema",
+                              "description": "An explanation about the purpose of this instance.",
+                              "default": "",
+                              "examples": [
+                                "rabbit@2abbf237037c"
+                              ]
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": true
+              },
+              "metrics": {
+                "$id": "#/properties/data/items/anyOf/0/properties/metrics",
+                "type": "array",
+                "title": "The metrics schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": [],
+                "examples": [
+                  [
+                    {
+                      "clusterName": "rabbit@2abbf237037c",
+                      "displayName": "/",
+                      "entityName": "vhost:/",
+                      "event_type": "RabbitmqVhostSample",
+                      "reportingEndpoint": "rabbitmq:15672",
+                      "vhost.connectionsBlocked": 0,
+                      "vhost.connectionsBlocking": 0,
+                      "vhost.connectionsClosed": 0,
+                      "vhost.connectionsClosing": 0,
+                      "vhost.connectionsFlow": 0,
+                      "vhost.connectionsOpening": 0,
+                      "vhost.connectionsRunning": 0,
+                      "vhost.connectionsStarting": 0,
+                      "vhost.connectionsTotal": 0,
+                      "vhost.connectionsTuning": 0
+                    }
+                  ]
+                ],
+                "additionalItems": true,
+                "items": {
+                  "$id": "#/properties/data/items/anyOf/0/properties/metrics/items",
+                  "anyOf": [
+                    {
+                      "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0",
+                      "type": "object",
+                      "title": "The first anyOf schema",
+                      "description": "An explanation about the purpose of this instance.",
+                      "default": {},
+                      "examples": [
+                        {
+                          "clusterName": "rabbit@2abbf237037c",
+                          "displayName": "/",
+                          "entityName": "vhost:/",
+                          "event_type": "RabbitmqVhostSample",
+                          "reportingEndpoint": "rabbitmq:15672",
+                          "vhost.connectionsBlocked": 0,
+                          "vhost.connectionsBlocking": 0,
+                          "vhost.connectionsClosed": 0,
+                          "vhost.connectionsClosing": 0,
+                          "vhost.connectionsFlow": 0,
+                          "vhost.connectionsOpening": 0,
+                          "vhost.connectionsRunning": 0,
+                          "vhost.connectionsStarting": 0,
+                          "vhost.connectionsTotal": 0,
+                          "vhost.connectionsTuning": 0
+                        }
+                      ],
+                      "required": [
+                        "clusterName",
+                        "displayName",
+                        "entityName",
+                        "event_type",
+                        "reportingEndpoint",
+                        "vhost.connectionsBlocked",
+                        "vhost.connectionsBlocking",
+                        "vhost.connectionsClosed",
+                        "vhost.connectionsClosing",
+                        "vhost.connectionsFlow",
+                        "vhost.connectionsOpening",
+                        "vhost.connectionsRunning",
+                        "vhost.connectionsStarting",
+                        "vhost.connectionsTotal",
+                        "vhost.connectionsTuning"
+                      ],
+                      "properties": {
+                        "clusterName": {
+                          "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0/properties/clusterName",
+                          "type": "string",
+                          "title": "The clusterName schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": "",
+                          "examples": [
+                            "rabbit@2abbf237037c"
+                          ]
+                        },
+                        "displayName": {
+                          "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0/properties/displayName",
+                          "type": "string",
+                          "title": "The displayName schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": "",
+                          "examples": [
+                            "/"
+                          ]
+                        },
+                        "entityName": {
+                          "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0/properties/entityName",
+                          "type": "string",
+                          "title": "The entityName schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": "",
+                          "examples": [
+                            "vhost:/"
+                          ]
+                        },
+                        "event_type": {
+                          "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0/properties/event_type",
+                          "type": "string",
+                          "title": "The event_type schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": "",
+                          "examples": [
+                            "RabbitmqVhostSample"
+                          ]
+                        },
+                        "reportingEndpoint": {
+                          "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0/properties/reportingEndpoint",
+                          "type": "string",
+                          "title": "The reportingEndpoint schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": "",
+                          "examples": [
+                            "rabbitmq:15672"
+                          ]
+                        },
+                        "vhost.connectionsBlocked": {
+                          "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0/properties/vhost.connectionsBlocked",
+                          "type": "integer",
+                          "title": "The vhost.connectionsBlocked schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": 0,
+                          "examples": [
+                            0
+                          ]
+                        },
+                        "vhost.connectionsBlocking": {
+                          "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0/properties/vhost.connectionsBlocking",
+                          "type": "integer",
+                          "title": "The vhost.connectionsBlocking schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": 0,
+                          "examples": [
+                            0
+                          ]
+                        },
+                        "vhost.connectionsClosed": {
+                          "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0/properties/vhost.connectionsClosed",
+                          "type": "integer",
+                          "title": "The vhost.connectionsClosed schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": 0,
+                          "examples": [
+                            0
+                          ]
+                        },
+                        "vhost.connectionsClosing": {
+                          "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0/properties/vhost.connectionsClosing",
+                          "type": "integer",
+                          "title": "The vhost.connectionsClosing schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": 0,
+                          "examples": [
+                            0
+                          ]
+                        },
+                        "vhost.connectionsFlow": {
+                          "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0/properties/vhost.connectionsFlow",
+                          "type": "integer",
+                          "title": "The vhost.connectionsFlow schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": 0,
+                          "examples": [
+                            0
+                          ]
+                        },
+                        "vhost.connectionsOpening": {
+                          "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0/properties/vhost.connectionsOpening",
+                          "type": "integer",
+                          "title": "The vhost.connectionsOpening schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": 0,
+                          "examples": [
+                            0
+                          ]
+                        },
+                        "vhost.connectionsRunning": {
+                          "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0/properties/vhost.connectionsRunning",
+                          "type": "integer",
+                          "title": "The vhost.connectionsRunning schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": 0,
+                          "examples": [
+                            0
+                          ]
+                        },
+                        "vhost.connectionsStarting": {
+                          "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0/properties/vhost.connectionsStarting",
+                          "type": "integer",
+                          "title": "The vhost.connectionsStarting schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": 0,
+                          "examples": [
+                            0
+                          ]
+                        },
+                        "vhost.connectionsTotal": {
+                          "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0/properties/vhost.connectionsTotal",
+                          "type": "integer",
+                          "title": "The vhost.connectionsTotal schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": 0,
+                          "examples": [
+                            0
+                          ]
+                        },
+                        "vhost.connectionsTuning": {
+                          "$id": "#/properties/data/items/anyOf/0/properties/metrics/items/anyOf/0/properties/vhost.connectionsTuning",
+                          "type": "integer",
+                          "title": "The vhost.connectionsTuning schema",
+                          "description": "An explanation about the purpose of this instance.",
+                          "default": 0,
+                          "examples": [
+                            0
+                          ]
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  ]
+                }
+              },
+              "inventory": {
+                "$id": "#/properties/data/items/anyOf/0/properties/inventory",
+                "type": "object",
+                "title": "The inventory schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": {},
+                "examples": [
+                  {}
+                ],
+                "required": [],
+                "additionalProperties": true
+              },
+              "events": {
+                "$id": "#/properties/data/items/anyOf/0/properties/events",
+                "type": "array",
+                "title": "The events schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": [],
+                "examples": [
+                  []
+                ],
+                "additionalItems": true,
+                "items": {
+                  "$id": "#/properties/data/items/anyOf/0/properties/events/items"
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        ]
+      }
+    }
+  },
+  "additionalProperties": true
+}

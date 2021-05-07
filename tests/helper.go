@@ -4,43 +4,43 @@ package tests
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
+	"github.com/newrelic/infra-integrations-sdk/log"
+	"github.com/xeipuuv/gojsonschema"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"time"
-
-	"github.com/streadway/amqp"
-
-	"github.com/newrelic/infra-integrations-sdk/log"
-
-	"github.com/xeipuuv/gojsonschema"
 )
 
-const (
-	connURL           = "amqp://guest:guest@localhost:5672/"
-	containerRabbitMQ = "rabbitmq"
-)
-
-func executeDockerCompose(containerName string, envVars []string) (string, string, error) {
+func dockerComposeRunMode(vars []string, ports []string, container string, detached bool) (string, string, error) {
 	cmdLine := []string{"run"}
-	for i := range envVars {
-		cmdLine = append(cmdLine, "-e")
-		cmdLine = append(cmdLine, envVars[i])
+	if detached {
+		cmdLine = append(cmdLine, "-d")
 	}
-	cmdLine = append(cmdLine, containerName)
+	cmdLine=append(cmdLine,"--name")
+	cmdLine=append(cmdLine,container)
+	for i := range vars {
+		cmdLine = append(cmdLine, "-e")
+		cmdLine = append(cmdLine, vars[i])
+	}
+	for p := range ports {
+		cmdLine = append(cmdLine, fmt.Sprintf("-p%s", ports[p]))
+	}
+	cmdLine = append(cmdLine, container)
 	fmt.Printf("executing: docker-compose %s\n", strings.Join(cmdLine, " "))
 	cmd := exec.Command("docker-compose", cmdLine...)
-	if err := checkRabbitMQIsUpAndRunning(10); err != nil {
-		return "", "", err
-	}
 	var outbuf, errbuf bytes.Buffer
 	cmd.Stdout = &outbuf
 	cmd.Stderr = &errbuf
-	cmd.Run()
-	return outbuf.String(), errbuf.String(), nil
+	err := cmd.Run()
+	stdout := outbuf.String()
+	stderr := errbuf.String()
+	return stdout, stderr, err
+}
+
+func dockerComposeRun(vars []string, container string) (string, string, error) {
+	return dockerComposeRunMode(vars, []string{}, container, false)
 }
 
 func validateJSONSchema(fileName string, input string) error {
@@ -58,6 +58,7 @@ func validateJSONSchema(fileName string, input string) error {
 	if err != nil {
 		return fmt.Errorf("Error loading JSON schema, error: %v", err)
 	}
+
 	if result.Valid() {
 		return nil
 	}
@@ -67,29 +68,4 @@ func validateJSONSchema(fileName string, input string) error {
 	}
 	fmt.Printf("\n")
 	return fmt.Errorf("The output of the integration doesn't have expected JSON format")
-}
-
-func checkRabbitMQIsUpAndRunning(maxTries int) error {
-	cmdLine := []string{"up", "-d"}
-	cmdLine = append(cmdLine, containerRabbitMQ)
-	fmt.Printf("executing: docker-compose %s\n", strings.Join(cmdLine, " "))
-	cmd := exec.Command("docker-compose", cmdLine...)
-	cmd.Run()
-	for ; maxTries > 0; maxTries-- {
-		log.Info("check rabbitmq connection")
-		conn, err := amqp.Dial(connURL)
-		if err != nil {
-			log.Warn(err.Error())
-			if maxTries == 0 {
-				return errors.New("rabbitmq connection cannot be established!. Tests won't be executed")
-			}
-
-			time.Sleep(3 * time.Second)
-		} else {
-			conn.Close()
-			break
-		}
-	}
-	log.Info("rabbit is up & running")
-	return nil
 }

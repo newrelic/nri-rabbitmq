@@ -26,7 +26,7 @@ ifeq ($(strip $(GO_FILES)),)
 	@echo "=== $(INTEGRATION) === [ validate ]: no Go files found. Skipping validation."
 else
 	@printf "=== $(INTEGRATION) === [ validate ]: running golangci-lint & semgrep... "
-	go run  $(GOFLAGS) github.com/golangci/golangci-lint/cmd/golangci-lint run --verbose
+	go run  $(GOFLAGS) $(GOLANGCI_LINT) run --verbose
 	docker run --rm -v "${PWD}:/src:ro" --workdir /src returntocorp/semgrep -c .semgrep.yml
 endif
 
@@ -45,6 +45,7 @@ test:
 
 integration-test:
 	@echo "=== $(INTEGRATION) === [ test ]: running integration tests..."
+	@docker-compose -f tests/docker-compose.yml pull
 	@go test -v -tags=integration ./tests/. || (ret=$$?; docker-compose -f tests/docker-compose.yml down && exit $$ret)
 	@docker-compose -f tests/docker-compose.yml down
 
