@@ -1,0 +1,14 @@
+version: "3.2"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+
+  nri-rabbitmq:
+    image: golang:1.16
+    container_name: nri_rabbitmq
+    working_dir: /code
+    volumes:
+      - ../:/code
+    entrypoint: go run /code/cmd/nri-rabbitmq/main.go
