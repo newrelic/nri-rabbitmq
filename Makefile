@@ -19,9 +19,12 @@ clean:
 
 validate:
 	@printf "=== $(INTEGRATION) === [ validate ]: running golangci-lint & semgrep... "
-	go run  $(GOFLAGS) $(GOLANGCI_LINT) run --verbose
-	docker run --rm -v "${PWD}:/src:ro" --workdir /src returntocorp/semgrep -c .semgrep.yml
-
+	@go run  $(GOFLAGS) $(GOLANGCI_LINT) run --verbose
+	@if [ -f .semgrep.yml ]; then \
+		docker run --rm -v "${PWD}:/src:ro" --workdir /src returntocorp/semgrep -c .semgrep.yml ; \
+	else \
+		docker run --rm -v "${PWD}:/src:ro" --workdir /src returntocorp/semgrep -c p/golang ; \
+	fi
 
 compile:
 	@echo "=== $(INTEGRATION) === [ compile ]: Building $(BINARY_NAME)..."
