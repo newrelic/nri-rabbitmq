@@ -15,3 +15,4 @@ require (
 	golang.org/x/tools v0.1.0
 	mvdan.cc/gofumpt v0.1.1
 )
+

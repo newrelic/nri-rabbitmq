@@ -34,4 +34,4 @@ sed \
   -e "s/{IntegrationExe}/$INTEGRATION_EXE/g" \
    ./build/windows/versioninfo.json.template > ./cmd/nri-${INTEGRATION}/versioninfo.json
 
-go generate github.com/newrelic/nri-${INTEGRATION}/src/
+go generate github.com/newrelic/nri-${INTEGRATION}/cmd/nri-${INTEGRATION}
