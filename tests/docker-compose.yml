@@ -11,4 +11,4 @@ services:
     working_dir: /code
     volumes:
       - ../:/code
-    entrypoint: go run /code/cmd/nri-rabbitmq/main.go
+    entrypoint: go run /code/src/rabbitmq.go

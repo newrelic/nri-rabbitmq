@@ -1,9 +1,9 @@
 builds:
   - id: nri-nix
-    main: ./cmd/nri-rabbitmq/main.go
+    main: ./src
     binary: nri-rabbitmq
     ldflags:
-      - -s -w -X github.com/newrelic/nri-rabbitmq/cmd/main.integrationVersion={{.Version}} -X github.com/newrelic/nri-rabbitmq/cmd/main.gitCommit={{.Commit}} -X github.com/newrelic/nri-rabbitmq/cmd/main.buildDate={{.Date}}
+      - -s -w -X main.integrationVersion={{.Version}} -X main.gitCommit={{.Commit}} -X main.buildDate={{.Date}}
     goos:
       - linux
       - darwin
@@ -17,10 +17,10 @@ builds:
         goarch: 386
 
   - id: nri-win
-    main: ./cmd/nri-rabbitmq/main.go
+    main: ./src
     binary: nri-rabbitmq
     ldflags:
-      - -s -w -X github.com/newrelic/nri-rabbitmq/cmd/main.integrationVersion={{.Version}} -X github.com/newrelic/nri-rabbitmq/cmd/main.gitCommit={{.Commit}} -X github.com/newrelic/nri-rabbitmq/cmd/main.buildDate={{.Date}}
+      - -s -w -X main.integrationVersion={{.Version}} -X main.gitCommit={{.Commit}} -X main.buildDate={{.Date}}
     goos:
       - windows
     goarch:

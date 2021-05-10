@@ -1,5 +1,5 @@
 INTEGRATION  := rabbitmq
-GO_FILES      := ./src/
+GO_FILES        := ./src/
 BINARY_NAME   = nri-$(INTEGRATION)
 GOFLAGS		  = -mod=readonly
 GOLANGCI_LINT = github.com/golangci/golangci-lint/cmd/golangci-lint
@@ -17,29 +17,18 @@ clean:
 	@echo "=== $(INTEGRATION) === [ clean ]: Removing binaries and coverage file..."
 	@rm -rfv bin coverage.xml
 
-
-format:
-	sh scripts/format.sh
-
 validate:
-ifeq ($(strip $(GO_FILES)),)
-	@echo "=== $(INTEGRATION) === [ validate ]: no Go files found. Skipping validation."
-else
 	@printf "=== $(INTEGRATION) === [ validate ]: running golangci-lint & semgrep... "
 	go run  $(GOFLAGS) $(GOLANGCI_LINT) run --verbose
 	docker run --rm -v "${PWD}:/src:ro" --workdir /src returntocorp/semgrep -c .semgrep.yml
-endif
 
 
-bin/$(BINARY_NAME):
-	@echo "=== $(INTEGRATION) === [ compile ]: building $(BINARY_NAME)..."
-	@go build -v -o bin/$(BINARY_NAME) cmd/nri-postgresql/main.go
-
-
-compile: bin/$(BINARY_NAME)
+compile:
+	@echo "=== $(INTEGRATION) === [ compile ]: Building $(BINARY_NAME)..."
+	@go build -o bin/$(BINARY_NAME) $(GO_FILES)
 
 test:
-	@echo "=== $(INTEGRATION) === [ test ]: running unit tests..."
+	@echo "=== $(INTEGRATION) === [ test ]: Running unit tests..."
 	@go run $(GOFLAGS) $(GOCOV) test ./... | go run $(GOFLAGS) $(GOCOV_XML) > coverage.xml
 
 

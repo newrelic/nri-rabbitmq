@@ -10,9 +10,8 @@ require (
 	github.com/newrelic/infra-integrations-sdk v3.6.7+incompatible
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.7.0
-	github.com/tidwall/gjson v1.7.5
+	github.com/tidwall/gjson v1.7.5 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0
 	golang.org/x/tools v0.1.0
 	mvdan.cc/gofumpt v0.1.1
 )
-

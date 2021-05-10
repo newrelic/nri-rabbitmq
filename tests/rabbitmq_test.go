@@ -36,7 +36,9 @@ func TestSuccessConnection(t *testing.T) {
 		"USERNAME=guest",
 		"PASSWORD=guest",
 	}
-	response, _, err := dockerComposeRun(envVars, containerName)
+	response, stderr, err := dockerComposeRun(envVars, containerName)
+	fmt.Println(response)
+	fmt.Println(stderr)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, response)
 	validateJSONSchema(response, schema)

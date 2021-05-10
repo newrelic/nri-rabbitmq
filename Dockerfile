@@ -6,7 +6,7 @@ COPY go.mod .
 RUN go mod download
 
 COPY . ./
-RUN go build -o ./bin/nri-rabbitmq cmd/nri-rabbitmq/main.go; strip ./bin/nri-rabbitmq
+RUN go build -o ./bin/nri-rabbitmq src/; strip ./bin/nri-rabbitmq
 
 
 FROM newrelic/infrastructure:latest
