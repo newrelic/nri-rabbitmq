@@ -17,10 +17,6 @@ clean:
 	@echo "=== $(INTEGRATION) === [ clean ]: Removing binaries and coverage file..."
 	@rm -rfv bin coverage.xml
 
-
-format:
-	sh scripts/format.sh
-
 validate:
 	@printf "=== $(INTEGRATION) === [ validate ]: running golangci-lint & semgrep... "
 	go run  $(GOFLAGS) $(GOLANGCI_LINT) run --verbose

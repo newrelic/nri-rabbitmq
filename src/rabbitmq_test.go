@@ -3,10 +3,9 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/newrelic/nri-rabbitmq/src"
-	args2 "github.com/newrelic/nri-rabbitmq/src/args"
-	client2 "github.com/newrelic/nri-rabbitmq/src/client"
-	testutils2 "github.com/newrelic/nri-rabbitmq/src/testutils"
+	"github.com/newrelic/nri-rabbitmq/src/args"
+	"github.com/newrelic/nri-rabbitmq/src/client"
+	"github.com/newrelic/nri-rabbitmq/src/testutils"
 	"io"
 	"net/http"
 	"os"
@@ -19,15 +18,15 @@ import (
 )
 
 func Test_main(t *testing.T) {
-	mux, closer := testutils2.GetTestServer(false)
+	mux, closer := testutils.GetTestServer(false)
 	defer closer()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("content-type", "application/json")
-		if r.RequestURI == fmt.Sprintf(client2.HealthCheckEndpoint, "node1") {
+		if r.RequestURI == fmt.Sprintf(client.HealthCheckEndpoint, "node1") {
 			fmt.Fprint(w, `{"status":"ok"}`)
-		} else if r.RequestURI == client2.NodesEndpoint {
+		} else if r.RequestURI == client.NodesEndpoint {
 			fmt.Fprintf(w, `[{ "name": "node1" }]`)
-		} else if r.RequestURI == client2.OverviewEndpoint {
+		} else if r.RequestURI == client.OverviewEndpoint {
 			fmt.Fprint(w, "{}")
 		} else {
 			fmt.Fprint(w, "[]")
@@ -38,8 +37,8 @@ func Test_main(t *testing.T) {
 		"nri-rabbitmq",
 		"-node_name_override", "node1",
 		"-config_path", "",
-		"-hostname", args2.GlobalArgs.Hostname,
-		"-port", strconv.Itoa(args2.GlobalArgs.Port),
+		"-hostname", args.GlobalArgs.Hostname,
+		"-port", strconv.Itoa(args.GlobalArgs.Port),
 	}
 	origStdout := os.Stdout
 	r, w, _ := os.Pipe()
@@ -59,30 +58,30 @@ func Test_main(t *testing.T) {
 	}()
 
 	assert.NotPanics(t, func() {
-		src.main()
+		main()
 	})
 	w.Close()
 	os.Stdout = origStdout
 	out := <-outC
 
-	assert.Equal(t, fmt.Sprintf(`{"name":%q,"protocol_version":"3","integration_version":%q,"data":[{"entity":{"name":"node1","type":"ra-node","id_attributes":[{"Key":"clusterName","Value":""}]},"metrics":[{"clusterName":"","displayName":"node1","entityName":"node:node1","event_type":"RabbitmqNodeSample","node.partitionsSeen":0,"reportingEndpoint":"127.0.0.1:%d"}],"inventory":{"config/nodeName":{"value":"node1"}},"events":[]}]}%s`, src.integrationName, src.integrationVersion, args2.GlobalArgs.Port, "\n"), out)
+	assert.Equal(t, fmt.Sprintf(`{"name":%q,"protocol_version":"3","integration_version":%q,"data":[{"entity":{"name":"node1","type":"ra-node","id_attributes":[{"Key":"clusterName","Value":""}]},"metrics":[{"clusterName":"","displayName":"node1","entityName":"node:node1","event_type":"RabbitmqNodeSample","node.partitionsSeen":0,"reportingEndpoint":"127.0.0.1:%d"}],"inventory":{"config/nodeName":{"value":"node1"}},"events":[]}]}%s`, integrationName, integrationVersion, args.GlobalArgs.Port, "\n"), out)
 }
 
 func Test_getNeededData(t *testing.T) {
-	mux, closer := testutils2.GetTestServer(false)
+	mux, closer := testutils.GetTestServer(false)
 	defer closer()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("content-type", "application/json")
-		if r.RequestURI == client2.OverviewEndpoint ||
-			r.RequestURI == fmt.Sprintf(client2.AlivenessTestEndpoint, "") ||
-			r.RequestURI == fmt.Sprintf(client2.HealthCheckEndpoint, "node1") {
+		if r.RequestURI == client.OverviewEndpoint ||
+			r.RequestURI == fmt.Sprintf(client.AlivenessTestEndpoint, "") ||
+			r.RequestURI == fmt.Sprintf(client.HealthCheckEndpoint, "node1") {
 			fmt.Fprint(w, "{}")
 		} else {
 			fmt.Fprint(w, "[{}]")
 		}
 	})
 
-	rabbitData := src.getNeededData()
+	rabbitData := getNeededData()
 	assert.NotNil(t, rabbitData)
 	assert.NotNil(t, rabbitData.overview)
 	assert.Equal(t, 1, len(rabbitData.bindings))
@@ -92,6 +91,6 @@ func Test_getNeededData(t *testing.T) {
 	assert.Equal(t, 1, len(rabbitData.queues))
 	assert.Equal(t, 1, len(rabbitData.vhosts))
 
-	metricData := src.getMetricEntities(rabbitData)
+	metricData := getMetricEntities(rabbitData)
 	assert.Equal(t, 3, len(metricData))
 }
