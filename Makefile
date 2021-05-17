@@ -3,8 +3,6 @@ GO_FILES        := ./src/
 BINARY_NAME   = nri-$(INTEGRATION)
 GOFLAGS		  = -mod=readonly
 GOLANGCI_LINT = github.com/golangci/golangci-lint/cmd/golangci-lint
-GOCOV         = github.com/axw/gocov/gocov
-GOCOV_XML	  = github.com/AlekSi/gocov-xml
 
 all: build
 
@@ -20,20 +18,16 @@ clean:
 validate:
 	@printf "=== $(INTEGRATION) === [ validate ]: running golangci-lint & semgrep... "
 	@go run  $(GOFLAGS) $(GOLANGCI_LINT) run --verbose
-	@if [ -f .semgrep.yml ]; then \
-		docker run --rm -v "${PWD}:/src:ro" --workdir /src returntocorp/semgrep -c .semgrep.yml ; \
-	else \
-		docker run --rm -v "${PWD}:/src:ro" --workdir /src returntocorp/semgrep -c p/golang ; \
-	fi
+	@[ -f .semgrep.yml ] && semgrep_config=".semgrep.yml" || semgrep_config="p/golang" ; \
+	docker run --rm -v "${PWD}:/src:ro" --workdir /src returntocorp/semgrep -c "$$semgrep_config"
 
 compile:
 	@echo "=== $(INTEGRATION) === [ compile ]: Building $(BINARY_NAME)..."
 	@go build -o bin/$(BINARY_NAME) $(GO_FILES)
 
 test:
-	@echo "=== $(INTEGRATION) === [ test ]: Running unit tests..."
-	@go run $(GOFLAGS) $(GOCOV) test ./... | go run $(GOFLAGS) $(GOCOV_XML) > coverage.xml
-
+	@echo "=== $(INTEGRATION) === [ test ]: running unit tests..."
+	@go test -race ./... -count=1
 
 integration-test:
 	@echo "=== $(INTEGRATION) === [ test ]: running integration tests..."
