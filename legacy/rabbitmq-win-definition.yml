@@ -1,24 +1,24 @@
 name: com.newrelic.rabbitmq
-description: Reports status and metrics for rabbitmq service
+description: Reports status and metrics for rabbitmq service. Legacy file kept for compatibility.
 protocol_version: 2
-os: linux
+os: windows
 
 commands:
   all:
     command:
-      - ./bin/nri-rabbitmq
+      - .\bin\nri-rabbitmq.exe
     prefix: config/rabbitmq
     interval: 15
 
   inventory:
     command:
-      - ./bin/nri-rabbitmq
+      - .\bin\nri-rabbitmq.exe
       - -inventory
     prefix: config/rabbitmq
     interval: 15
   
   events:
     command:
-      - ./bin/nri-rabbitmq
+      - .\bin\nri-rabbitmq.exe
       - -events
     interval: 15
