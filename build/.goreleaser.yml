@@ -87,7 +87,7 @@ archives:
     name_template: "{{ .ProjectName }}-{{ .Arch }}.{{ .Version }}_dirty"
     files:
       - rabbitmq-config.yml.sample
-      - src: 'legacyrabbitmq-win-definition.yml'
+      - src: 'legacy/rabbitmq-win-definition.yml'
         dst: .
         strip_parent: true
     format: zip
