@@ -1,31 +1,31 @@
 integrations:
 - name: nri-rabbitmq
   env:
-    hostname: <hostname or IP of RabbitMQ host>
-    port: <management UI port>
+    HOSTNAME: <hostname or IP of RabbitMQ host>
+    PORT: <management UI port>
 
-    username: <management UI username>
-    password: <management UI password>
+    USERNAME: <management UI username>
+    PASSWORD: <management UI password>
 
-    management_path_prefix: <rabbitmq management path prefix>
+    MANAGEMENT_PATH_PREFIX: <rabbitmq management path prefix>
 
-    use_ssl: <bool>
+    USE_SSL: <bool>
 
-    ca_bundle_dir: <ca bundle directory>
-    ca_bundle_file: <ca bundle file>
+    CA_BUNDLE_DIR: <ca bundle directory>
+    CA_BUNDLE_FILE: <ca bundle file>
 
-    config_path: </path/to/config/file/rabbitmq.conf>
+    CONFIG_PATH: </path/to/config/file/rabbitmq.conf>
 
-    node_name_override: <local node name>
+    NODE_NAME_OVERRIDE: <local node name>
 
-    exchanges: <json array of exchange names to collect>
-    exchanges_regexes: <json array of regexes, matching exchange names will be collected>
+    EXCHANGES: <json array of exchange names to collect>
+     EXCHANGES_REGEXES: <json array of regexes, matching exchange names will be collected>
 
-    queues: <json array of queue names to collect>
-    queues_regexes: <json array of regexes, matching queue names will be collected>
+    QUEUES: <json array of queue names to collect>
+    QUEUES_REGEXES: <json array of regexes, matching queue names will be collected>
 
-    vhosts: <json array of vhost names to collect>
-    vhosts_regexes: <json array of regexes, entities assigned to vhosts matching a regex will be collected>
+    VHOSTS: <json array of vhost names to collect>
+    VHOSTS_REGEXES: <json array of regexes, entities assigned to vhosts matching a regex will be collected>
 
   interval: 15s
   labels:
