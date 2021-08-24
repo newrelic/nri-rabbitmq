@@ -19,7 +19,7 @@ integrations:
     NODE_NAME_OVERRIDE: <local node name>
 
     EXCHANGES: <json array of exchange names to collect>
-     EXCHANGES_REGEXES: <json array of regexes, matching exchange names will be collected>
+    EXCHANGES_REGEXES: <json array of regexes, matching exchange names will be collected>
 
     QUEUES: <json array of queue names to collect>
     QUEUES_REGEXES: <json array of regexes, matching queue names will be collected>
