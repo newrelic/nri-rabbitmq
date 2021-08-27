@@ -1,5 +1,5 @@
 name: com.newrelic.rabbitmq
-description: Reports status and metrics for rabbitmq service. Legacy file kept for compatibility.
+description: Reports status and metrics for rabbitmq service
 protocol_version: 2
 os: windows
 
