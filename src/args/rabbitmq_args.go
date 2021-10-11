@@ -2,7 +2,6 @@ package args
 
 import (
 	"encoding/json"
-	"errors"
 	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
 	"regexp"
 
@@ -32,16 +31,6 @@ type RabbitMQArguments struct {
 	ExchangesRegexes     []*regexp.Regexp
 	Vhosts               []string
 	VhostsRegexes        []*regexp.Regexp
-}
-
-// Validate checks that valid collection arguments were specified
-func (args *RabbitMQArguments) Validate() error {
-	if args.Metrics && !args.Inventory {
-		err := errors.New("when collecting metrics, you must also collect inventory")
-		log.Error("%v", err)
-		return err
-	}
-	return nil
 }
 
 // IncludeEntity returns true if the entity should be included; false otherwise

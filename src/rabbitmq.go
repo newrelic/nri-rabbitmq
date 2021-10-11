@@ -52,18 +52,16 @@ func main() {
 
 	log.SetupLogging(args.GlobalArgs.Verbose)
 
-	exitOnError(args.GlobalArgs.Validate())
-
 	rabbitData := getNeededData()
 	clusterName := rabbitData.overview.ClusterName
 
-	if args.GlobalArgs.HasMetrics() && args.GlobalArgs.HasInventory() {
+	if args.GlobalArgs.HasMetrics() { //&& args.GlobalArgs.HasInventory() {
 		metrics.CollectVhostMetrics(rabbitmqIntegration, rabbitData.vhosts, rabbitData.connections, clusterName)
 
 		metricEntities := getMetricEntities(rabbitData)
 		metrics.CollectEntityMetrics(rabbitmqIntegration, rabbitData.bindings, clusterName, metricEntities...)
 
-		inventory.PopulateClusterInventory(rabbitmqIntegration, rabbitData.overview)
+		metrics.PopulateClusterData(rabbitmqIntegration, rabbitData.overview)
 	}
 
 	if args.GlobalArgs.HasInventory() {
