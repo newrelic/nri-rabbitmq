@@ -55,7 +55,7 @@ func main() {
 	rabbitData := getNeededData()
 	clusterName := rabbitData.overview.ClusterName
 
-	if args.GlobalArgs.HasMetrics() { //&& args.GlobalArgs.HasInventory() {
+	if args.GlobalArgs.HasMetrics() {
 		metrics.CollectVhostMetrics(rabbitmqIntegration, rabbitData.vhosts, rabbitData.connections, clusterName)
 
 		metricEntities := getMetricEntities(rabbitData)
