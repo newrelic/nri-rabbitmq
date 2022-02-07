@@ -67,58 +67,6 @@ func TestSetGlobalArgs_ValidJson(t *testing.T) {
 	assert.True(t, GlobalArgs.QueuesRegexes[1].MatchString("two-queue"))
 }
 
-func TestRabbitMQArguments_Validate_BadInventory(t *testing.T) {
-	testArgs := RabbitMQArguments{}
-
-	testArgs.Metrics = true
-	testArgs.Inventory = false
-	testArgs.Events = false
-	err := testArgs.Validate()
-	assert.Error(t, err, "Collecting just Metrics (-metrics) should invalid, Inventory (-inventory) is required")
-
-	testArgs.Metrics = true
-	testArgs.Inventory = false
-	testArgs.Events = true
-	err = testArgs.Validate()
-	assert.Error(t, err, "Collecting both Metrics and Events (-metrics -events) should invalid, Inventory (-inventory) is required")
-}
-
-func TestRabbitMQArguments_Validate_Success(t *testing.T) {
-	testArgs := RabbitMQArguments{}
-	err := testArgs.Validate()
-	assert.NoError(t, err, "Collecting everything (no args) should be valid")
-
-	testArgs.Metrics = false
-	testArgs.Inventory = true
-	testArgs.Events = false
-	err = testArgs.Validate()
-	assert.NoError(t, err, "Collecting just Inventory (-inventory) should be valid")
-
-	testArgs.Metrics = false
-	testArgs.Inventory = false
-	testArgs.Events = true
-	err = testArgs.Validate()
-	assert.NoError(t, err, "Collecting just Events (-events) should be valid")
-
-	testArgs.Metrics = true
-	testArgs.Inventory = true
-	testArgs.Events = false
-	err = testArgs.Validate()
-	assert.NoError(t, err, "Collecting both Metrics and Inventory (-metrics -inventory) should be valid")
-
-	testArgs.Metrics = false
-	testArgs.Inventory = true
-	testArgs.Events = true
-	err = testArgs.Validate()
-	assert.NoError(t, err, "Collecting both Inventory and Events (-inventory -events) should be valid")
-
-	testArgs.Metrics = true
-	testArgs.Inventory = true
-	testArgs.Events = true
-	err = testArgs.Validate()
-	assert.NoError(t, err, "Collecting explicitly everything (-metrics -inventory -events) should be valid")
-}
-
 func TestRabbitMQArguments_include(t *testing.T) {
 	testRegex, _ := regexp.Compile("four-.*")
 	testArgs := RabbitMQArguments{

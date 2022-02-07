@@ -1,4 +1,4 @@
-package inventory
+package metrics
 
 import (
 	"github.com/newrelic/infra-integrations-sdk/integration"
@@ -7,8 +7,8 @@ import (
 	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
 )
 
-// PopulateClusterInventory populates the cluster entity with appropriate inventory data
-func PopulateClusterInventory(integrationData *integration.Integration, overviewData *data2.OverviewData) {
+// PopulateClusterData populates the cluster entity with appropriate data
+func PopulateClusterData(integrationData *integration.Integration, overviewData *data2.OverviewData) {
 	if overviewData == nil || overviewData.ClusterName == "" {
 		return
 	}

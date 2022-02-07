@@ -1,4 +1,4 @@
-package inventory
+package metrics
 
 import (
 	data2 "github.com/newrelic/nri-rabbitmq/src/data"
@@ -11,16 +11,16 @@ import (
 
 func TestPopulateClusterInventory(t *testing.T) {
 	i := testutils2.GetTestingIntegration(t)
-	PopulateClusterInventory(i, nil)
+	PopulateClusterData(i, nil)
 	assert.Empty(t, i.Entities)
 
 	overviewData := &data2.OverviewData{}
-	PopulateClusterInventory(i, overviewData)
+	PopulateClusterData(i, overviewData)
 	assert.Empty(t, i.Entities)
 
 	testutils2.ReadStructFromJSONFile(t, filepath.Join("testdata", "populateClusterEntity.json"), overviewData)
 
-	PopulateClusterInventory(i, overviewData)
+	PopulateClusterData(i, overviewData)
 	assert.Equal(t, 1, len(i.Entities))
 	assert.Equal(t, "my-cluster", i.Entities[0].Metadata.Name)
 	assert.Equal(t, "ra-cluster", i.Entities[0].Metadata.Namespace)
