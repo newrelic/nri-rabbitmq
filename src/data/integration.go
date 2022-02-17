@@ -37,7 +37,7 @@ func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, enti
 		return nil, nil, err
 	}
 
-	entity, err = rabbitmqIntegration.EntityReportedVia(endpoint, name, fmt.Sprintf("ra-%s", entityType), clusterNameAttribute)
+	entity, err = rabbitmqIntegration.EntityReportedVia(endpoint, fmt.Sprintf("%s:%s", endpoint, name), fmt.Sprintf("ra-%s", entityType), clusterNameAttribute)
 	return
 }
 
