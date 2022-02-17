@@ -28,7 +28,7 @@ func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, enti
 	metricNamespace = []attribute.Attribute{
 		{Key: "displayName", Value: name},
 		{Key: "entityName", Value: fmt.Sprintf("%s:%s", entityType, name)},
-		{Key: "clusterName", Value: clusterName},
+		{Key: "rabbitmqClusterName", Value: clusterName},
 	}
 
 	clusterNameAttribute := integration.IDAttribute{Key: "clusterName", Value: clusterName}
