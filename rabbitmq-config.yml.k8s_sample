@@ -19,10 +19,15 @@
           PORT: 15672
           USERNAME: <management UI username>
           PASSWORD: <management UI password>
+          # NODE_NAME_OVERRIDE allows to generate the RabbitMQ Node entity.
+          # Setting this avoids the integration to run a local command (rabbitmqctl) in order to
+          # get the node name. The node name has to match exactly with the one set in the env var RABBITMQ_NODE_NAME
+          # inside the RabbitMQ pod. For instance in bitnami charts this is defined as 
+          # RABBITMQ_NODE_NAME=rabbit@$(MY_POD_NAME).$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local
+          NODE_NAME_OVERRIDE: rabbit@${discovery.podName}.rabbitmq-headless.${discovery.namespace}.svc.cluster.local
           MANAGEMENT_PATH_PREFIX: <(Optional) rabbitmq management path prefix>
           CA_BUNDLE_DIR: <(Optional) ca bundle directory>
           CA_BUNDLE_FILE: <(Optional)ca bundle file>
-          NODE_NAME_OVERRIDE: <(Optional) local node name>
           CONFIG_PATH: <(Optional) /path/to/config/file/rabbitmq.conf>
           USE_SSL: <(Optional) bool>
           QUEUES: <(Optional) json array of queue names to collect>
