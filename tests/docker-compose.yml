@@ -6,7 +6,7 @@ services:
     container_name: rabbitmq
 
   nri-rabbitmq:
-    image: golang:1.16
+    image: golang:1.18
     container_name: nri_rabbitmq
     working_dir: /code
     volumes:
