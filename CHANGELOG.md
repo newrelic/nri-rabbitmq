@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.5.0  (2022-05-03)
+### Changed
+- Move tool deps to go.mod in tools
+- Update pipeline to Go 1.18
+## Breaking
+- Replace the attribute `clusterName` to `rabbitmqClusterName` to avoid collisions with the `clusterName` attribute reported when running in k8s. Naming was taken from [HAproxy integration fix](https://github.com/newrelic/nri-haproxy/blob/master/src/collection.go#L160) . User that have been use `clusterName` attribute will need to replace it with `rabbitmqClusterName`.
+
+- Adds the `host:port` to all entity keys in order to use the entityRewrite when running in k8s. This fixes #73 . When the new version of the integration is deployed entities will be recreated with this new name. Old entities will live for an [extra day](https://github.com/newrelic/entity-definitions/blob/main/definitions/infra-rabbitmqqueue/definition.yml#L6).
+example: 
+`entityKey`(before):`ra-queue:/aliveness-test:clustername=rabbit@rabbitmq-0.rabbitmq-headless.rabbitmq.svc.cluster.local`
+`entityKey`(fixed):`ra-queue:k8s:k8s-cluster-name:rabbitmq:pod:rabbitmq-0:rabbitmq:15672:/aliveness-test:clustername=rabbit@rabbitmq-0.rabbitmq-headless.rabbitmq.svc.cluster.local`
+
 ## 2.4.2  (2022-03-17)
 ### Added
 - `rabbitmq-log.yml.example` is now in Linux packages to help setting up log parsing.
