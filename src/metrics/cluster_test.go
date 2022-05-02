@@ -1,13 +1,25 @@
 package metrics
 
 import (
-	data2 "github.com/newrelic/nri-rabbitmq/src/data"
-	testutils2 "github.com/newrelic/nri-rabbitmq/src/testutils"
+	"fmt"
 	"path/filepath"
 	"testing"
 
+	"github.com/newrelic/nri-rabbitmq/src/args"
+	data2 "github.com/newrelic/nri-rabbitmq/src/data"
+	testutils2 "github.com/newrelic/nri-rabbitmq/src/testutils"
+
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMain(m *testing.M) {
+	// TODO remove global args.
+	// This test are heavily based on global args to create entities.
+	args.GlobalArgs = args.RabbitMQArguments{
+		Hostname: "foo",
+		Port:     8000,
+	}
+}
 
 func TestPopulateClusterInventory(t *testing.T) {
 	i := testutils2.GetTestingIntegration(t)
@@ -22,8 +34,10 @@ func TestPopulateClusterInventory(t *testing.T) {
 
 	PopulateClusterData(i, overviewData)
 	assert.Equal(t, 1, len(i.Entities))
-	assert.Equal(t, "my-cluster", i.Entities[0].Metadata.Name)
-	assert.Equal(t, "ra-cluster", i.Entities[0].Metadata.Namespace)
+
+	entityKeyPrefix := fmt.Sprintf("%s:%d:", args.GlobalArgs.Hostname, args.GlobalArgs.Port)
+	assert.Equal(t, entityKeyPrefix+"my-cluster", i.Entities[0].Metadata.Name)
+	assert.Equal(t, entityKeyPrefix+"ra-cluster", i.Entities[0].Metadata.Namespace)
 	assert.Equal(t, 2, len(i.Entities[0].Inventory.Items()))
 
 	item, ok := i.Entities[0].Inventory.Item("version/rabbitmq")

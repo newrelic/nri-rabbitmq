@@ -1,13 +1,20 @@
 package main
 
 import (
+	"testing"
+
 	"github.com/newrelic/nri-rabbitmq/src/args"
 	"github.com/newrelic/nri-rabbitmq/src/data"
 	"github.com/newrelic/nri-rabbitmq/src/testutils"
-	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMain(m *testing.M) {
+	// TODO remove global args.
+	// This test are heavily based on global args to filter entities on creation.
+	args.GlobalArgs.Vhosts = []string{"vhost1"}
+}
 
 func Test_alivenessTest_Pass(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
@@ -29,7 +36,7 @@ func Test_alivenessTest_FailCreateEntity(t *testing.T) {
 
 	vhostTests := []*data.VhostTest{
 		{
-			Vhost: &data.VhostData{},
+			Vhost: &data.VhostData{Name: "bar"},
 			Test:  &data.TestData{},
 		},
 	}
@@ -87,19 +94,6 @@ func Test_healthcheckTest_Pass(t *testing.T) {
 			Test: &data.TestData{
 				Status: "ok",
 			},
-		},
-	}
-	healthcheckTest(i, nodeTests, "testClusterName")
-	assert.Empty(t, i.Entities)
-}
-
-func Test_healthcheckTest_FailCreateEntity(t *testing.T) {
-	i := testutils.GetTestingIntegration(t)
-
-	nodeTests := []*data.NodeTest{
-		{
-			Node: &data.NodeData{},
-			Test: &data.TestData{},
 		},
 	}
 	healthcheckTest(i, nodeTests, "testClusterName")

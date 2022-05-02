@@ -3,9 +3,10 @@ package data
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	args2 "github.com/newrelic/nri-rabbitmq/src/args"
 	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
-	"strings"
 
 	"github.com/newrelic/infra-integrations-sdk/data/attribute"
 
@@ -28,16 +29,17 @@ func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, enti
 	metricNamespace = []attribute.Attribute{
 		{Key: "displayName", Value: name},
 		{Key: "entityName", Value: fmt.Sprintf("%s:%s", entityType, name)},
-		{Key: "clusterName", Value: clusterName},
+		{Key: "rabbitmqClusterName", Value: clusterName},
 	}
 
 	clusterNameAttribute := integration.IDAttribute{Key: "clusterName", Value: clusterName}
 	endpoint := fmt.Sprintf("%s:%d", args2.GlobalArgs.Hostname, args2.GlobalArgs.Port)
+
+	entity, err = rabbitmqIntegration.EntityReportedVia(endpoint, fmt.Sprintf("%s:%s", endpoint, name), fmt.Sprintf("ra-%s", entityType), clusterNameAttribute)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	entity, err = rabbitmqIntegration.EntityReportedVia(endpoint, name, fmt.Sprintf("ra-%s", entityType), clusterNameAttribute)
 	return
 }
 

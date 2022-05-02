@@ -1,26 +1,37 @@
 package data
 
 import (
+	"fmt"
+	"testing"
+
 	args2 "github.com/newrelic/nri-rabbitmq/src/args"
 	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
 	testutils2 "github.com/newrelic/nri-rabbitmq/src/testutils"
-	"testing"
 
 	"github.com/newrelic/infra-integrations-sdk/data/attribute"
 
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMain(m *testing.M) {
+	// TODO remove global args.
+	// This test are heavily based on global args to create entities.
+	args2.GlobalArgs = args2.RabbitMQArguments{
+		Hostname: "foo",
+		Port:     8000,
+	}
+}
+
 func TestCreateEntity(t *testing.T) {
-	args2.GlobalArgs = args2.RabbitMQArguments{}
 	i := testutils2.GetTestingIntegration(t)
 
 	expectedEntityName := "/firstEntity"
+	expectedEntityKey := fmt.Sprintf("%s:%d:%s", args2.GlobalArgs.Hostname, args2.GlobalArgs.Port, expectedEntityName)
 	expectedMetricEntityName := "queue:" + expectedEntityName
 	e1, metricNS, err := CreateEntity(i, "firstEntity", consts2.QueueType, "/", "testClusterName")
 	assert.NoError(t, err)
 	assert.NotNil(t, e1)
-	assert.Equal(t, expectedEntityName, e1.Metadata.Name)
+	assert.Equal(t, expectedEntityKey, e1.Metadata.Name)
 	assert.Equal(t, "ra-queue", e1.Metadata.Namespace)
 	assert.Equal(t, 3, len(metricNS))
 	assert.Contains(t, metricNS, attribute.Attribute{
@@ -31,12 +42,13 @@ func TestCreateEntity(t *testing.T) {
 	})
 
 	expectedEntityName = "/vhost2/" + consts2.DefaultExchangeName
+	expectedEntityKey = fmt.Sprintf("%s:%d:%s", args2.GlobalArgs.Hostname, args2.GlobalArgs.Port, expectedEntityName)
 	expectedMetricEntityName = "exchange:" + expectedEntityName
 	e2, metricNS, err := CreateEntity(i, "", consts2.ExchangeType, "/vhost2", "testClusterName")
 	assert.NoError(t, err)
 	assert.NotNil(t, e2)
 	assert.NotNil(t, metricNS)
-	assert.Equal(t, expectedEntityName, e2.Metadata.Name)
+	assert.Equal(t, expectedEntityKey, e2.Metadata.Name)
 	assert.Equal(t, "ra-exchange", e2.Metadata.Namespace)
 	assert.Equal(t, 3, len(metricNS))
 	assert.Contains(t, metricNS, attribute.Attribute{
