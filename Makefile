@@ -8,8 +8,8 @@ all: build
 
 build: clean validate test compile
 
-build-container:
-	docker build -t nri-rabbitmq .
+build-dev-container:
+	docker build -t nri-rabbitmq -f Dockerfile.dev .
 
 clean:
 	@echo "=== $(INTEGRATION) === [ clean ]: Removing binaries and coverage file..."

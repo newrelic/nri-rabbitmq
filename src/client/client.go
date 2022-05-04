@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	args2 "github.com/newrelic/nri-rabbitmq/src/args"
 	"net/http"
 	"os"
 	"strings"
@@ -12,6 +11,8 @@ import (
 
 	nrHttp "github.com/newrelic/infra-integrations-sdk/http"
 	"github.com/newrelic/infra-integrations-sdk/log"
+
+	args2 "github.com/newrelic/nri-rabbitmq/src/args"
 )
 
 const (
@@ -33,6 +34,8 @@ const (
 	AlivenessTestEndpoint = "/api/aliveness-test/%s"
 	// HealthCheckEndpoint path, this is formatted with the node name
 	HealthCheckEndpoint = "/api/healthchecks/node/%s"
+	// Default client timeout
+	DefaultTimout = time.Second * 30
 )
 
 var defaultClient *http.Client
@@ -90,11 +93,22 @@ func collectEndpoint(req *http.Request, jsonResult interface{}) error {
 
 func ensureClient() {
 	if defaultClient == nil {
-		client, err := nrHttp.New(args2.GlobalArgs.CABundleFile, args2.GlobalArgs.CABundleDir, time.Second*30)
+		clientOptions := []nrHttp.ClientOption{
+			nrHttp.WithTimeout(DefaultTimout),
+		}
+		if args2.GlobalArgs.CABundleDir != "" {
+			clientOptions = append(clientOptions, nrHttp.WithCABundleDir(args2.GlobalArgs.CABundleDir))
+		}
+		if args2.GlobalArgs.CABundleFile != "" {
+			clientOptions = append(clientOptions, nrHttp.WithCABundleFile(args2.GlobalArgs.CABundleFile))
+		}
+
+		client, err := nrHttp.New(clientOptions...)
 		if err != nil {
 			log.Error("Unable to create HTTP Client: %v", err)
 			os.Exit(2)
 		}
+
 		defaultClient = client
 	}
 }
