@@ -1,9 +1,10 @@
 package args
 
 import (
-	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
 	"regexp"
 	"testing"
+
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -96,11 +97,11 @@ func TestRabbitMQArguments_IncludeEntity(t *testing.T) {
 		Queues:    []string{"two"},
 		Vhosts:    []string{"three"},
 	}
-	assert.True(t, testArgs.IncludeEntity("one", consts2.ExchangeType, "three"))
-	assert.True(t, testArgs.IncludeEntity("two", consts2.QueueType, "three"))
-	assert.True(t, testArgs.IncludeEntity("five", consts2.NodeType, "three"))
-	assert.False(t, testArgs.IncludeEntity("one", consts2.ExchangeType, ""))
+	assert.True(t, testArgs.IncludeEntity("one", consts.ExchangeType, "three"))
+	assert.True(t, testArgs.IncludeEntity("two", consts.QueueType, "three"))
+	assert.True(t, testArgs.IncludeEntity("five", consts.NodeType, "three"))
+	assert.False(t, testArgs.IncludeEntity("one", consts.ExchangeType, ""))
 
 	testArgs = RabbitMQArguments{}
-	assert.True(t, testArgs.IncludeEntity("any", consts2.VhostType, "any"))
+	assert.True(t, testArgs.IncludeEntity("any", consts.VhostType, "any"))
 }

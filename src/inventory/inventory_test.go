@@ -3,17 +3,17 @@ package inventory
 import (
 	"errors"
 	"fmt"
-	args2 "github.com/newrelic/nri-rabbitmq/src/args"
-	data2 "github.com/newrelic/nri-rabbitmq/src/data"
-	testutils2 "github.com/newrelic/nri-rabbitmq/src/testutils"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
 
-	"github.com/newrelic/infra-integrations-sdk/log"
+	"github.com/newrelic/nri-rabbitmq/src/args"
+	"github.com/newrelic/nri-rabbitmq/src/data"
+	"github.com/newrelic/nri-rabbitmq/src/testutils"
 
+	"github.com/newrelic/infra-integrations-sdk/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -31,10 +31,10 @@ const (
 var testConfigPath = filepath.Join("testdata", "sample.conf")
 
 func TestCollectInventory(t *testing.T) {
-	i := testutils2.GetTestingIntegration(t)
-	args2.GlobalArgs = args2.RabbitMQArguments{}
+	i := testutils.GetTestingIntegration(t)
+	args.GlobalArgs = args.RabbitMQArguments{}
 
-	var nodesData []*data2.NodeData
+	var nodesData []*data.NodeData
 	CollectInventory(i, nodesData, "testClusterName")
 	assert.Empty(t, i.Entities, "CollectInventory shouldn't create anything with empty NodeData")
 
@@ -46,7 +46,7 @@ func TestCollectInventory(t *testing.T) {
 		os.Unsetenv("GO_WANT_HELPER_PROCESS")
 	}()
 
-	nodesData = []*data2.NodeData{
+	nodesData = []*data.NodeData{
 		{
 			Name: "node2",
 		},
@@ -59,7 +59,7 @@ func TestCollectInventory(t *testing.T) {
 	CollectInventory(i, nodesData, "testClustreName")
 	assert.Empty(t, i.Entities, "CollectInventory shouldn't create anything with mismatched nodeData")
 
-	nodesData = []*data2.NodeData{
+	nodesData = []*data.NodeData{
 		{
 			Name:        expectedNodeName,
 			ConfigFiles: []string{testConfigPath},
@@ -77,7 +77,7 @@ func TestCollectInventory(t *testing.T) {
 	actual, _ := i.Entities[0].Inventory.MarshalJSON()
 
 	golden := testConfigPath + ".golden"
-	if *testutils2.Update {
+	if *testutils.Update {
 		t.Log("Writing .golden file")
 		if err := ioutil.WriteFile(golden, actual, 0o644); err != nil {
 			log.Error(err.Error())
@@ -89,12 +89,12 @@ func TestCollectInventory(t *testing.T) {
 }
 
 func TestCollectInventory_Errors(t *testing.T) {
-	args2.GlobalArgs = args2.RabbitMQArguments{
+	args.GlobalArgs = args.RabbitMQArguments{
 		NodeNameOverride: "node1",
 	}
-	i := testutils2.GetTestingIntegration(t)
+	i := testutils.GetTestingIntegration(t)
 
-	nodesData := []*data2.NodeData{
+	nodesData := []*data.NodeData{
 		{Name: "node2"},
 	}
 
@@ -102,14 +102,14 @@ func TestCollectInventory_Errors(t *testing.T) {
 }
 
 func Test_getLocalNodeName(t *testing.T) {
-	args2.GlobalArgs = args2.RabbitMQArguments{
+	args.GlobalArgs = args.RabbitMQArguments{
 		NodeNameOverride: expectedNodeName,
 	}
 
 	nodeName, err := getLocalNodeName()
 	assert.NoError(t, err)
 	assert.Equal(t, expectedNodeName, nodeName)
-	args2.GlobalArgs.NodeNameOverride = ""
+	args.GlobalArgs.NodeNameOverride = ""
 
 	prevExec := execCommand
 	execCommand = fakeExecCommand
@@ -138,7 +138,7 @@ func Test_findNodeData(t *testing.T) {
 	_, err := findNodeData("node1", nil)
 	assert.EqualError(t, err, "node name [node1] not found in RabbitMQ")
 
-	nodeData := []*data2.NodeData{
+	nodeData := []*data.NodeData{
 		{Name: "node1"},
 		{Name: "node2"},
 	}
@@ -153,7 +153,7 @@ func Test_findNodeData(t *testing.T) {
 }
 
 func Test_getConfigData_ConfigNotExist(t *testing.T) {
-	args2.GlobalArgs = args2.RabbitMQArguments{
+	args.GlobalArgs = args.RabbitMQArguments{
 		ConfigPath: filepath.Join("testdata", "file-not_found.config"),
 	}
 	config := getConfigData(nil)
@@ -161,7 +161,7 @@ func Test_getConfigData_ConfigNotExist(t *testing.T) {
 }
 
 func Test_getConfigData_ConfigOpenError(t *testing.T) {
-	args2.GlobalArgs = args2.RabbitMQArguments{
+	args.GlobalArgs = args.RabbitMQArguments{
 		ConfigPath: filepath.Join("testdata"),
 	}
 	config := getConfigData(nil)
@@ -178,30 +178,30 @@ func Test_getConfigData_ConfigOpenError(t *testing.T) {
 }
 
 func Test_getConfigData(t *testing.T) {
-	args2.GlobalArgs = args2.RabbitMQArguments{}
+	args.GlobalArgs = args.RabbitMQArguments{}
 
 	config := getConfigData(nil)
 	assert.Empty(t, config)
 
-	args2.GlobalArgs.ConfigPath = testConfigPath
+	args.GlobalArgs.ConfigPath = testConfigPath
 	config = getConfigData(nil)
 	require.NotEmpty(t, config)
 }
 
 func Test_getConfigPath(t *testing.T) {
-	args2.GlobalArgs = args2.RabbitMQArguments{
+	args.GlobalArgs = args.RabbitMQArguments{
 		ConfigPath: testConfigPath,
 	}
 
 	actual := getConfigPath(nil)
 	assert.Equal(t, testConfigPath, actual)
-	args2.GlobalArgs.ConfigPath = ""
+	args.GlobalArgs.ConfigPath = ""
 
 	actual = getConfigPath(nil)
 	assert.Empty(t, actual)
 
-	nodeData := new(data2.NodeData)
-	testutils2.ReadStructFromJSONString(t, `{
+	nodeData := new(data.NodeData)
+	testutils.ReadStructFromJSONString(t, `{
 		"config_files": [
 			"/etc/rabbitmq/rabbitmq.config",
 			"/etc/rabbitmq/advanced.config"
@@ -210,7 +210,7 @@ func Test_getConfigPath(t *testing.T) {
 	actual = getConfigPath(nodeData)
 	assert.Empty(t, actual)
 
-	testutils2.ReadStructFromJSONString(t, `{
+	testutils.ReadStructFromJSONString(t, `{
 		"config_files": [
 			"/etc/rabbitmq/rabbitmq.conf",
 			"/etc/rabbitmq/advanced.config"

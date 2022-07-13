@@ -2,10 +2,10 @@ package data
 
 import (
 	"encoding/json"
-	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
+
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 
 	"github.com/newrelic/infra-integrations-sdk/data/attribute"
-
 	"github.com/newrelic/infra-integrations-sdk/integration"
 )
 
@@ -30,12 +30,12 @@ type NodeData struct {
 
 // GetEntity creates an integration.Entity for this NodeData
 func (n *NodeData) GetEntity(integration *integration.Integration, clusterName string) (*integration.Entity, []attribute.Attribute, error) {
-	return CreateEntity(integration, n.Name, consts2.NodeType, "", clusterName)
+	return CreateEntity(integration, n.Name, consts.NodeType, "", clusterName)
 }
 
 // EntityType returns the type of this entity
 func (n *NodeData) EntityType() string {
-	return consts2.NodeType
+	return consts.NodeType
 }
 
 // EntityName returns the main name of this entity

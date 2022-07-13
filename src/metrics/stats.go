@@ -1,8 +1,8 @@
 package metrics
 
 import (
-	data2 "github.com/newrelic/nri-rabbitmq/src/data"
-	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
+	"github.com/newrelic/nri-rabbitmq/src/data"
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 )
 
 // connKey is used to uniquely identify a connection by Vhost and State
@@ -11,7 +11,7 @@ type connKey struct {
 }
 
 // collectConnectionStats returns a map of vhost -> connection totals by status and an overall status
-func collectConnectionStats(connectionsData []*data2.ConnectionData) (stats map[connKey]int) {
+func collectConnectionStats(connectionsData []*data.ConnectionData) (stats map[connKey]int) {
 	stats = map[connKey]int{}
 
 	for _, connection := range connectionsData {
@@ -27,16 +27,16 @@ func collectConnectionStats(connectionsData []*data2.ConnectionData) (stats map[
 }
 
 // CollectBindingStats returns a map of BindingKey{vhost,source,dest} -> BindingStats
-func collectBindingStats(bindingsData []*data2.BindingData) (stats data2.BindingStats) {
-	stats = make(data2.BindingStats)
+func collectBindingStats(bindingsData []*data.BindingData) (stats data.BindingStats) {
+	stats = make(data.BindingStats)
 
 	for _, binding := range bindingsData {
-		srcKey := data2.BindingKey{
+		srcKey := data.BindingKey{
 			Vhost:      binding.Vhost,
 			EntityName: binding.Source,
-			EntityType: consts2.ExchangeType,
+			EntityType: consts.ExchangeType,
 		}
-		dstKey := data2.BindingKey{
+		dstKey := data.BindingKey{
 			Vhost:      srcKey.Vhost,
 			EntityName: binding.Destination,
 			EntityType: binding.DestinationType,
@@ -44,17 +44,17 @@ func collectBindingStats(bindingsData []*data2.BindingData) (stats data2.Binding
 		if stat := stats[srcKey]; stat != nil {
 			stat.Destination = append(stat.Destination, &dstKey)
 		} else {
-			stats[srcKey] = &data2.Binding{
-				Destination: []*data2.BindingKey{&dstKey},
-				Source:      []*data2.BindingKey{},
+			stats[srcKey] = &data.Binding{
+				Destination: []*data.BindingKey{&dstKey},
+				Source:      []*data.BindingKey{},
 			}
 		}
 		if stat := stats[dstKey]; stat != nil {
 			stat.Source = append(stat.Source, &srcKey)
 		} else {
-			stats[dstKey] = &data2.Binding{
-				Destination: []*data2.BindingKey{},
-				Source:      []*data2.BindingKey{&srcKey},
+			stats[dstKey] = &data.Binding{
+				Destination: []*data.BindingKey{},
+				Source:      []*data.BindingKey{&srcKey},
 			}
 		}
 	}

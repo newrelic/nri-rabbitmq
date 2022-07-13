@@ -2,8 +2,9 @@ package args
 
 import (
 	"encoding/json"
-	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
 	"regexp"
+
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 
 	sdkArgs "github.com/newrelic/infra-integrations-sdk/args"
 	"github.com/newrelic/infra-integrations-sdk/log"
@@ -35,7 +36,7 @@ type RabbitMQArguments struct {
 
 // IncludeEntity returns true if the entity should be included; false otherwise
 func (args *RabbitMQArguments) IncludeEntity(entityName string, entityType string, vhostName string) bool {
-	if entityType == consts2.NodeType {
+	if entityType == consts.NodeType {
 		return true
 	}
 
@@ -43,9 +44,9 @@ func (args *RabbitMQArguments) IncludeEntity(entityName string, entityType strin
 		return false
 	}
 
-	if entityType == consts2.QueueType {
+	if entityType == consts.QueueType {
 		return args.includeQueue(entityName)
-	} else if entityType == consts2.ExchangeType {
+	} else if entityType == consts.ExchangeType {
 		return args.includeExchange(entityName)
 	} else {
 		return true

@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package tests
@@ -5,12 +6,13 @@ package tests
 import (
 	"flag"
 	"fmt"
-	"github.com/newrelic/infra-integrations-sdk/log"
-	"github.com/streadway/amqp"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/newrelic/infra-integrations-sdk/log"
+	"github.com/streadway/amqp"
+	"github.com/stretchr/testify/assert"
 )
 
 const (

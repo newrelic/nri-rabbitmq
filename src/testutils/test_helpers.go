@@ -3,13 +3,14 @@ package testutils
 import (
 	"encoding/json"
 	"flag"
-	args2 "github.com/newrelic/nri-rabbitmq/src/args"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strconv"
 	"testing"
+
+	"github.com/newrelic/nri-rabbitmq/src/args"
 
 	"github.com/newrelic/infra-integrations-sdk/integration"
 	"github.com/stretchr/testify/assert"
@@ -61,15 +62,15 @@ func GetTestServer(tls bool) (mux *http.ServeMux, teardown func()) {
 	mux = http.NewServeMux()
 	var server *httptest.Server
 	if tls {
-		args2.GlobalArgs.UseSSL = true
+		args.GlobalArgs.UseSSL = true
 		server = httptest.NewTLSServer(mux)
 	} else {
-		args2.GlobalArgs.UseSSL = false
+		args.GlobalArgs.UseSSL = false
 		server = httptest.NewServer(mux)
 	}
 	url, _ := url.Parse(server.URL)
 
 	port, _ := strconv.Atoi(url.Port())
-	args2.GlobalArgs.Hostname, args2.GlobalArgs.Port = url.Hostname(), port
+	args.GlobalArgs.Hostname, args.GlobalArgs.Port = url.Hostname(), port
 	return mux, server.Close
 }

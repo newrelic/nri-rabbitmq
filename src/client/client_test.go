@@ -2,22 +2,23 @@ package client
 
 import (
 	"fmt"
-	args2 "github.com/newrelic/nri-rabbitmq/src/args"
-	data2 "github.com/newrelic/nri-rabbitmq/src/data"
-	testutils2 "github.com/newrelic/nri-rabbitmq/src/testutils"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
 
+	"github.com/newrelic/nri-rabbitmq/src/args"
+	"github.com/newrelic/nri-rabbitmq/src/data"
+	"github.com/newrelic/nri-rabbitmq/src/testutils"
+
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCollectEndpoint(t *testing.T) {
 	defaultClient = nil
-	args2.GlobalArgs = args2.RabbitMQArguments{}
-	mux, teardown := testutils2.GetTestServer(false)
+	args.GlobalArgs = args.RabbitMQArguments{}
+	mux, teardown := testutils.GetTestServer(false)
 	defer teardown()
 	mux.HandleFunc(ConnectionsEndpoint, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("content-type", "application/json")
@@ -47,14 +48,14 @@ func TestCollectEndpoint(t *testing.T) {
 
 	err = CollectEndpoint(ConnectionsEndpoint, nil)
 	assert.Error(t, err)
-	var actualConnections []data2.ConnectionData
+	var actualConnections []data.ConnectionData
 
 	err = CollectEndpoint(ConnectionsEndpoint, &actualConnections)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(actualConnections), "Connection length should be 1")
 	assert.Equal(t, "test-vhost", actualConnections[0].Vhost, "Vhost is different")
 	assert.Equal(t, "running", actualConnections[0].State, "State is different")
-	var actualQueues []data2.QueueData
+	var actualQueues []data.QueueData
 	err = CollectEndpoint(QueuesEndpoint, &actualQueues)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(actualQueues))
@@ -68,8 +69,8 @@ func TestCollectEndpoint(t *testing.T) {
 
 func TestCollectEndpointOldRabbitMQVersion(t *testing.T) {
 	defaultClient = nil
-	args2.GlobalArgs = args2.RabbitMQArguments{}
-	mux, teardown := testutils2.GetTestServer(false)
+	args.GlobalArgs = args.RabbitMQArguments{}
+	mux, teardown := testutils.GetTestServer(false)
 	defer teardown()
 
 	mux.HandleFunc(QueuesEndpoint, func(w http.ResponseWriter, r *http.Request) {
@@ -86,7 +87,7 @@ func TestCollectEndpointOldRabbitMQVersion(t *testing.T) {
 			}
 		]`)
 	})
-	var actualQueues []data2.QueueData
+	var actualQueues []data.QueueData
 	err := CollectEndpoint(QueuesEndpoint, &actualQueues)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(actualQueues))
@@ -100,8 +101,8 @@ func TestCollectEndpointOldRabbitMQVersion(t *testing.T) {
 
 func TestCollectEndpoint_Errors(t *testing.T) {
 	defaultClient = nil
-	args2.GlobalArgs = args2.RabbitMQArguments{}
-	mux, teardown := testutils2.GetTestServer(false)
+	args.GlobalArgs = args.RabbitMQArguments{}
+	mux, teardown := testutils.GetTestServer(false)
 	defer teardown()
 	mux.HandleFunc(ConnectionsEndpoint, func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(404)
@@ -111,7 +112,7 @@ func TestCollectEndpoint_Errors(t *testing.T) {
 	assert.Error(t, err)
 
 	defaultClient = nil
-	args2.GlobalArgs.Hostname = "[" + args2.GlobalArgs.Hostname
+	args.GlobalArgs.Hostname = "[" + args.GlobalArgs.Hostname
 
 	err = CollectEndpoint("/missing", &struct{}{})
 	assert.Error(t, err)
@@ -119,14 +120,14 @@ func TestCollectEndpoint_Errors(t *testing.T) {
 
 func Test_ensureClient_CannotCreateClient(t *testing.T) {
 	defaultClient = nil
-	args2.GlobalArgs = args2.RabbitMQArguments{}
+	args.GlobalArgs = args.RabbitMQArguments{}
 
 	if os.Getenv("INVALID_CLIENT") == "1" {
 		// If this test was called to execute the invalid client test, then call collectEndpoint
 		// This is only called in this fashion below
-		args2.GlobalArgs.CABundleFile = filepath.Join("not-found")
+		args.GlobalArgs.CABundleFile = filepath.Join("not-found")
 		defer func() {
-			args2.GlobalArgs.CABundleDir = ""
+			args.GlobalArgs.CABundleDir = ""
 		}()
 
 		ensureClient()
@@ -152,9 +153,9 @@ func Test_ensureClient_CannotCreateClient(t *testing.T) {
 
 func Test_collectEndpoint_Errors(t *testing.T) {
 	defaultClient = nil
-	args2.GlobalArgs = args2.RabbitMQArguments{}
+	args.GlobalArgs = args.RabbitMQArguments{}
 
-	mux, close := testutils2.GetTestServer(false)
+	mux, close := testutils.GetTestServer(false)
 	defer close()
 	mux.HandleFunc(ConnectionsEndpoint, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("content-type", "application/json")
@@ -185,17 +186,17 @@ func Test_collectEndpoint_Errors(t *testing.T) {
 }
 
 func Test_createRequest(t *testing.T) {
-	args2.GlobalArgs = args2.RabbitMQArguments{}
-	args2.GlobalArgs.UseSSL = true
-	args2.GlobalArgs.Hostname = "test-hostname"
-	args2.GlobalArgs.Port = 3000
-	args2.GlobalArgs.ManagementPathPrefix = "/test-management-prefix"
+	args.GlobalArgs = args.RabbitMQArguments{}
+	args.GlobalArgs.UseSSL = true
+	args.GlobalArgs.Hostname = "test-hostname"
+	args.GlobalArgs.Port = 3000
+	args.GlobalArgs.ManagementPathPrefix = "/test-management-prefix"
 	endpoint := "/test-endpoint"
 	r, err := createRequest(endpoint)
 	assert.NoError(t, err)
 
 	actualURL := r.URL.String()
-	expectedURL := fmt.Sprintf("https://%v:%v%v%v", args2.GlobalArgs.Hostname, args2.GlobalArgs.Port, args2.GlobalArgs.ManagementPathPrefix, endpoint)
+	expectedURL := fmt.Sprintf("https://%v:%v%v%v", args.GlobalArgs.Hostname, args.GlobalArgs.Port, args.GlobalArgs.ManagementPathPrefix, endpoint)
 	assert.Equal(t, expectedURL, actualURL, "expect url to use https")
 	if r.Method != http.MethodGet {
 		t.Error("Expected GET method, got POST method.")
@@ -203,8 +204,8 @@ func Test_createRequest(t *testing.T) {
 }
 
 func Test_createRequest_Error(t *testing.T) {
-	args2.GlobalArgs = args2.RabbitMQArguments{}
-	args2.GlobalArgs.Hostname = "[test-hostname"
+	args.GlobalArgs = args.RabbitMQArguments{}
+	args.GlobalArgs.Hostname = "[test-hostname"
 	endpoint := "/test-endpoint"
 	_, err := createRequest(endpoint)
 	assert.Error(t, err)

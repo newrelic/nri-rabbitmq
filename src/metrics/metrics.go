@@ -2,9 +2,10 @@ package metrics
 
 import (
 	"fmt"
-	data2 "github.com/newrelic/nri-rabbitmq/src/data"
-	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
 	"strings"
+
+	"github.com/newrelic/nri-rabbitmq/src/data"
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 
 	"github.com/newrelic/infra-integrations-sdk/data/metric"
 	"github.com/newrelic/infra-integrations-sdk/integration"
@@ -29,7 +30,7 @@ var vhostMetrics = []struct {
 }
 
 // CollectEntityMetrics ...
-func CollectEntityMetrics(rabbitmqIntegration *integration.Integration, bindings []*data2.BindingData, clusterName string, dataItems ...data2.EntityData) {
+func CollectEntityMetrics(rabbitmqIntegration *integration.Integration, bindings []*data.BindingData, clusterName string, dataItems ...data.EntityData) {
 	bindingStats := collectBindingStats(bindings)
 	for _, dataItem := range dataItems {
 		if entity, metricNamespace, err := dataItem.GetEntity(rabbitmqIntegration, clusterName); err != nil {
@@ -38,11 +39,11 @@ func CollectEntityMetrics(rabbitmqIntegration *integration.Integration, bindings
 			metricSet := entity.NewMetricSet(getSampleName(dataItem.EntityType()), metricNamespace...)
 			warnIfError(metricSet.MarshalMetrics(dataItem), "Error collecting metrics for [%s:%s]", dataItem.EntityType(), dataItem.EntityName())
 
-			if queue, ok := dataItem.(*data2.QueueData); ok {
-				populateBindingMetric(queue.Name, queue.Vhost, consts2.QueueType, metricSet, bindingStats)
+			if queue, ok := dataItem.(*data.QueueData); ok {
+				populateBindingMetric(queue.Name, queue.Vhost, consts.QueueType, metricSet, bindingStats)
 				queue.CollectInventory(entity, bindingStats)
-			} else if exchange, ok := dataItem.(*data2.ExchangeData); ok {
-				populateBindingMetric(exchange.Name, exchange.Vhost, consts2.ExchangeType, metricSet, bindingStats)
+			} else if exchange, ok := dataItem.(*data.ExchangeData); ok {
+				populateBindingMetric(exchange.Name, exchange.Vhost, consts.ExchangeType, metricSet, bindingStats)
 				exchange.CollectInventory(entity, bindingStats)
 			}
 		}
@@ -50,13 +51,13 @@ func CollectEntityMetrics(rabbitmqIntegration *integration.Integration, bindings
 }
 
 // CollectVhostMetrics collects the metrics for VHost entities
-func CollectVhostMetrics(rabbitmqIntegration *integration.Integration, vhosts []*data2.VhostData, connections []*data2.ConnectionData, clusterName string) {
+func CollectVhostMetrics(rabbitmqIntegration *integration.Integration, vhosts []*data.VhostData, connections []*data.ConnectionData, clusterName string) {
 	connStats := collectConnectionStats(connections)
 	for _, vhost := range vhosts {
-		if entity, metricNamespace, err := data2.CreateEntity(rabbitmqIntegration, vhost.Name, consts2.VhostType, vhost.Name, clusterName); err != nil {
+		if entity, metricNamespace, err := data.CreateEntity(rabbitmqIntegration, vhost.Name, consts.VhostType, vhost.Name, clusterName); err != nil {
 			log.Error("Could not create vhost entity [%s]: %v", vhost.Name, err)
 		} else if entity != nil {
-			metricSet := entity.NewMetricSet(getSampleName(consts2.VhostType), metricNamespace...)
+			metricSet := entity.NewMetricSet(getSampleName(consts.VhostType), metricNamespace...)
 			for _, connStatus := range vhostMetrics {
 				connKey := connKey{vhost.Name, connStatus.state}
 				setMetric(metricSet, connStatus.metricName, connStats[connKey], connStatus.sourceType)
@@ -82,10 +83,10 @@ func setMetric(metricSet *metric.Set, metricName string, metricValue interface{}
 	}
 }
 
-func populateBindingMetric(entityName, vhost, entityType string, metricSet *metric.Set, bindingsStats data2.BindingStats) {
+func populateBindingMetric(entityName, vhost, entityType string, metricSet *metric.Set, bindingsStats data.BindingStats) {
 	count := 0
 	if bindingsStats != nil {
-		key := data2.BindingKey{Vhost: vhost, EntityName: entityName, EntityType: entityType}
+		key := data.BindingKey{Vhost: vhost, EntityName: entityName, EntityType: entityType}
 		if stat := bindingsStats[key]; stat != nil {
 			count = len(stat.Destination) + len(stat.Source)
 		}
