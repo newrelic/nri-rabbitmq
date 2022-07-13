@@ -2,9 +2,11 @@ package metrics
 
 import (
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 
+	"github.com/newrelic/nri-rabbitmq/src/args"
 	"github.com/newrelic/nri-rabbitmq/src/data"
 	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 	"github.com/newrelic/nri-rabbitmq/src/testutils"
@@ -14,6 +16,17 @@ import (
 	"github.com/newrelic/infra-integrations-sdk/persist"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMain(m *testing.M) {
+	// TODO remove global args.
+	// This test are heavily based on global args to create entities.
+	args.GlobalArgs = args.RabbitMQArguments{
+		Hostname: "foo",
+		Port:     8000,
+	}
+
+	os.Exit(m.Run())
+}
 
 func TestCollectEntityMetrics(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)

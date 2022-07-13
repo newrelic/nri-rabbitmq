@@ -317,28 +317,6 @@
             }
           },
           "events": []
-        },
-        {
-          "entity": {
-            "name": "rabbit@2abbf237037c",
-            "type": "ra-cluster",
-            "id_attributes": [
-              {
-                "Key": "clusterName",
-                "Value": "rabbit@2abbf237037c"
-              }
-            ]
-          },
-          "metrics": [],
-          "inventory": {
-            "version/management": {
-              "value": "3.8.16"
-            },
-            "version/rabbitmq": {
-              "value": "3.8.16"
-            }
-          },
-          "events": []
         }
       ]
     }
