@@ -1,1 +1,1 @@
-{"clusterName":"testClusterName","displayName":"test-vhost/test-name","entityName":"queue:test-vhost/test-name","event_type":"RabbitmqQueueSample","queue.bindings":2,"queue.messagesReadyDeliveryClients":243,"queue.messagesReadyDeliveryClientsPerSecond":10.5,"reportingEndpoint":":0"}
+{"displayName":"test-vhost/test-name","entityName":"queue:test-vhost/test-name","event_type":"RabbitmqQueueSample","queue.bindings":2,"queue.messagesReadyDeliveryClients":243,"queue.messagesReadyDeliveryClientsPerSecond":10.5,"rabbitmqClusterName":"testClusterName","reportingEndpoint":"foo:8000"}

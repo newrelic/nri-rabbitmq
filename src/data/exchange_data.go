@@ -1,9 +1,10 @@
 package data
 
 import (
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
+
 	"github.com/newrelic/infra-integrations-sdk/data/attribute"
 	"github.com/newrelic/infra-integrations-sdk/integration"
-	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
 )
 
 // ExchangeData is the representation of the exchanges endpoint
@@ -28,21 +29,21 @@ type ExchangeData struct {
 
 // CollectInventory collects inventory data and reports it to the integration.Entity
 func (e *ExchangeData) CollectInventory(entity *integration.Entity, bindingStats BindingStats) {
-	SetInventoryItem(entity, consts2.ExchangeType, "type", e.Type)
-	SetInventoryItem(entity, consts2.ExchangeType, "durable", ConvertBoolToInt(e.Durable))
-	SetInventoryItem(entity, consts2.ExchangeType, "auto_delete", ConvertBoolToInt(e.AutoDelete))
-	setInventoryMap(entity, consts2.ExchangeType, "arguments", e.Arguments)
+	SetInventoryItem(entity, consts.ExchangeType, "type", e.Type)
+	SetInventoryItem(entity, consts.ExchangeType, "durable", ConvertBoolToInt(e.Durable))
+	SetInventoryItem(entity, consts.ExchangeType, "auto_delete", ConvertBoolToInt(e.AutoDelete))
+	setInventoryMap(entity, consts.ExchangeType, "arguments", e.Arguments)
 	setInventoryBindings(entity, e, bindingStats)
 }
 
 // GetEntity creates an integration.Entity for this ExchangeData
 func (e *ExchangeData) GetEntity(integration *integration.Integration, clusterName string) (*integration.Entity, []attribute.Attribute, error) {
-	return CreateEntity(integration, e.Name, consts2.ExchangeType, e.Vhost, clusterName)
+	return CreateEntity(integration, e.Name, consts.ExchangeType, e.Vhost, clusterName)
 }
 
 // EntityType returns the type of this entity
 func (e *ExchangeData) EntityType() string {
-	return consts2.ExchangeType
+	return consts.ExchangeType
 }
 
 // EntityName returns the main name of this entity

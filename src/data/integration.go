@@ -5,11 +5,10 @@ import (
 	"fmt"
 	"strings"
 
-	args2 "github.com/newrelic/nri-rabbitmq/src/args"
-	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
+	"github.com/newrelic/nri-rabbitmq/src/args"
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 
 	"github.com/newrelic/infra-integrations-sdk/data/attribute"
-
 	"github.com/newrelic/infra-integrations-sdk/integration"
 	"github.com/newrelic/infra-integrations-sdk/log"
 )
@@ -18,12 +17,12 @@ import (
 func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, entityType, vhost, clusterName string) (entity *integration.Entity, metricNamespace []attribute.Attribute, err error) {
 	name := cleanEntityName(entityName, entityType)
 
-	if !args2.GlobalArgs.IncludeEntity(name, entityType, vhost) {
+	if !args.GlobalArgs.IncludeEntity(name, entityType, vhost) {
 		log.Debug("Skipping entity with name: %s, entity type: %s, vhost: %s", entityName, entityType, vhost)
 		return nil, nil, nil
 	}
 
-	if entityType == consts2.QueueType || entityType == consts2.ExchangeType {
+	if entityType == consts.QueueType || entityType == consts.ExchangeType {
 		name = joinVhostName(vhost, name)
 	}
 	metricNamespace = []attribute.Attribute{
@@ -33,7 +32,7 @@ func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, enti
 	}
 
 	clusterNameAttribute := integration.IDAttribute{Key: "clusterName", Value: clusterName}
-	endpoint := fmt.Sprintf("%s:%d", args2.GlobalArgs.Hostname, args2.GlobalArgs.Port)
+	endpoint := fmt.Sprintf("%s:%d", args.GlobalArgs.Hostname, args.GlobalArgs.Port)
 
 	entity, err = rabbitmqIntegration.EntityReportedVia(endpoint, fmt.Sprintf("%s:%s", endpoint, name), fmt.Sprintf("ra-%s", entityType), clusterNameAttribute)
 	if err != nil {
@@ -44,8 +43,8 @@ func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, enti
 }
 
 func cleanEntityName(entityName, entityType string) string {
-	if entityType == consts2.ExchangeType && entityName == "" {
-		return consts2.DefaultExchangeName
+	if entityType == consts.ExchangeType && entityName == "" {
+		return consts.DefaultExchangeName
 	}
 	return entityName
 }

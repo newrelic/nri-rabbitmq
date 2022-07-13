@@ -1,17 +1,18 @@
 package data
 
 import (
-	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
-	testutils2 "github.com/newrelic/nri-rabbitmq/src/testutils"
 	"path/filepath"
 	"testing"
+
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
+	"github.com/newrelic/nri-rabbitmq/src/testutils"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestQueueData_UnmarshalJSON_MarshalMetrics(t *testing.T) {
 	var queueData QueueData
-	testutils2.ReadStructFromJSONFile(t, filepath.Join("testdata", "queue.json"), &queueData)
+	testutils.ReadStructFromJSONFile(t, filepath.Join("testdata", "queue.json"), &queueData)
 	assert.NotNil(t, queueData)
 	assert.Equal(t, getInt64(1), queueData.Messages)
 	assert.Equal(t, getFloat64(0.1), queueData.MessagesDetails.Rate)
@@ -39,9 +40,9 @@ func TestQueueData_UnmarshalJSON_MarshalMetrics(t *testing.T) {
 	assert.Equal(t, getFloat64(11.11), queueData.ConsumerUtilisation)
 	assert.Equal(t, getInt64(1024), queueData.Memory)
 	assert.Equal(t, "queue1", queueData.EntityName())
-	assert.Equal(t, consts2.QueueType, queueData.EntityType())
+	assert.Equal(t, consts.QueueType, queueData.EntityType())
 
-	testIntegration := testutils2.GetTestingIntegration(t)
+	testIntegration := testutils.GetTestingIntegration(t)
 	e, metricAttribs, err := queueData.GetEntity(testIntegration, "testClusterName")
 	assert.NotNil(t, e)
 	assert.NotEmpty(t, metricAttribs)

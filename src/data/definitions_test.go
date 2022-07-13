@@ -1,16 +1,17 @@
 package data
 
 import (
-	testutils2 "github.com/newrelic/nri-rabbitmq/src/testutils"
 	"path/filepath"
 	"testing"
+
+	"github.com/newrelic/nri-rabbitmq/src/testutils"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestOverviewData_UnmarshalJSON(t *testing.T) {
 	var overviewData *OverviewData
-	testutils2.ReadStructFromJSONFile(t, filepath.Join("testdata", "overview.json"), &overviewData)
+	testutils.ReadStructFromJSONFile(t, filepath.Join("testdata", "overview.json"), &overviewData)
 	assert.NotNil(t, overviewData)
 	assert.Equal(t, "cluster1", overviewData.ClusterName)
 	assert.Equal(t, "1.0.1", overviewData.RabbitMQVersion)
@@ -19,7 +20,7 @@ func TestOverviewData_UnmarshalJSON(t *testing.T) {
 
 func TestConnectionData_UnmarshalJSON(t *testing.T) {
 	var connectionData []*ConnectionData
-	testutils2.ReadStructFromJSONFile(t, filepath.Join("testdata", "connections.json"), &connectionData)
+	testutils.ReadStructFromJSONFile(t, filepath.Join("testdata", "connections.json"), &connectionData)
 	assert.Equal(t, 1, len(connectionData))
 	assert.Equal(t, "running", connectionData[0].State)
 	assert.Equal(t, "vhost1", connectionData[0].Vhost)
@@ -27,7 +28,7 @@ func TestConnectionData_UnmarshalJSON(t *testing.T) {
 
 func TestBindingData_UnmarshalJSON(t *testing.T) {
 	var bindingData []*BindingData
-	testutils2.ReadStructFromJSONFile(t, filepath.Join("testdata", "bindings.json"), &bindingData)
+	testutils.ReadStructFromJSONFile(t, filepath.Join("testdata", "bindings.json"), &bindingData)
 	assert.Equal(t, 1, len(bindingData))
 	assert.Equal(t, "source1", bindingData[0].Source)
 	assert.Equal(t, "vhost1", bindingData[0].Vhost)
@@ -37,7 +38,7 @@ func TestBindingData_UnmarshalJSON(t *testing.T) {
 
 func TestVhostData_UnmarshalJSON(t *testing.T) {
 	var vhostData []*VhostData
-	testutils2.ReadStructFromJSONFile(t, filepath.Join("testdata", "vhosts.json"), &vhostData)
+	testutils.ReadStructFromJSONFile(t, filepath.Join("testdata", "vhosts.json"), &vhostData)
 	assert.Equal(t, 1, len(vhostData))
 	assert.Equal(t, "vhost1", vhostData[0].Name)
 }

@@ -2,10 +2,11 @@ package data
 
 import (
 	"encoding/json"
-	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
-	testutils2 "github.com/newrelic/nri-rabbitmq/src/testutils"
 	"path/filepath"
 	"testing"
+
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
+	"github.com/newrelic/nri-rabbitmq/src/testutils"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -13,7 +14,7 @@ import (
 
 func TestNodeData_UnmarshalJSON_MarshalMetrics(t *testing.T) {
 	var nodeData NodeData
-	testutils2.ReadStructFromJSONFile(t, filepath.Join("testdata", "node.json"), &nodeData)
+	testutils.ReadStructFromJSONFile(t, filepath.Join("testdata", "node.json"), &nodeData)
 	assert.NotNil(t, nodeData)
 	assert.Equal(t, 2, len(nodeData.ConfigFiles))
 	assert.Contains(t, nodeData.ConfigFiles, "advanced.config")
@@ -33,10 +34,10 @@ func TestNodeData_UnmarshalJSON_MarshalMetrics(t *testing.T) {
 	assert.Equal(t, getInt64(2), nodeData.SocketsUsed)
 	assert.Equal(t, getInt64(58890), nodeData.SocketsTotal)
 	assert.Equal(t, "node1", nodeData.EntityName())
-	assert.Equal(t, consts2.NodeType, nodeData.EntityType())
+	assert.Equal(t, consts.NodeType, nodeData.EntityType())
 	assert.Equal(t, "", nodeData.EntityVhost())
 
-	testIntegration := testutils2.GetTestingIntegration(t)
+	testIntegration := testutils.GetTestingIntegration(t)
 	e, metricAttribs, err := nodeData.GetEntity(testIntegration, "testClusterName")
 	assert.NotNil(t, e)
 	assert.NotEmpty(t, metricAttribs)

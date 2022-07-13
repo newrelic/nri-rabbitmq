@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package tests
@@ -5,12 +6,13 @@ package tests
 import (
 	"bytes"
 	"fmt"
-	"github.com/newrelic/infra-integrations-sdk/log"
-	"github.com/xeipuuv/gojsonschema"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/newrelic/infra-integrations-sdk/log"
+	"github.com/xeipuuv/gojsonschema"
 )
 
 func dockerComposeRunMode(vars []string, ports []string, container string, detached bool) (string, string, error) {
@@ -18,8 +20,8 @@ func dockerComposeRunMode(vars []string, ports []string, container string, detac
 	if detached {
 		cmdLine = append(cmdLine, "-d")
 	}
-	cmdLine=append(cmdLine,"--name")
-	cmdLine=append(cmdLine,container)
+	cmdLine = append(cmdLine, "--name")
+	cmdLine = append(cmdLine, container)
 	for i := range vars {
 		cmdLine = append(cmdLine, "-e")
 		cmdLine = append(cmdLine, vars[i])

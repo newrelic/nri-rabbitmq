@@ -1,10 +1,11 @@
 package testutils
 
 import (
-	args2 "github.com/newrelic/nri-rabbitmq/src/args"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
+
+	"github.com/newrelic/nri-rabbitmq/src/args"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -60,7 +61,7 @@ func TestGetTestServer(t *testing.T) {
 	mux, closer := GetTestServer(false)
 	assert.NotNil(t, mux)
 	assert.NotNil(t, closer)
-	assert.NotEmpty(t, args2.GlobalArgs.Hostname)
-	assert.True(t, args2.GlobalArgs.Port > 0)
+	assert.NotEmpty(t, args.GlobalArgs.Hostname)
+	assert.True(t, args.GlobalArgs.Port > 0)
 	closer()
 }

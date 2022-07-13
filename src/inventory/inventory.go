@@ -5,14 +5,15 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	args2 "github.com/newrelic/nri-rabbitmq/src/args"
-	data2 "github.com/newrelic/nri-rabbitmq/src/data"
-	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
 	"io"
 	"os"
 	"os/exec"
 	"strings"
 	"unicode"
+
+	"github.com/newrelic/nri-rabbitmq/src/args"
+	"github.com/newrelic/nri-rabbitmq/src/data"
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 
 	"github.com/newrelic/infra-integrations-sdk/integration"
 	"github.com/newrelic/infra-integrations-sdk/log"
@@ -29,7 +30,7 @@ type inventoryKey struct {
 }
 
 // CollectInventory collects the inventory items (config file values) from the apiResponses
-func CollectInventory(rabbitmqIntegration *integration.Integration, nodesData []*data2.NodeData, clusterName string) {
+func CollectInventory(rabbitmqIntegration *integration.Integration, nodesData []*data.NodeData, clusterName string) {
 	if len(nodesData) == 0 {
 		log.Warn("No node data available to collect inventory")
 		return
@@ -47,23 +48,23 @@ func CollectInventory(rabbitmqIntegration *integration.Integration, nodesData []
 		return
 	}
 
-	localNode, _, err := data2.CreateEntity(rabbitmqIntegration, nodeName, consts2.NodeType, "", clusterName)
+	localNode, _, err := data.CreateEntity(rabbitmqIntegration, nodeName, consts.NodeType, "", clusterName)
 	if err != nil {
 		log.Error("Error creating local node entity: %s", err)
 	}
 
 	if config := getConfigData(nodeData); len(config) > 0 {
 		for k, v := range config {
-			data2.SetInventoryItem(localNode, k.category, k.key, v)
+			data.SetInventoryItem(localNode, k.category, k.key, v)
 		}
 	} else {
-		data2.SetInventoryItem(localNode, "config", "nodeName", nodeName)
+		data.SetInventoryItem(localNode, "config", "nodeName", nodeName)
 	}
 }
 
 func getLocalNodeName() (string, error) {
-	if len(args2.GlobalArgs.NodeNameOverride) > 0 {
-		return args2.GlobalArgs.NodeNameOverride, nil
+	if len(args.GlobalArgs.NodeNameOverride) > 0 {
+		return args.GlobalArgs.NodeNameOverride, nil
 	}
 	cmd := execCommand("rabbitmqctl", "eval", "node().")
 	for _, env := range os.Environ() {
@@ -87,7 +88,7 @@ func trimNodeName(r rune) bool {
 	return unicode.IsSpace(r) || r == '\''
 }
 
-func findNodeData(nodeName string, nodesData []*data2.NodeData) (nodeData *data2.NodeData, err error) {
+func findNodeData(nodeName string, nodesData []*data.NodeData) (nodeData *data.NodeData, err error) {
 	for _, node := range nodesData {
 		if node.Name == nodeName {
 			return node, err
@@ -96,12 +97,12 @@ func findNodeData(nodeName string, nodesData []*data2.NodeData) (nodeData *data2
 	return nil, fmt.Errorf("node name [%v] not found in RabbitMQ", nodeName)
 }
 
-func getConfigData(nodeData *data2.NodeData) map[inventoryKey]string {
+func getConfigData(nodeData *data.NodeData) map[inventoryKey]string {
 	configPath := getConfigPath(nodeData)
 	if len(configPath) > 0 {
 		file, err := osOpen(configPath)
 		if os.IsNotExist(err) {
-			log.Error("The specified configuration file does not exist: %v", args2.GlobalArgs.ConfigPath)
+			log.Error("The specified configuration file does not exist: %v", args.GlobalArgs.ConfigPath)
 			return nil
 		}
 		if err != nil {
@@ -124,9 +125,9 @@ func getConfigData(nodeData *data2.NodeData) map[inventoryKey]string {
 	return nil
 }
 
-func getConfigPath(nodeData *data2.NodeData) string {
-	if len(args2.GlobalArgs.ConfigPath) > 0 {
-		return args2.GlobalArgs.ConfigPath
+func getConfigPath(nodeData *data.NodeData) string {
+	if len(args.GlobalArgs.ConfigPath) > 0 {
+		return args.GlobalArgs.ConfigPath
 	}
 	if nodeData != nil {
 		for _, config := range nodeData.ConfigFiles {

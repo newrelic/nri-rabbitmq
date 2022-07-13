@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"testing"
 
 	"github.com/newrelic/nri-rabbitmq/src/args"
@@ -14,6 +15,8 @@ func TestMain(m *testing.M) {
 	// TODO remove global args.
 	// This test are heavily based on global args to filter entities on creation.
 	args.GlobalArgs.Vhosts = []string{"vhost1"}
+
+	os.Exit(m.Run())
 }
 
 func Test_alivenessTest_Pass(t *testing.T) {

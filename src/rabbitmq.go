@@ -3,16 +3,17 @@ package main
 
 import (
 	"fmt"
+	"net/url"
+	"os"
+	"runtime"
+	"strings"
+
 	"github.com/newrelic/nri-rabbitmq/src/args"
 	"github.com/newrelic/nri-rabbitmq/src/client"
 	"github.com/newrelic/nri-rabbitmq/src/data"
 	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 	"github.com/newrelic/nri-rabbitmq/src/inventory"
 	"github.com/newrelic/nri-rabbitmq/src/metrics"
-	"net/url"
-	"os"
-	"runtime"
-	"strings"
 
 	"github.com/newrelic/infra-integrations-sdk/data/event"
 	"github.com/newrelic/infra-integrations-sdk/integration"

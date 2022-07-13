@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/newrelic/nri-rabbitmq/src/args"
+
 	nrHttp "github.com/newrelic/infra-integrations-sdk/http"
 	"github.com/newrelic/infra-integrations-sdk/log"
-
-	args2 "github.com/newrelic/nri-rabbitmq/src/args"
 )
 
 const (
@@ -96,11 +96,11 @@ func ensureClient() {
 		clientOptions := []nrHttp.ClientOption{
 			nrHttp.WithTimeout(DefaultTimout),
 		}
-		if args2.GlobalArgs.CABundleDir != "" {
-			clientOptions = append(clientOptions, nrHttp.WithCABundleDir(args2.GlobalArgs.CABundleDir))
+		if args.GlobalArgs.CABundleDir != "" {
+			clientOptions = append(clientOptions, nrHttp.WithCABundleDir(args.GlobalArgs.CABundleDir))
 		}
-		if args2.GlobalArgs.CABundleFile != "" {
-			clientOptions = append(clientOptions, nrHttp.WithCABundleFile(args2.GlobalArgs.CABundleFile))
+		if args.GlobalArgs.CABundleFile != "" {
+			clientOptions = append(clientOptions, nrHttp.WithCABundleFile(args.GlobalArgs.CABundleFile))
 		}
 
 		client, err := nrHttp.New(clientOptions...)
@@ -115,15 +115,15 @@ func ensureClient() {
 
 func createRequest(endpoint string) (*http.Request, error) {
 	var fullURL string
-	if args2.GlobalArgs.UseSSL {
-		fullURL = fmt.Sprintf("https://%s:%d%s%s", args2.GlobalArgs.Hostname, args2.GlobalArgs.Port, args2.GlobalArgs.ManagementPathPrefix, endpoint)
+	if args.GlobalArgs.UseSSL {
+		fullURL = fmt.Sprintf("https://%s:%d%s%s", args.GlobalArgs.Hostname, args.GlobalArgs.Port, args.GlobalArgs.ManagementPathPrefix, endpoint)
 	} else {
-		fullURL = fmt.Sprintf("http://%s:%d%s%s", args2.GlobalArgs.Hostname, args2.GlobalArgs.Port, args2.GlobalArgs.ManagementPathPrefix, endpoint)
+		fullURL = fmt.Sprintf("http://%s:%d%s%s", args.GlobalArgs.Hostname, args.GlobalArgs.Port, args.GlobalArgs.ManagementPathPrefix, endpoint)
 	}
 	req, err := http.NewRequest("GET", fullURL, nil)
 	if err != nil {
 		return nil, err
 	}
-	req.SetBasicAuth(args2.GlobalArgs.Username, args2.GlobalArgs.Password)
+	req.SetBasicAuth(args.GlobalArgs.Username, args.GlobalArgs.Password)
 	return req, nil
 }

@@ -1,10 +1,11 @@
 package data
 
 import (
-	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
-	testutils2 "github.com/newrelic/nri-rabbitmq/src/testutils"
 	"path/filepath"
 	"testing"
+
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
+	"github.com/newrelic/nri-rabbitmq/src/testutils"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -18,7 +19,7 @@ var expectedArguments = map[string]interface{}{
 
 func TestExchangeData_UnmarshalJSON_MarshalMetrics(t *testing.T) {
 	var exchangeData ExchangeData
-	testutils2.ReadStructFromJSONFile(t, filepath.Join("testdata", "exchange.json"), &exchangeData)
+	testutils.ReadStructFromJSONFile(t, filepath.Join("testdata", "exchange.json"), &exchangeData)
 	assert.NotNil(t, exchangeData)
 	assert.Equal(t, "exchange1", exchangeData.Name)
 	assert.Equal(t, "vhost1", exchangeData.Vhost)
@@ -31,10 +32,10 @@ func TestExchangeData_UnmarshalJSON_MarshalMetrics(t *testing.T) {
 	assert.Equal(t, getInt64(2), exchangeData.MessageStats.PublishOut)
 	assert.Equal(t, getFloat64(2.2), exchangeData.MessageStats.PublishOutDetails.Rate)
 	assert.Equal(t, "exchange1", exchangeData.EntityName())
-	assert.Equal(t, consts2.ExchangeType, exchangeData.EntityType())
+	assert.Equal(t, consts.ExchangeType, exchangeData.EntityType())
 	assert.Equal(t, "vhost1", exchangeData.EntityVhost())
 
-	testIntegration := testutils2.GetTestingIntegration(t)
+	testIntegration := testutils.GetTestingIntegration(t)
 	e, metricAttribs, err := exchangeData.GetEntity(testIntegration, "testClusterName")
 	assert.NotNil(t, e)
 	assert.NotEmpty(t, metricAttribs)

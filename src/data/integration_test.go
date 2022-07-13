@@ -2,33 +2,35 @@ package data
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
-	args2 "github.com/newrelic/nri-rabbitmq/src/args"
-	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
-	testutils2 "github.com/newrelic/nri-rabbitmq/src/testutils"
+	"github.com/newrelic/nri-rabbitmq/src/args"
+	"github.com/newrelic/nri-rabbitmq/src/data/consts"
+	"github.com/newrelic/nri-rabbitmq/src/testutils"
 
 	"github.com/newrelic/infra-integrations-sdk/data/attribute"
-
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMain(m *testing.M) {
 	// TODO remove global args.
 	// This test are heavily based on global args to create entities.
-	args2.GlobalArgs = args2.RabbitMQArguments{
+	args.GlobalArgs = args.RabbitMQArguments{
 		Hostname: "foo",
 		Port:     8000,
 	}
+
+	os.Exit(m.Run())
 }
 
 func TestCreateEntity(t *testing.T) {
-	i := testutils2.GetTestingIntegration(t)
+	i := testutils.GetTestingIntegration(t)
 
 	expectedEntityName := "/firstEntity"
-	expectedEntityKey := fmt.Sprintf("%s:%d:%s", args2.GlobalArgs.Hostname, args2.GlobalArgs.Port, expectedEntityName)
+	expectedEntityKey := fmt.Sprintf("%s:%d:%s", args.GlobalArgs.Hostname, args.GlobalArgs.Port, expectedEntityName)
 	expectedMetricEntityName := "queue:" + expectedEntityName
-	e1, metricNS, err := CreateEntity(i, "firstEntity", consts2.QueueType, "/", "testClusterName")
+	e1, metricNS, err := CreateEntity(i, "firstEntity", consts.QueueType, "/", "testClusterName")
 	assert.NoError(t, err)
 	assert.NotNil(t, e1)
 	assert.Equal(t, expectedEntityKey, e1.Metadata.Name)
@@ -41,10 +43,10 @@ func TestCreateEntity(t *testing.T) {
 		Key: "entityName", Value: expectedMetricEntityName,
 	})
 
-	expectedEntityName = "/vhost2/" + consts2.DefaultExchangeName
-	expectedEntityKey = fmt.Sprintf("%s:%d:%s", args2.GlobalArgs.Hostname, args2.GlobalArgs.Port, expectedEntityName)
+	expectedEntityName = "/vhost2/" + consts.DefaultExchangeName
+	expectedEntityKey = fmt.Sprintf("%s:%d:%s", args.GlobalArgs.Hostname, args.GlobalArgs.Port, expectedEntityName)
 	expectedMetricEntityName = "exchange:" + expectedEntityName
-	e2, metricNS, err := CreateEntity(i, "", consts2.ExchangeType, "/vhost2", "testClusterName")
+	e2, metricNS, err := CreateEntity(i, "", consts.ExchangeType, "/vhost2", "testClusterName")
 	assert.NoError(t, err)
 	assert.NotNil(t, e2)
 	assert.NotNil(t, metricNS)
@@ -58,15 +60,15 @@ func TestCreateEntity(t *testing.T) {
 		Key: "entityName", Value: expectedMetricEntityName,
 	})
 
-	existingArgs := args2.GlobalArgs
+	existingArgs := args.GlobalArgs
 	defer func() {
-		args2.GlobalArgs = existingArgs
+		args.GlobalArgs = existingArgs
 	}()
-	args2.GlobalArgs = args2.RabbitMQArguments{
+	args.GlobalArgs = args.RabbitMQArguments{
 		Queues: []string{"missing-queue"},
 	}
 
-	e3, metricNS, err := CreateEntity(i, "actual-queue", consts2.QueueType, "/", "testClusterName")
+	e3, metricNS, err := CreateEntity(i, "actual-queue", consts.QueueType, "/", "testClusterName")
 	assert.Nil(t, e3)
 	assert.Nil(t, metricNS)
 	assert.Nil(t, err)
@@ -75,11 +77,11 @@ func TestCreateEntity(t *testing.T) {
 const errorKey = "this-key-is-longer-than-375-to-force-an-error-lorem-ipsum-dolor-sit-amet-consectetur-adipiscing-elit-sed-do-eiusmod-tempor-incididunt-ut-labore-et-dolore-magna-aliqua-ut-enim-ad-minim-veniam-quis-nostrud-exercitation-ullamco-laboris-nisi-ut-aliquip-ex-ea-commodo-consequat-duis-aute-irure-dolor-in-reprehenderit-in-voluptate-velit-esse-cillum-dolore-eu-fugiat-nulla-pariatures"
 
 func TestSetInventoryItem_ErrorKeyToLong(t *testing.T) {
-	_, e := testutils2.GetTestingEntity(t)
+	_, e := testutils.GetTestingEntity(t)
 	SetInventoryItem(e, errorKey, "nope", "false")
 	assert.Empty(t, e.Inventory.Items())
 
-	_, e = testutils2.GetTestingEntity(t, "name", "namespace")
+	_, e = testutils.GetTestingEntity(t, "name", "namespace")
 	SetInventoryItem(e, errorKey, "nope", "false")
 	assert.Empty(t, e.Inventory.Items())
 }
@@ -114,35 +116,35 @@ func TestCollectInventory_Exchange(t *testing.T) {
 		BindingKey{
 			Vhost:      "vhost1",
 			EntityName: "exchange1",
-			EntityType: consts2.ExchangeType,
+			EntityType: consts.ExchangeType,
 		}: &Binding{
 			Source: []*BindingKey{
 				{
 					Vhost:      "vhost1",
 					EntityName: "exchange2",
-					EntityType: consts2.ExchangeType,
+					EntityType: consts.ExchangeType,
 				},
 				{
 					Vhost:      "vhost1",
 					EntityName: "exchange3",
-					EntityType: consts2.ExchangeType,
+					EntityType: consts.ExchangeType,
 				},
 			},
 			Destination: []*BindingKey{
 				{
 					Vhost:      "vhost1",
 					EntityName: "queue2",
-					EntityType: consts2.QueueType,
+					EntityType: consts.QueueType,
 				},
 				{
 					Vhost:      "vhost1",
 					EntityName: "exchange4",
-					EntityType: consts2.ExchangeType,
+					EntityType: consts.ExchangeType,
 				},
 			},
 		},
 	}
-	_, e := testutils2.GetTestingEntity(t)
+	_, e := testutils.GetTestingEntity(t)
 	data.CollectInventory(e, bindingStats)
 
 	item, ok := e.Inventory.Item("exchange/bindings.source")
@@ -191,24 +193,24 @@ func TestCollectInventory_Queue(t *testing.T) {
 		BindingKey{
 			Vhost:      "vhost1",
 			EntityName: "queue1",
-			EntityType: consts2.QueueType,
+			EntityType: consts.QueueType,
 		}: &Binding{
 			Source: []*BindingKey{
 				{
 					Vhost:      "vhost1",
 					EntityName: "exchange1",
-					EntityType: consts2.ExchangeType,
+					EntityType: consts.ExchangeType,
 				},
 				{
 					Vhost:      "vhost1",
 					EntityName: "exchange2",
-					EntityType: consts2.ExchangeType,
+					EntityType: consts.ExchangeType,
 				},
 			},
 			Destination: []*BindingKey{},
 		},
 	}
-	_, e := testutils2.GetTestingEntity(t)
+	_, e := testutils.GetTestingEntity(t)
 	data.CollectInventory(e, bindingStats)
 
 	item, ok := e.Inventory.Item("queue/bindings.source")
