@@ -3,17 +3,17 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/newrelic/nri-rabbitmq/src/args"
-	"github.com/newrelic/nri-rabbitmq/src/client"
-	"github.com/newrelic/nri-rabbitmq/src/testutils"
 	"io"
 	"net/http"
 	"os"
 	"strconv"
 	"testing"
 
-	"github.com/newrelic/infra-integrations-sdk/log"
+	"github.com/newrelic/nri-rabbitmq/src/args"
+	"github.com/newrelic/nri-rabbitmq/src/client"
+	"github.com/newrelic/nri-rabbitmq/src/testutils"
 
+	"github.com/newrelic/infra-integrations-sdk/log"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -64,7 +64,7 @@ func Test_main(t *testing.T) {
 	os.Stdout = origStdout
 	out := <-outC
 
-	assert.Equal(t, fmt.Sprintf(`{"name":%q,"protocol_version":"3","integration_version":%q,"data":[{"entity":{"name":"node1","type":"ra-node","id_attributes":[{"Key":"clusterName","Value":""}]},"metrics":[{"clusterName":"","displayName":"node1","entityName":"node:node1","event_type":"RabbitmqNodeSample","node.partitionsSeen":0,"reportingEndpoint":"127.0.0.1:%d"}],"inventory":{"config/nodeName":{"value":"node1"}},"events":[]}]}%s`, integrationName, integrationVersion, args.GlobalArgs.Port, "\n"), out)
+	assert.Equal(t, fmt.Sprintf(`{"name":%q,"protocol_version":"3","integration_version":%q,"data":[{"entity":{"name":"%s:%d:node1","type":"ra-node","id_attributes":[{"Key":"clusterName","Value":""}]},"metrics":[{"displayName":"node1","entityName":"node:node1","event_type":"RabbitmqNodeSample","node.partitionsSeen":0,"rabbitmqClusterName":"","reportingEndpoint":"127.0.0.1:%d"}],"inventory":{"config/nodeName":{"value":"node1"}},"events":[]}]}%s`, integrationName, integrationVersion, args.GlobalArgs.Hostname, args.GlobalArgs.Port, args.GlobalArgs.Port, "\n"), out)
 }
 
 func Test_getNeededData(t *testing.T) {

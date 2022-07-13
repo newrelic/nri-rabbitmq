@@ -2,6 +2,7 @@ package data
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	args2 "github.com/newrelic/nri-rabbitmq/src/args"
@@ -20,6 +21,8 @@ func TestMain(m *testing.M) {
 		Hostname: "foo",
 		Port:     8000,
 	}
+
+	os.Exit(m.Run())
 }
 
 func TestCreateEntity(t *testing.T) {

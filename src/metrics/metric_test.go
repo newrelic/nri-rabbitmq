@@ -1,16 +1,16 @@
 package metrics
 
 import (
-	data2 "github.com/newrelic/nri-rabbitmq/src/data"
-	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
-	testutils2 "github.com/newrelic/nri-rabbitmq/src/testutils"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
 
-	"github.com/newrelic/infra-integrations-sdk/log"
+	data2 "github.com/newrelic/nri-rabbitmq/src/data"
+	consts2 "github.com/newrelic/nri-rabbitmq/src/data/consts"
+	testutils2 "github.com/newrelic/nri-rabbitmq/src/testutils"
 
 	"github.com/newrelic/infra-integrations-sdk/data/metric"
+	"github.com/newrelic/infra-integrations-sdk/log"
 	"github.com/newrelic/infra-integrations-sdk/persist"
 	"github.com/stretchr/testify/assert"
 )

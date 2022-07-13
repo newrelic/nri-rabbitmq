@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -19,6 +20,8 @@ func TestMain(m *testing.M) {
 		Hostname: "foo",
 		Port:     8000,
 	}
+
+	os.Exit(m.Run())
 }
 
 func TestPopulateClusterInventory(t *testing.T) {
@@ -37,7 +40,7 @@ func TestPopulateClusterInventory(t *testing.T) {
 
 	entityKeyPrefix := fmt.Sprintf("%s:%d:", args.GlobalArgs.Hostname, args.GlobalArgs.Port)
 	assert.Equal(t, entityKeyPrefix+"my-cluster", i.Entities[0].Metadata.Name)
-	assert.Equal(t, entityKeyPrefix+"ra-cluster", i.Entities[0].Metadata.Namespace)
+	assert.Equal(t, "ra-cluster", i.Entities[0].Metadata.Namespace)
 	assert.Equal(t, 2, len(i.Entities[0].Inventory.Items()))
 
 	item, ok := i.Entities[0].Inventory.Item("version/rabbitmq")
