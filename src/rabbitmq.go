@@ -61,8 +61,6 @@ func main() {
 
 		metricEntities := getMetricEntities(rabbitData)
 		metrics.CollectEntityMetrics(rabbitmqIntegration, rabbitData.bindings, clusterName, metricEntities...)
-
-		metrics.PopulateClusterData(rabbitmqIntegration, rabbitData.overview)
 	}
 
 	if args.GlobalArgs.HasInventory() {

@@ -12,6 +12,4 @@ const (
 	QueueType = "queue"
 	// ExchangeType name
 	ExchangeType = "exchange"
-	// ClusterType name
-	ClusterType = "cluster"
 )
