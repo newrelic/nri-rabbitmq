@@ -1,0 +1,12 @@
+###############################################################################
+# This sample file will forward rabbitmq Windows error logs to NR once        #
+#   it is renamed to rabbitmq-log-win.yml                                     #
+# On Windows systems a restart is needed after it is renamed                  #
+# Source: rabbitmq error log file                                             #
+# Available customization parameters: attributes, max_line_kb, pattern        #
+###############################################################################
+logs:
+  - name: "rabbitmqlog"
+    file: C:\Users\Administrator\AppData\Roaming\RabbitMQ\log\*.log
+    attributes:
+      logtype: rabbitmq
