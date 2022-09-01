@@ -7,6 +7,6 @@
 ###############################################################################
 logs:
   - name: "rabbitmqlog"
-    file: C:\Users\Administrator\AppData\Roaming\RabbitMQ\log\*.log
+    file: C:\Users\*\AppData\Roaming\RabbitMQ\log\*.log
     attributes:
       logtype: rabbitmq
