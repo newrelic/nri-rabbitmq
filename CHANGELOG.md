@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.7.0  (2022-09-27)
+### Added
+- Logging configuration examples files.
+
+
+## 2.6.0  (2022-07-14)
+### Breaking
+
+- Removing the Cluster entity generation. This entity didn't contain any metrics related. And its deprecation was announced on this [EOL](https://discuss.newrelic.com/t/q1-bulk-eol-announcement-fy23/181744)
+
 ## 2.5.1  (2022-07-04)
 
 ### Changed
