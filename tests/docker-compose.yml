@@ -1,9 +1,33 @@
 version: "3.2"
 
 services:
-  rabbitmq:
+  rabbitmq-1:
     image: rabbitmq:3-management
-    container_name: rabbitmq
+    hostname: rabbitmq-1
+    container_name: rabbitmq-1
+    volumes:
+      - ${PWD}/config/rabbitmq-2/:/config/
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=ETOBVBEFXUPGETFECHSQ
+      - RABBITMQ_CONFIG_FILE=/config/rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  rabbitmq-2:
+    image: rabbitmq:3-management
+    links:
+      - rabbitmq-1
+    hostname: rabbitmq-2
+    container_name: rabbitmq-2
+    volumes:
+      - ${PWD}/config/rabbitmq-2/:/config/
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=ETOBVBEFXUPGETFECHSQ
+      - RABBITMQ_CONFIG_FILE=/config/rabbitmq
+    ports:
+      - "6672:5672"
+      - "16672:15672"
 
   nri-rabbitmq:
     image: golang:1.18
