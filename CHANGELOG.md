@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.8.0 (2023-02-20)
+### Changed
+- Remove old Healthcheck and use the 'running' metric to calculate node status event.
+
 ## 2.7.0  (2022-09-27)
 ### Added
 - Logging configuration examples files.
