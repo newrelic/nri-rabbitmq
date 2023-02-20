@@ -90,31 +90,36 @@ func Test_alivenessTest_SkipCollect(t *testing.T) {
 
 func Test_healthcheckTest_Pass(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
+	running := true
 
-	nodeTests := []*data.NodeTest{
-		{
-			Node: &data.NodeData{Name: "node1"},
-			Test: &data.TestData{
-				Status: "ok",
-			},
-		},
+	nodeTests := []*data.NodeData{
+		{Name: "node1", Running: &running},
 	}
 	healthcheckTest(i, nodeTests, "testClusterName")
 	assert.Empty(t, i.Entities)
 }
 
-func Test_healthcheckTest_FailAliveness(t *testing.T) {
+func Test_healthcheckTest_NoRunningField(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
-	nodeTests := []*data.NodeTest{
-		{
-			Node: &data.NodeData{Name: "vhost1"},
-			Test: &data.TestData{
-				Status: "failed",
-				Reason: "nodedown",
-			},
-		},
+
+	nodeTests := []*data.NodeData{
+		{Name: "node1"},
 	}
 	healthcheckTest(i, nodeTests, "testClusterName")
 	assert.Equal(t, 1, len(i.Entities))
 	assert.Equal(t, 1, len(i.Entities[0].Events))
+	assert.Contains(t, i.Entities[0].Events[0].Summary, RunningUnknown)
+}
+
+func Test_healthcheckTest_FailAliveness(t *testing.T) {
+	i := testutils.GetTestingIntegration(t)
+	running := false
+
+	nodeTests := []*data.NodeData{
+		{Name: "node1", Running: &running},
+	}
+	healthcheckTest(i, nodeTests, "testClusterName")
+	assert.Equal(t, 1, len(i.Entities))
+	assert.Equal(t, 1, len(i.Entities[0].Events))
+	assert.Contains(t, i.Entities[0].Events[0].Summary, NotRunning)
 }

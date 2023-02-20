@@ -22,13 +22,12 @@ func Test_main(t *testing.T) {
 	defer closer()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("content-type", "application/json")
-		if r.RequestURI == fmt.Sprintf(client.HealthCheckEndpoint, "node1") {
-			fmt.Fprint(w, `{"status":"ok"}`)
-		} else if r.RequestURI == client.NodesEndpoint {
-			fmt.Fprintf(w, `[{ "name": "node1" }]`)
-		} else if r.RequestURI == client.OverviewEndpoint {
+		switch r.RequestURI {
+		case client.NodesEndpoint:
+			fmt.Fprintf(w, `[{ "name": "node1", "running": false }]`)
+		case client.OverviewEndpoint:
 			fmt.Fprint(w, "{}")
-		} else {
+		default:
 			fmt.Fprint(w, "[]")
 		}
 	})
@@ -64,7 +63,7 @@ func Test_main(t *testing.T) {
 	os.Stdout = origStdout
 	out := <-outC
 
-	assert.Equal(t, fmt.Sprintf(`{"name":%q,"protocol_version":"3","integration_version":%q,"data":[{"entity":{"name":"%s:%d:node1","type":"ra-node","id_attributes":[{"Key":"clusterName","Value":""}]},"metrics":[{"displayName":"node1","entityName":"node:node1","event_type":"RabbitmqNodeSample","node.partitionsSeen":0,"rabbitmqClusterName":"","reportingEndpoint":"127.0.0.1:%d"}],"inventory":{"config/nodeName":{"value":"node1"}},"events":[]}]}%s`, integrationName, integrationVersion, args.GlobalArgs.Hostname, args.GlobalArgs.Port, args.GlobalArgs.Port, "\n"), out)
+	assert.Equal(t, fmt.Sprintf(`{"name":%q,"protocol_version":"3","integration_version":%q,"data":[{"entity":{"name":"%s:%d:node1","type":"ra-node","id_attributes":[{"Key":"clusterName","Value":""}]},"metrics":[{"displayName":"node1","entityName":"node:node1","event_type":"RabbitmqNodeSample","node.partitionsSeen":0,"node.running":0,"rabbitmqClusterName":"","reportingEndpoint":"127.0.0.1:%d"}],"inventory":{"config/nodeName":{"value":"node1"}},"events":[{"summary":"Response is [%s] for node [node1] running status","category":"integration","attributes":{"reportingEndpoint":"127.0.0.1:%d"}}]}]}%s`, integrationName, integrationVersion, args.GlobalArgs.Hostname, args.GlobalArgs.Port, args.GlobalArgs.Port, NotRunning, args.GlobalArgs.Port, "\n"), out)
 }
 
 func Test_getNeededData(t *testing.T) {

@@ -23,6 +23,8 @@ import (
 const (
 	integrationName = "com.newrelic.rabbitmq"
 	success         = "ok"
+	NotRunning      = "not running"
+	RunningUnknown  = "unknown"
 )
 
 var (
@@ -69,7 +71,7 @@ func main() {
 
 	if args.GlobalArgs.HasEvents() {
 		alivenessTest(rabbitmqIntegration, rabbitData.aliveness, clusterName)
-		healthcheckTest(rabbitmqIntegration, rabbitData.healthcheck, clusterName)
+		healthcheckTest(rabbitmqIntegration, rabbitData.nodes, clusterName)
 	}
 
 	if len(rabbitmqIntegration.Entities) > 0 {
@@ -113,23 +115,6 @@ func getNeededData() *allData {
 }
 
 func getEventData(rabbitData *allData) {
-	var endpoint string
-	if len(rabbitData.nodes) > 0 {
-		rabbitData.healthcheck = make([]*data.NodeTest, len(rabbitData.nodes))
-		for i, node := range rabbitData.nodes {
-			nodeTest := &data.NodeTest{
-				Node: node,
-				Test: new(data.TestData),
-			}
-			endpoint = fmt.Sprintf(client.HealthCheckEndpoint, url.PathEscape(node.Name))
-			if err := client.CollectEndpoint(endpoint, nodeTest.Test); err != nil {
-				nodeTest.Test.Status = "error"
-				nodeTest.Test.Reason = err.Error()
-			}
-			rabbitData.healthcheck[i] = nodeTest
-		}
-	}
-
 	if len(rabbitData.vhosts) > 0 {
 		rabbitData.aliveness = make([]*data.VhostTest, len(rabbitData.vhosts))
 		for i, vhost := range rabbitData.vhosts {
@@ -137,7 +122,7 @@ func getEventData(rabbitData *allData) {
 				Vhost: vhost,
 				Test:  new(data.TestData),
 			}
-			endpoint = fmt.Sprintf(client.AlivenessTestEndpoint, url.PathEscape(vhost.Name))
+			endpoint := fmt.Sprintf(client.AlivenessTestEndpoint, url.PathEscape(vhost.Name))
 			if err := client.CollectEndpoint(endpoint, vhostTest.Test); err != nil {
 				vhostTest.Test.Status = "error"
 				vhostTest.Test.Reason = err.Error()
@@ -222,21 +207,28 @@ func alivenessTest(rabbitmqIntegration *integration.Integration, vhostTests []*d
 	}
 }
 
-func healthcheckTest(rabbitmqIntegration *integration.Integration, nodeTests []*data.NodeTest, clusterName string) {
+func healthcheckTest(rabbitmqIntegration *integration.Integration, nodes []*data.NodeData, clusterName string) {
 	if rabbitmqIntegration != nil {
-		for _, nodeTest := range nodeTests {
-			if nodeTest.Test.Status != success {
-				e, _, err := nodeTest.Node.GetEntity(rabbitmqIntegration, clusterName)
-				if err != nil {
-					log.Error("Error creating node entity [%s]: %v", nodeTest.Node.Name, err)
-					return
-				}
+		for _, node := range nodes {
+			if node.Running != nil && *node.Running {
+				continue
+			}
 
-				// Don't add events for the entity if we are skipping its collection
-				if e != nil {
-					description := fmt.Sprintf("Response [%s] for node [%s]: %s", nodeTest.Test.Status, nodeTest.Node.Name, nodeTest.Test.Reason)
-					exitIfError(e.AddEvent(event.New(description, "integration")), "Error adding event: %v")
-				}
+			running := NotRunning
+			if node.Running == nil {
+				running = RunningUnknown
+			}
+
+			e, _, err := node.GetEntity(rabbitmqIntegration, clusterName)
+			if err != nil {
+				log.Error("Error creating node entity [%s]: %v", node.Name, err)
+				return
+			}
+
+			// Don't add events for the entity if we are skipping its collection
+			if e != nil {
+				description := fmt.Sprintf("Response is [%s] for node [%s] running status", running, node.Name)
+				exitIfError(e.AddEvent(event.New(description, "integration")), "Error adding event: %v")
 			}
 		}
 	}

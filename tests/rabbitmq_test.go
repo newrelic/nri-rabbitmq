@@ -19,7 +19,7 @@ const (
 	containerName     = "nri-rabbitmq"
 	schema            = "rabbitmq-schema.json"
 	connURL           = "amqp://guest:guest@localhost:5672/"
-	containerRabbitMQ = "rabbitmq"
+	containerRabbitMQ = "rabbitmq-1"
 )
 
 func TestMain(m *testing.M) {
@@ -32,18 +32,18 @@ func TestSuccessConnection(t *testing.T) {
 	if !waitForRabbitMQIsUpAndRunning(20) {
 		t.Fatal("tests cannot be executed")
 	}
-	hostname := "rabbitmq"
+	hostname := "rabbitmq-1"
 	envVars := []string{
 		fmt.Sprintf("HOSTNAME=%s", hostname),
 		"USERNAME=guest",
 		"PASSWORD=guest",
 	}
 	response, stderr, err := dockerComposeRun(envVars, containerName)
-	fmt.Println(response)
 	fmt.Println(stderr)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, response)
-	validateJSONSchema(response, schema)
+	err = validateJSONSchema(schema, response)
+	assert.NoError(t, err, "The output of kafka integration doesn't have expected format.")
 }
 
 func waitForRabbitMQIsUpAndRunning(maxTries int) bool {
