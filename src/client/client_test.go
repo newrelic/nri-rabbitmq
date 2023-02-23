@@ -15,6 +15,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const timeout = 30
+
 func TestCollectEndpoint(t *testing.T) {
 	defaultClient = nil
 	args.GlobalArgs = args.RabbitMQArguments{}
@@ -43,20 +45,20 @@ func TestCollectEndpoint(t *testing.T) {
 		]`)
 	})
 
-	err := CollectEndpoint("", nil)
+	err := CollectEndpoint("", timeout, nil)
 	assert.Error(t, err)
 
-	err = CollectEndpoint(ConnectionsEndpoint, nil)
+	err = CollectEndpoint(ConnectionsEndpoint, timeout, nil)
 	assert.Error(t, err)
 	var actualConnections []data.ConnectionData
 
-	err = CollectEndpoint(ConnectionsEndpoint, &actualConnections)
+	err = CollectEndpoint(ConnectionsEndpoint, timeout, &actualConnections)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(actualConnections), "Connection length should be 1")
 	assert.Equal(t, "test-vhost", actualConnections[0].Vhost, "Vhost is different")
 	assert.Equal(t, "running", actualConnections[0].State, "State is different")
 	var actualQueues []data.QueueData
-	err = CollectEndpoint(QueuesEndpoint, &actualQueues)
+	err = CollectEndpoint(QueuesEndpoint, timeout, &actualQueues)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(actualQueues))
 	f := float64(0.1)
@@ -88,7 +90,7 @@ func TestCollectEndpointOldRabbitMQVersion(t *testing.T) {
 		]`)
 	})
 	var actualQueues []data.QueueData
-	err := CollectEndpoint(QueuesEndpoint, &actualQueues)
+	err := CollectEndpoint(QueuesEndpoint, timeout, &actualQueues)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(actualQueues))
 	f := float64(0.1)
@@ -108,13 +110,13 @@ func TestCollectEndpoint_Errors(t *testing.T) {
 		w.WriteHeader(404)
 	})
 
-	err := CollectEndpoint(ConnectionsEndpoint, &struct{}{})
+	err := CollectEndpoint(ConnectionsEndpoint, timeout, &struct{}{})
 	assert.Error(t, err)
 
 	defaultClient = nil
 	args.GlobalArgs.Hostname = "[" + args.GlobalArgs.Hostname
 
-	err = CollectEndpoint("/missing", &struct{}{})
+	err = CollectEndpoint("/missing", timeout, &struct{}{})
 	assert.Error(t, err)
 }
 
@@ -130,7 +132,7 @@ func Test_ensureClient_CannotCreateClient(t *testing.T) {
 			args.GlobalArgs.CABundleDir = ""
 		}()
 
-		ensureClient()
+		ensureClient(timeout)
 		return
 	}
 
@@ -167,21 +169,21 @@ func Test_collectEndpoint_Errors(t *testing.T) {
 		w.WriteHeader(404)
 	})
 
-	err := collectEndpoint(nil, &struct{}{})
+	err := collectEndpoint(nil, timeout, &struct{}{})
 	assert.Error(t, err)
 
 	req, err := createRequest(ConnectionsEndpoint)
 	assert.NoError(t, err)
-	err = collectEndpoint(req, &struct{}{})
+	err = collectEndpoint(req, timeout, &struct{}{})
 	assert.Error(t, err)
 
 	req, err = createRequest(QueuesEndpoint)
 	assert.NoError(t, err)
-	err = collectEndpoint(req, &struct{}{})
+	err = collectEndpoint(req, timeout, &struct{}{})
 	assert.Error(t, err)
 
 	req.URL = nil
-	err = collectEndpoint(req, &struct{}{})
+	err = collectEndpoint(req, timeout, &struct{}{})
 	assert.Error(t, err)
 }
 

@@ -34,14 +34,12 @@ const (
 	AlivenessTestEndpoint = "/api/aliveness-test/%s"
 	// HealthCheckEndpoint path, this is formatted with the node name
 	HealthCheckEndpoint = "/api/healthchecks/node/%s"
-	// Default client timeout
-	DefaultTimout = time.Second * 30
 )
 
 var defaultClient *http.Client
 
 // CollectEndpoint calls the endpoint and populates its response into result
-func CollectEndpoint(endpoint string, result interface{}) error {
+func CollectEndpoint(endpoint string, timeout int, result interface{}) error {
 	if endpoint == "" {
 		err := errors.New("endpoint cannot be empty")
 		log.Error("Error collecting endpoint: %v", err)
@@ -57,14 +55,14 @@ func CollectEndpoint(endpoint string, result interface{}) error {
 		log.Error("Error creating request to Management API: %v", err)
 		return err
 	}
-	if err := collectEndpoint(request, result); err != nil {
+	if err := collectEndpoint(request, timeout, result); err != nil {
 		return err
 	}
 	return nil
 }
 
-func collectEndpoint(req *http.Request, jsonResult interface{}) error {
-	ensureClient()
+func collectEndpoint(req *http.Request, timeout int, jsonResult interface{}) error {
+	ensureClient(timeout)
 	if req == nil {
 		return errors.New("an http request was not specified")
 	}
@@ -91,10 +89,10 @@ func collectEndpoint(req *http.Request, jsonResult interface{}) error {
 	return nil
 }
 
-func ensureClient() {
+func ensureClient(timeout int) {
 	if defaultClient == nil {
 		clientOptions := []nrHttp.ClientOption{
-			nrHttp.WithTimeout(DefaultTimout),
+			nrHttp.WithTimeout(time.Second * time.Duration(timeout)),
 		}
 		if args.GlobalArgs.CABundleDir != "" {
 			clientOptions = append(clientOptions, nrHttp.WithCABundleDir(args.GlobalArgs.CABundleDir))

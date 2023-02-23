@@ -17,6 +17,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const timeout = 30
+
 func Test_main(t *testing.T) {
 	mux, closer := testutils.GetTestServer(false)
 	defer closer()
@@ -80,7 +82,7 @@ func Test_getNeededData(t *testing.T) {
 		}
 	})
 
-	rabbitData := getNeededData()
+	rabbitData := getNeededData(timeout)
 	assert.NotNil(t, rabbitData)
 	assert.NotNil(t, rabbitData.overview)
 	assert.Equal(t, 1, len(rabbitData.bindings))
