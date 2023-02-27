@@ -22,4 +22,5 @@ type ArgumentList struct {
 	Vhosts               string `default:"" help:"JSON array of vhost names from which to collect metrics."`
 	VhostsRegexes        string `default:"" help:"JSON array of vhost name regexes from which to collect metrics."`
 	ShowVersion          bool   `default:"false" help:"Print build information and exit"`
+	Timeout              int    `default:"30" help:"Timeout in seconds to timeout the connection to RabbitMQ endpoint."`
 }

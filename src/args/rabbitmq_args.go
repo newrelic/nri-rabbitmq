@@ -26,6 +26,7 @@ type RabbitMQArguments struct {
 	NodeNameOverride     string
 	ConfigPath           string
 	UseSSL               bool
+	Timeout              int
 	Queues               []string
 	QueuesRegexes        []*regexp.Regexp
 	Exchanges            []string
@@ -99,6 +100,7 @@ func SetGlobalArgs(args ArgumentList) error {
 		Port:                 args.Port,
 		Username:             args.Username,
 		UseSSL:               args.UseSSL,
+		Timeout:              args.Timeout,
 	}
 	var err error
 	if err = parseStrings(args.Exchanges, &rabbitArgs.Exchanges); err != nil {

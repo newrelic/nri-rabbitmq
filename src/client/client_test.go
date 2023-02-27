@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/newrelic/nri-rabbitmq/src/args"
 	"github.com/newrelic/nri-rabbitmq/src/data"
@@ -209,4 +210,21 @@ func Test_createRequest_Error(t *testing.T) {
 	endpoint := "/test-endpoint"
 	_, err := createRequest(endpoint)
 	assert.Error(t, err)
+}
+
+func TestClientTimeout(t *testing.T) {
+	defaultClient = nil
+	args.GlobalArgs = args.RabbitMQArguments{
+		Timeout: 2,
+	}
+	mux, teardown := testutils.GetTestServer(false)
+	defer teardown()
+	mux.HandleFunc(ConnectionsEndpoint, func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(5 * time.Second)
+	})
+
+	var actualConnections []data.ConnectionData
+	err := CollectEndpoint(ConnectionsEndpoint, &actualConnections)
+
+	assert.ErrorContains(t, err, "context deadline exceeded")
 }

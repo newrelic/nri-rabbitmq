@@ -34,8 +34,6 @@ const (
 	AlivenessTestEndpoint = "/api/aliveness-test/%s"
 	// HealthCheckEndpoint path, this is formatted with the node name
 	HealthCheckEndpoint = "/api/healthchecks/node/%s"
-	// Default client timeout
-	DefaultTimout = time.Second * 30
 )
 
 var defaultClient *http.Client
@@ -94,7 +92,7 @@ func collectEndpoint(req *http.Request, jsonResult interface{}) error {
 func ensureClient() {
 	if defaultClient == nil {
 		clientOptions := []nrHttp.ClientOption{
-			nrHttp.WithTimeout(DefaultTimout),
+			nrHttp.WithTimeout(time.Second * time.Duration(args.GlobalArgs.Timeout)),
 		}
 		if args.GlobalArgs.CABundleDir != "" {
 			clientOptions = append(clientOptions, nrHttp.WithCABundleDir(args.GlobalArgs.CABundleDir))
