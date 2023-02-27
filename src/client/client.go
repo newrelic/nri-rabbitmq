@@ -39,7 +39,7 @@ const (
 var defaultClient *http.Client
 
 // CollectEndpoint calls the endpoint and populates its response into result
-func CollectEndpoint(endpoint string, timeout int, result interface{}) error {
+func CollectEndpoint(endpoint string, result interface{}) error {
 	if endpoint == "" {
 		err := errors.New("endpoint cannot be empty")
 		log.Error("Error collecting endpoint: %v", err)
@@ -55,14 +55,14 @@ func CollectEndpoint(endpoint string, timeout int, result interface{}) error {
 		log.Error("Error creating request to Management API: %v", err)
 		return err
 	}
-	if err := collectEndpoint(request, timeout, result); err != nil {
+	if err := collectEndpoint(request, result); err != nil {
 		return err
 	}
 	return nil
 }
 
-func collectEndpoint(req *http.Request, timeout int, jsonResult interface{}) error {
-	ensureClient(timeout)
+func collectEndpoint(req *http.Request, jsonResult interface{}) error {
+	ensureClient()
 	if req == nil {
 		return errors.New("an http request was not specified")
 	}
@@ -89,10 +89,10 @@ func collectEndpoint(req *http.Request, timeout int, jsonResult interface{}) err
 	return nil
 }
 
-func ensureClient(timeout int) {
+func ensureClient() {
 	if defaultClient == nil {
 		clientOptions := []nrHttp.ClientOption{
-			nrHttp.WithTimeout(time.Second * time.Duration(timeout)),
+			nrHttp.WithTimeout(time.Second * time.Duration(args.GlobalArgs.Timeout)),
 		}
 		if args.GlobalArgs.CABundleDir != "" {
 			clientOptions = append(clientOptions, nrHttp.WithCABundleDir(args.GlobalArgs.CABundleDir))

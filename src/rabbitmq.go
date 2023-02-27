@@ -91,30 +91,29 @@ type allData struct {
 	exchanges   []*data.ExchangeData
 	connections []*data.ConnectionData
 	bindings    []*data.BindingData
-	healthcheck []*data.NodeTest
 	aliveness   []*data.VhostTest
 }
 
 func getNeededData(timeout int) *allData {
 	rabbitData := new(allData)
-	exitIfError(client.CollectEndpoint(client.NodesEndpoint, timeout, &rabbitData.nodes), "Error collecting Node data: %v")
-	exitIfError(client.CollectEndpoint(client.OverviewEndpoint, timeout, &rabbitData.overview), "Error collecting Overview data: %v")
+	exitIfError(client.CollectEndpoint(client.NodesEndpoint, &rabbitData.nodes), "Error collecting Node data: %v")
+	exitIfError(client.CollectEndpoint(client.OverviewEndpoint, &rabbitData.overview), "Error collecting Overview data: %v")
 	if args.GlobalArgs.HasMetrics() {
-		exitIfError(client.CollectEndpoint(client.ConnectionsEndpoint, timeout, &rabbitData.connections), "Error collecting Connections data: %v")
-		exitIfError(client.CollectEndpoint(client.BindingsEndpoint, timeout, &rabbitData.bindings), "Error collecting Bindings data: %v")
-		exitIfError(client.CollectEndpoint(client.VhostsEndpoint, timeout, &rabbitData.vhosts), "Error collecting Vhost data: %v")
-		exitIfError(client.CollectEndpoint(client.QueuesEndpoint, timeout, &rabbitData.queues), "Error collecting Queue data: %v")
-		exitIfError(client.CollectEndpoint(client.ExchangesEndpoint, timeout, &rabbitData.exchanges), "Error collecting Exchange data: %v")
+		exitIfError(client.CollectEndpoint(client.ConnectionsEndpoint, &rabbitData.connections), "Error collecting Connections data: %v")
+		exitIfError(client.CollectEndpoint(client.BindingsEndpoint, &rabbitData.bindings), "Error collecting Bindings data: %v")
+		exitIfError(client.CollectEndpoint(client.VhostsEndpoint, &rabbitData.vhosts), "Error collecting Vhost data: %v")
+		exitIfError(client.CollectEndpoint(client.QueuesEndpoint, &rabbitData.queues), "Error collecting Queue data: %v")
+		exitIfError(client.CollectEndpoint(client.ExchangesEndpoint, &rabbitData.exchanges), "Error collecting Exchange data: %v")
 	} else if args.GlobalArgs.HasEvents() {
-		exitIfError(client.CollectEndpoint(client.VhostsEndpoint, timeout, &rabbitData.vhosts), "Error collecting Vhost data: %v")
+		exitIfError(client.CollectEndpoint(client.VhostsEndpoint, &rabbitData.vhosts), "Error collecting Vhost data: %v")
 	}
 	if args.GlobalArgs.HasEvents() {
-		getEventData(rabbitData, timeout)
+		getEventData(rabbitData)
 	}
 	return rabbitData
 }
 
-func getEventData(rabbitData *allData, timeout int) {
+func getEventData(rabbitData *allData) {
 	if len(rabbitData.vhosts) > 0 {
 		rabbitData.aliveness = make([]*data.VhostTest, len(rabbitData.vhosts))
 		for i, vhost := range rabbitData.vhosts {
@@ -123,7 +122,7 @@ func getEventData(rabbitData *allData, timeout int) {
 				Test:  new(data.TestData),
 			}
 			endpoint := fmt.Sprintf(client.AlivenessTestEndpoint, url.PathEscape(vhost.Name))
-			if err := client.CollectEndpoint(endpoint, timeout, vhostTest.Test); err != nil {
+			if err := client.CollectEndpoint(endpoint, vhostTest.Test); err != nil {
 				vhostTest.Test.Status = "error"
 				vhostTest.Test.Reason = err.Error()
 			}
