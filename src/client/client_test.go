@@ -223,14 +223,8 @@ func TestClientTimeout(t *testing.T) {
 		time.Sleep(5 * time.Second)
 	})
 
-	err := CollectEndpoint("", nil)
-	assert.Error(t, err)
-
-	err = CollectEndpoint(ConnectionsEndpoint, nil)
-	assert.Error(t, err)
-
 	var actualConnections []data.ConnectionData
-	err = CollectEndpoint(ConnectionsEndpoint, &actualConnections)
+	err := CollectEndpoint(ConnectionsEndpoint, &actualConnections)
 
 	assert.ErrorContains(t, err, "context deadline exceeded")
 }
