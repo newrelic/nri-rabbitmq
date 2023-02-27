@@ -55,7 +55,7 @@ func main() {
 
 	log.SetupLogging(args.GlobalArgs.Verbose)
 
-	rabbitData := getNeededData(argList.Timeout)
+	rabbitData := getNeededData()
 	clusterName := rabbitData.overview.ClusterName
 
 	if args.GlobalArgs.HasMetrics() {
@@ -94,7 +94,7 @@ type allData struct {
 	aliveness   []*data.VhostTest
 }
 
-func getNeededData(timeout int) *allData {
+func getNeededData() *allData {
 	rabbitData := new(allData)
 	exitIfError(client.CollectEndpoint(client.NodesEndpoint, &rabbitData.nodes), "Error collecting Node data: %v")
 	exitIfError(client.CollectEndpoint(client.OverviewEndpoint, &rabbitData.overview), "Error collecting Overview data: %v")
