@@ -91,6 +91,7 @@ type allData struct {
 	exchanges   []*data.ExchangeData
 	connections []*data.ConnectionData
 	bindings    []*data.BindingData
+	healthcheck []*data.NodeTest
 	aliveness   []*data.VhostTest
 }
 
