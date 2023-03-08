@@ -30,7 +30,7 @@ services:
       - "16672:15672"
 
   nri-rabbitmq:
-    image: golang:1.18
+    image: golang:1.19
     container_name: nri_rabbitmq
     working_dir: /code
     volumes:
