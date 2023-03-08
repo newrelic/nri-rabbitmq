@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.10.0 (2023-03-08)
+### Changed
+- Upgrade Go to 1.19 and bump dependencies
+
 ## 2.9.0 (2023-02-27)
 ### Added
 - Add an arguments that allow to set the timeout to connecto to Rabbit's API
