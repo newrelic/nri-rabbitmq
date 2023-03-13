@@ -39,7 +39,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v3
         with:
-          go-version-file: "src/github.com/${{ env.ORIGINAL_REPO_NAME }}/go.mod"
+          go-version-file: src\github.com\${{ env.ORIGINAL_REPO_NAME }}\go.mod
       - name: Running unit tests
         shell: pwsh
         run: |
@@ -118,11 +118,11 @@ jobs:
       - name: Download zip from GH Release assets and extract .exe
         shell: pwsh
         run: |
-          build\windows\download_zip_extract_exe.ps1 "$env:INTEGRATION" ${{ matrix.goarch }} "$env:TAG" "$env:REPO_FULL_NAME"
+          build\windows\download_zip.ps1 "$env:INTEGRATION" ${{ matrix.goarch }} "$env:TAG" "$env:REPO_FULL_NAME"
+          build\windows\extract_exe.ps1 "$env:INTEGRATION" ${{ matrix.goarch }} "$env:TAG"
       - name: Create MSI
         shell: pwsh
-        run: |
-          build\windows\package_msi.ps1 -integration "$env:INTEGRATION" -arch ${{ matrix.goarch }} -tag "$env:TAG" -pfx_passphrase "$env:PFX_PASSPHRASE" -pfx_certificate_description "$env:PFX_CERTIFICATE_DESCRIPTION"
+        run: build\windows\package_msi.ps1 -integration "$env:INTEGRATION" -arch ${{ matrix.goarch }} -tag "$env:TAG" -pfx_passphrase "$env:PFX_PASSPHRASE" -pfx_certificate_description "$env:PFX_CERTIFICATE_DESCRIPTION"
       - name: Test win packages installation
         uses: newrelic/integrations-pkg-test-action/windows@v1
         with:
@@ -133,8 +133,7 @@ jobs:
       - name: Upload MSI to GH
         if: startsWith(matrix.test-upgrade, 'false')
         shell: bash
-        run: |
-          build/windows/upload_msi.sh ${INTEGRATION} ${{ matrix.goarch }} ${TAG}
+        run: build/windows/upload_msi.sh ${INTEGRATION} ${{ matrix.goarch }} ${TAG}
       - name: Notify failure via Slack
         if: ${{ failure() }}
         uses: archive/github-actions-slack@master
