@@ -27,7 +27,8 @@ builds:
       - 386
       - amd64
     hooks:
-      pre: build/windows/set_exe_properties.sh {{ .Env.TAG }} "rabbitmq"
+      pre: 
+        - build/windows/set_exe_properties.sh {{ .Env.TAG }} "rabbitmq"
 
 nfpms:
   - id: linux
@@ -78,6 +79,7 @@ archives:
     name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Version }}_{{ .Arch }}_dirty"
     files:
       - rabbitmq-config.yml.sample
+      - rabbitmq-log.yml.example
       - src: 'legacy/rabbitmq-definition.yml'
         dst: .
         strip_parent: true
