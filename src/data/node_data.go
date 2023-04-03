@@ -2,11 +2,13 @@ package data
 
 import (
 	"encoding/json"
+	"math/big"
 
 	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 
 	"github.com/newrelic/infra-integrations-sdk/data/attribute"
 	"github.com/newrelic/infra-integrations-sdk/integration"
+	"github.com/newrelic/infra-integrations-sdk/log"
 )
 
 // NodeData is the representation of the nodes endpoint
@@ -55,6 +57,7 @@ func (n *NodeData) UnmarshalJSON(data []byte) error {
 	aux := &struct {
 		Partitions []interface{} `json:"partitions"`
 		*Alias
+		DiskFreeSpace *big.Int `json:"disk_free" metric_name:"node.diskSpaceFreeInBytes" source_type:"gauge"`
 	}{
 		Alias: (*Alias)(n),
 	}
@@ -62,5 +65,14 @@ func (n *NodeData) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	n.Partitions = len(aux.Partitions)
+	if aux.DiskFreeSpace == nil {
+		return nil
+	}
+	if aux.DiskFreeSpace.IsInt64() {
+		diskFree := aux.DiskFreeSpace.Int64()
+		n.DiskFreeSpace = &diskFree
+	} else {
+		log.Warn("Node's disk_free value is too high to be reported (%v), ignoring it", aux.DiskFreeSpace)
+	}
 	return nil
 }

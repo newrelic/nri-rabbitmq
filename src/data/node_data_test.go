@@ -70,3 +70,13 @@ func TestNodeData_JSONError(t *testing.T) {
 	err := json.Unmarshal([]byte(badJSONData), &nodeData)
 	require.Error(t, err)
 }
+
+func TestNodeData_BigDiskFree(t *testing.T) {
+	t.Parallel()
+
+	bigDiskFreeJSONData := `{"name": "node1", "disk_free": 9223372036854775808}` // disk_free is greater than max value in int64
+	var nodeData NodeData
+	err := json.Unmarshal([]byte(bigDiskFreeJSONData), &nodeData)
+	require.NoError(t, err)
+	assert.Nil(t, nodeData.DiskFreeSpace)
+}
