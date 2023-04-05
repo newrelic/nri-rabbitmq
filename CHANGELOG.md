@@ -5,9 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 2.10.1  (2023-04-03)
+## 2.10.1  (2023-04-05)
 ### Changed
 - Fix log example file path in unix tarballs
+- Fix: handle huge values in node's disk_free metric properly
 - Disable CGO
 
 ## 2.10.0 (2023-03-08)
