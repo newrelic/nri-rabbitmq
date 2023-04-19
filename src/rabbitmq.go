@@ -133,8 +133,8 @@ func getEventData(rabbitData *allData) {
 }
 
 // maxQueues is the maximum amount of Queues that can be collect.
-// If there are more than this number of Queues then collection of
-// Queues will fail.
+// The reason is that each queue generates an inventory entry (for entity creation proposes)
+// and the Agent is not capable of processing a higher amount of inventory entries.
 const maxQueues = 2000
 
 func getMetricEntities(apiData *allData) []data.EntityData {
