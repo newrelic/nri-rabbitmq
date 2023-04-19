@@ -58,6 +58,7 @@ func main() {
 	rabbitData := getNeededData()
 	clusterName := rabbitData.overview.ClusterName
 
+	// The metric collections also generates inventory entries for the entity generation.
 	if args.GlobalArgs.HasMetrics() {
 		metrics.CollectVhostMetrics(rabbitmqIntegration, rabbitData.vhosts, rabbitData.connections, clusterName)
 
@@ -132,11 +133,6 @@ func getEventData(rabbitData *allData) {
 	}
 }
 
-// maxQueues is the maximum amount of Queues that can be collect.
-// If there are more than this number of Queues then collection of
-// Queues will fail.
-const maxQueues = 2000
-
 func getMetricEntities(apiData *allData) []data.EntityData {
 	i := 0
 	// Make the length the size of nodes and exchanges but capacity the length + size of queues. This is to accommodate the chance that there are more
@@ -152,26 +148,10 @@ func getMetricEntities(apiData *allData) []data.EntityData {
 		i++
 	}
 
-	if queueLength := getFilteredQueueCount(apiData.queues); queueLength > maxQueues {
-		log.Error("There are %d queues in collection, the maximum amount of queues to collect is %d. Use the queue whitelist or regex configuration parameter to limit collection size.", queueLength, maxQueues)
-		return dataItems
-	}
-
 	for _, v := range apiData.queues {
 		dataItems = append(dataItems, v)
 	}
 	return dataItems
-}
-
-func getFilteredQueueCount(queuesData []*data.QueueData) int {
-	queueCount := 0
-	for _, queueData := range queuesData {
-		if args.GlobalArgs.IncludeEntity(queueData.Name, "queue", queueData.Vhost) {
-			queueCount++
-		}
-	}
-
-	return queueCount
 }
 
 func exitIfError(err error, format string, args ...interface{}) {
