@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/newrelic/nri-rabbitmq/src/args"
 	"github.com/newrelic/nri-rabbitmq/src/data"
 	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 
@@ -33,17 +34,25 @@ var vhostMetrics = []struct {
 func CollectEntityMetrics(rabbitmqIntegration *integration.Integration, bindings []*data.BindingData, clusterName string, dataItems ...data.EntityData) {
 	bindingStats := collectBindingStats(bindings)
 	for _, dataItem := range dataItems {
-		if entity, metricNamespace, err := dataItem.GetEntity(rabbitmqIntegration, clusterName); err != nil {
+		entity, metricNamespace, err := dataItem.GetEntity(rabbitmqIntegration, clusterName)
+		if err != nil || entity == nil {
 			log.Error("Could not create %s entity [%s]: %v", dataItem.EntityType(), dataItem.EntityName(), err)
-		} else if entity != nil {
-			metricSet := entity.NewMetricSet(getSampleName(dataItem.EntityType()), metricNamespace...)
-			warnIfError(metricSet.MarshalMetrics(dataItem), "Error collecting metrics for [%s:%s]", dataItem.EntityType(), dataItem.EntityName())
+			continue
+		}
 
-			if queue, ok := dataItem.(*data.QueueData); ok {
-				populateBindingMetric(queue.Name, queue.Vhost, consts.QueueType, metricSet, bindingStats)
+		metricSet := entity.NewMetricSet(getSampleName(dataItem.EntityType()), metricNamespace...)
+		warnIfError(metricSet.MarshalMetrics(dataItem), "Error collecting metrics for [%s:%s]", dataItem.EntityType(), dataItem.EntityName())
+
+		if queue, ok := dataItem.(*data.QueueData); ok {
+			populateBindingMetric(queue.Name, queue.Vhost, consts.QueueType, metricSet, bindingStats)
+			if !args.GlobalArgs.DisableEntities {
 				queue.CollectInventory(entity, bindingStats)
-			} else if exchange, ok := dataItem.(*data.ExchangeData); ok {
-				populateBindingMetric(exchange.Name, exchange.Vhost, consts.ExchangeType, metricSet, bindingStats)
+			}
+		}
+
+		if exchange, ok := dataItem.(*data.ExchangeData); ok {
+			populateBindingMetric(exchange.Name, exchange.Vhost, consts.ExchangeType, metricSet, bindingStats)
+			if !args.GlobalArgs.DisableEntities {
 				exchange.CollectInventory(entity, bindingStats)
 			}
 		}
