@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.10.2  (2023-04-20)
+### Added
+- Exposed the 'QueuesMaxLimit' flag to configure the max amount of queues collected.
+- Added a 'DisableEntities' flag to avoid generating inventory entries on large environments
+
 ## 2.10.1  (2023-04-05)
 ### Changed
 - Fix log example file path in unix tarballs
