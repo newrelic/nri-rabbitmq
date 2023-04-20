@@ -32,10 +32,27 @@ func TestCollectEntityMetrics(t *testing.T) {
 	i := testutils.GetTestingIntegration(t)
 	CollectEntityMetrics(i, []*data.BindingData{},
 		"testClusterName",
-		&data.NodeData{Name: "node1"},
+		&data.ExchangeData{Name: "exchange1"},
 		&data.QueueData{Name: "queue1"},
 	)
 	assert.Equal(t, 2, len(i.Entities))
+	for _, e := range i.Entities {
+		assert.Greater(t, len(e.Inventory.Items()), 1)
+	}
+}
+
+func TestCollectEntityMetrics_DisabledInventory(t *testing.T) {
+	i := testutils.GetTestingIntegration(t)
+	args.GlobalArgs.DisableEntities = true
+	CollectEntityMetrics(i, []*data.BindingData{},
+		"testClusterName",
+		&data.QueueData{Name: "queue1"},
+		&data.ExchangeData{Name: "exchange1"},
+	)
+	assert.Equal(t, 2, len(i.Entities))
+	for _, e := range i.Entities {
+		assert.Len(t, e.Inventory.Items(), 0)
+	}
 }
 
 func Test_setMetric(t *testing.T) {

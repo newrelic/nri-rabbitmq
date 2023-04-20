@@ -27,6 +27,7 @@ type RabbitMQArguments struct {
 	ConfigPath           string
 	UseSSL               bool
 	Timeout              int
+	DisableEntities      bool
 	Queues               []string
 	QueuesRegexes        []*regexp.Regexp
 	Exchanges            []string
@@ -101,6 +102,7 @@ func SetGlobalArgs(args ArgumentList) error {
 		Username:             args.Username,
 		UseSSL:               args.UseSSL,
 		Timeout:              args.Timeout,
+		DisableEntities:      args.DisableEntities,
 	}
 	var err error
 	if err = parseStrings(args.Exchanges, &rabbitArgs.Exchanges); err != nil {
