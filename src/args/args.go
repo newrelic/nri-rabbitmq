@@ -23,5 +23,9 @@ type ArgumentList struct {
 	VhostsRegexes        string `default:"" help:"JSON array of vhost name regexes from which to collect metrics."`
 	ShowVersion          bool   `default:"false" help:"Print build information and exit"`
 	Timeout              int    `default:"30" help:"Timeout in seconds to timeout the connection to RabbitMQ endpoint."`
-	DisableEntities      bool   `default:"false" help:"configure whether inventory entries are created for entities."`
+	DisableEntities      bool   `default:"false" help:"configure whether inventory entries are created for entities during metrics collection."`
+
+	// The reason is that each queue generates an inventory entry (for entity creation proposes)
+	// and the Agent is not capable of processing a higher amount of inventory entries.
+	QueuesMaxLimit int `default:"2000" help:"Defines the max amount of Queues that can be processed, if this number is reached all queues will be dropped. If defined as '0' no limits are applied"`
 }
