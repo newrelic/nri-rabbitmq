@@ -155,7 +155,7 @@ func getMetricEntities(apiData *allData) []data.EntityData {
 
 	// keeping this message here so all queue limit stuff are together.
 	if args.GlobalArgs.QueuesMaxLimit == 0 && !args.GlobalArgs.DisableEntities {
-		log.Warn("QueuesMaxLimit has been disable (=0) but the entities generation has not been disabled (DisableEntities) this could cause hugh time and memory increase when metrics are processed by the Agent")
+		log.Warn("QueuesMaxLimit has been disabled (=0) but the entities generation has not been disabled (DisableEntities) this could cause huge time and memory increase when metrics are processed by the Agent")
 	}
 
 	for _, v := range apiData.queues {
