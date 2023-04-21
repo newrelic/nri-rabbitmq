@@ -132,11 +132,6 @@ func getEventData(rabbitData *allData) {
 	}
 }
 
-// maxQueues is the maximum amount of Queues that can be collect.
-// The reason is that each queue generates an inventory entry (for entity creation proposes)
-// and the Agent is not capable of processing a higher amount of inventory entries.
-const maxQueues = 2000
-
 func getMetricEntities(apiData *allData) []data.EntityData {
 	i := 0
 	// Make the length the size of nodes and exchanges but capacity the length + size of queues. This is to accommodate the chance that there are more
@@ -152,9 +147,15 @@ func getMetricEntities(apiData *allData) []data.EntityData {
 		i++
 	}
 
-	if queueLength := getFilteredQueueCount(apiData.queues); queueLength > maxQueues {
-		log.Error("There are %d queues in collection, the maximum amount of queues to collect is %d. Use the queue whitelist or regex configuration parameter to limit collection size.", queueLength, maxQueues)
+	queueLength := getFilteredQueueCount(apiData.queues)
+	if queueLength > args.GlobalArgs.QueuesMaxLimit && args.GlobalArgs.QueuesMaxLimit != 0 {
+		log.Error("There are %d queues in collection, the maximum amount of queues to collect is %d. Use the queue whitelist or regex configuration parameter to limit collection size.", queueLength, args.GlobalArgs.QueuesMaxLimit)
 		return dataItems
+	}
+
+	// keeping this message here so all queue limit stuff are together.
+	if args.GlobalArgs.QueuesMaxLimit == 0 && !args.GlobalArgs.DisableEntities {
+		log.Warn("QueuesMaxLimit has been disabled (=0) but the entities generation has not been disabled (DisableEntities) this could cause huge time and memory increase when metrics are processed by the Agent")
 	}
 
 	for _, v := range apiData.queues {

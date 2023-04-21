@@ -28,6 +28,7 @@ type RabbitMQArguments struct {
 	UseSSL               bool
 	Timeout              int
 	DisableEntities      bool
+	QueuesMaxLimit       int
 	Queues               []string
 	QueuesRegexes        []*regexp.Regexp
 	Exchanges            []string
@@ -103,6 +104,7 @@ func SetGlobalArgs(args ArgumentList) error {
 		UseSSL:               args.UseSSL,
 		Timeout:              args.Timeout,
 		DisableEntities:      args.DisableEntities,
+		QueuesMaxLimit:       args.QueuesMaxLimit,
 	}
 	var err error
 	if err = parseStrings(args.Exchanges, &rabbitArgs.Exchanges); err != nil {
