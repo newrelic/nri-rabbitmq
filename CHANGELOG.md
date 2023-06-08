@@ -5,7 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 2.10.2  (2023-04-20)
+## 2.12.0  (2023-06-08)
+### Added
+- Update Go version to 1.20
+
+## 2.11.0  (2023-04-20)
 ### Added
 - Exposed the 'QueuesMaxLimit' flag to configure the max amount of queues collected.
 - Added a 'DisableEntities' flag to avoid generating inventory entries on large environments
