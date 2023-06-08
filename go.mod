@@ -1,11 +1,11 @@
 module github.com/newrelic/nri-rabbitmq
 
-go 1.19
+go 1.20
 
 require (
 	github.com/newrelic/infra-integrations-sdk v3.7.3+incompatible
 	github.com/streadway/amqp v1.0.0
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.4
 	github.com/xeipuuv/gojsonschema v1.2.0
 )
 
