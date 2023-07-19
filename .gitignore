@@ -60,3 +60,6 @@ internal/versioninfo.json
 internal/resource.syso
 
 vendor
+
+# Release toolkit
+CHANGELOG.partial.md
