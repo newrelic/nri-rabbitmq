@@ -25,7 +25,7 @@ jobs:
         with:
           semgrep-append: false
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v4
         continue-on-error: ${{ github.event_name != 'pull_request' }}
         with:
           only-new-issues: true
