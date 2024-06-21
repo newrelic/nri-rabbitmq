@@ -35,8 +35,12 @@ func CollectEntityMetrics(rabbitmqIntegration *integration.Integration, bindings
 	bindingStats := collectBindingStats(bindings)
 	for _, dataItem := range dataItems {
 		entity, metricNamespace, err := dataItem.GetEntity(rabbitmqIntegration, clusterName)
-		if err != nil || entity == nil {
+		if err != nil {
 			log.Error("Could not create %s entity [%s]: %v", dataItem.EntityType(), dataItem.EntityName(), err)
+			continue
+		}
+		if entity == nil {
+			log.Debug("Not creating %s entity [%s] due to config", dataItem.EntityType(), dataItem.EntityName())
 			continue
 		}
 

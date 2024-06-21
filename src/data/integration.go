@@ -14,7 +14,7 @@ import (
 )
 
 // CreateEntity will create an entity and metricNamespace attributes with appropriate name/namespace values if the entity isn't filtered
-func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, entityType, vhost, clusterName string) (entity *integration.Entity, metricNamespace []attribute.Attribute, err error) {
+func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, entityType, vhost, clusterName string) (*integration.Entity, []attribute.Attribute, error) {
 	name := cleanEntityName(entityName, entityType)
 
 	if !args.GlobalArgs.IncludeEntity(name, entityType, vhost) {
@@ -25,7 +25,7 @@ func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, enti
 	if entityType == consts.QueueType || entityType == consts.ExchangeType {
 		name = joinVhostName(vhost, name)
 	}
-	metricNamespace = []attribute.Attribute{
+	metricNamespace := []attribute.Attribute{
 		{Key: "displayName", Value: name},
 		{Key: "entityName", Value: fmt.Sprintf("%s:%s", entityType, name)},
 		{Key: "rabbitmqClusterName", Value: clusterName},
@@ -34,12 +34,12 @@ func CreateEntity(rabbitmqIntegration *integration.Integration, entityName, enti
 	clusterNameAttribute := integration.IDAttribute{Key: "clusterName", Value: clusterName}
 	endpoint := fmt.Sprintf("%s:%d", args.GlobalArgs.Hostname, args.GlobalArgs.Port)
 
-	entity, err = rabbitmqIntegration.EntityReportedVia(endpoint, fmt.Sprintf("%s:%s", endpoint, name), fmt.Sprintf("ra-%s", entityType), clusterNameAttribute)
+	entity, err := rabbitmqIntegration.EntityReportedVia(endpoint, fmt.Sprintf("%s:%s", endpoint, name), fmt.Sprintf("ra-%s", entityType), clusterNameAttribute)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return
+	return entity, metricNamespace, nil
 }
 
 func cleanEntityName(entityName, entityType string) string {

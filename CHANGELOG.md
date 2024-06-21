@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 Unreleased section should follow [Release Toolkit](https://github.com/newrelic/release-toolkit#render-markdown-and-update-markdown)
 ## Unreleased
 
+### bugfix
+- we were logging an error message even if there was no actual error causing a weird `\u003cnil\u003e` to show up in the logs.
+
 ## v2.13.6 - 2024-05-15
 
 ### ⛓️ Dependencies
