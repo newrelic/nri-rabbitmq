@@ -9,7 +9,7 @@ import (
 	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 	"github.com/newrelic/nri-rabbitmq/src/testutils"
 
-	"github.com/newrelic/infra-integrations-sdk/data/attribute"
+	"github.com/newrelic/infra-integrations-sdk/v3/data/attribute"
 	"github.com/stretchr/testify/assert"
 )
 

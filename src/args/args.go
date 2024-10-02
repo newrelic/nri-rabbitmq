@@ -1,6 +1,6 @@
 package args
 
-import sdkArgs "github.com/newrelic/infra-integrations-sdk/args"
+import sdkArgs "github.com/newrelic/infra-integrations-sdk/v3/args"
 
 // ArgumentList is the raw arguments passed into the integration via YAML, CLI args, or ENV variables
 type ArgumentList struct {

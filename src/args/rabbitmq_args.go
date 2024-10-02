@@ -6,8 +6,8 @@ import (
 
 	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 
-	sdkArgs "github.com/newrelic/infra-integrations-sdk/args"
-	"github.com/newrelic/infra-integrations-sdk/log"
+	sdkArgs "github.com/newrelic/infra-integrations-sdk/v3/args"
+	"github.com/newrelic/infra-integrations-sdk/v3/log"
 )
 
 // GlobalArgs are the global set of arguments
