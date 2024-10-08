@@ -15,9 +15,9 @@ import (
 	"github.com/newrelic/nri-rabbitmq/src/inventory"
 	"github.com/newrelic/nri-rabbitmq/src/metrics"
 
-	"github.com/newrelic/infra-integrations-sdk/data/event"
-	"github.com/newrelic/infra-integrations-sdk/integration"
-	"github.com/newrelic/infra-integrations-sdk/log"
+	"github.com/newrelic/infra-integrations-sdk/v3/data/event"
+	"github.com/newrelic/infra-integrations-sdk/v3/integration"
+	"github.com/newrelic/infra-integrations-sdk/v3/log"
 )
 
 const (

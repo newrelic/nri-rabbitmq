@@ -8,9 +8,9 @@ import (
 	"github.com/newrelic/nri-rabbitmq/src/args"
 	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 
-	"github.com/newrelic/infra-integrations-sdk/data/attribute"
-	"github.com/newrelic/infra-integrations-sdk/integration"
-	"github.com/newrelic/infra-integrations-sdk/log"
+	"github.com/newrelic/infra-integrations-sdk/v3/data/attribute"
+	"github.com/newrelic/infra-integrations-sdk/v3/integration"
+	"github.com/newrelic/infra-integrations-sdk/v3/log"
 )
 
 // CreateEntity will create an entity and metricNamespace attributes with appropriate name/namespace values if the entity isn't filtered

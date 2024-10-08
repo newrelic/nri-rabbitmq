@@ -15,8 +15,8 @@ import (
 	"github.com/newrelic/nri-rabbitmq/src/data"
 	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 
-	"github.com/newrelic/infra-integrations-sdk/integration"
-	"github.com/newrelic/infra-integrations-sdk/log"
+	"github.com/newrelic/infra-integrations-sdk/v3/integration"
+	"github.com/newrelic/infra-integrations-sdk/v3/log"
 )
 
 var (

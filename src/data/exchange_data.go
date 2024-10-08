@@ -3,8 +3,8 @@ package data
 import (
 	"github.com/newrelic/nri-rabbitmq/src/data/consts"
 
-	"github.com/newrelic/infra-integrations-sdk/data/attribute"
-	"github.com/newrelic/infra-integrations-sdk/integration"
+	"github.com/newrelic/infra-integrations-sdk/v3/data/attribute"
+	"github.com/newrelic/infra-integrations-sdk/v3/integration"
 )
 
 // ExchangeData is the representation of the exchanges endpoint
