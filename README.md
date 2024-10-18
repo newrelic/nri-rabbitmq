@@ -10,7 +10,7 @@ The RabbitMQ integration requires that the [RabbitMQ Management Plugin](https://
 
 ## Installation and usage
 
-For installation and usage instructions, see our [documentation web site](https://docs.newrelic.com/docs/integrations/host-integrations/host-integrations-list/rabbitmq-monitoring-integration).
+For installation and usage instructions, see our [documentation web site](https://docs.newrelic.com/install/rabbitmq/).
 
 ## Building
 
