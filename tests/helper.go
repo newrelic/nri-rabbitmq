@@ -9,10 +9,42 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/newrelic/infra-integrations-sdk/v3/log"
 	"github.com/xeipuuv/gojsonschema"
 )
+
+func executeCommandInContainer(containerName string, command []string) (string, string, error) {
+	cmdArgs := append([]string{"exec", containerName}, command...)
+	cmd := exec.Command("docker", cmdArgs...)
+	var outbuf, errbuf bytes.Buffer
+	cmd.Stdout = &outbuf
+	cmd.Stderr = &errbuf
+
+	err := cmd.Run()
+	if err != nil {
+		return "", "", err
+	}
+
+	stdout := outbuf.String()
+	stderr := errbuf.String()
+	return stdout, stderr, nil
+}
+
+func waitForRabbitMQIsUpAndRunning(maxTries int, containerName string) bool {
+	for ; maxTries > 0; maxTries-- {
+		time.Sleep(5 * time.Second)
+		fmt.Println("Trying to establish connection with RabbitMQ...")
+		stdout, stderr, err := executeCommandInContainer(containerName, []string{"rabbitmq-diagnostics", "check_running"})
+		fmt.Println(stdout)
+		fmt.Println(stderr)
+		if err == nil && strings.Contains(stdout, "fully booted and running") {
+			return true
+		}
+	}
+	return false
+}
 
 func dockerComposeRunMode(vars []string, ports []string, container string, detached bool) (string, string, error) {
 	cmdLine := []string{"run"}
