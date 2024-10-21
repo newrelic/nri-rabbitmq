@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 Unreleased section should follow [Release Toolkit](https://github.com/newrelic/release-toolkit#render-markdown-and-update-markdown)
 ## Unreleased
 
+### enhancement
+- Update amqp client to use "github.com/rabbitmq/amqp091-go" v1.10.0
+
 ## v2.14.0 - 2024-10-09
 
 ### dependency

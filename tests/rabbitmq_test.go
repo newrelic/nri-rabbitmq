@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/newrelic/infra-integrations-sdk/v3/log"
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/stretchr/testify/assert"
 )
 
