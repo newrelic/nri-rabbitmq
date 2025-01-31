@@ -1,7 +1,9 @@
-INTEGRATION  := rabbitmq
-GO_FILES        := ./src/
-BINARY_NAME   = nri-$(INTEGRATION)
-GOFLAGS		  = -mod=readonly
+INTEGRATION  	:= rabbitmq
+GO_FILES       	:= ./src/
+BINARY_NAME   	= nri-$(INTEGRATION)
+GOFLAGS		  	= -mod=readonly
+GO_VERSION 		?= $(shell grep '^go ' go.mod | awk '{print $$2}')
+BUILDER_IMAGE 	?= "ghcr.io/newrelic/coreint-automation:latest-go$(GO_VERSION)-ubuntu16.04"
 
 all: build
 
