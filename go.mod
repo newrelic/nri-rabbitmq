@@ -1,6 +1,6 @@
 module github.com/newrelic/nri-rabbitmq
 
-go 1.24.4
+go 1.24.6
 
 require (
 	github.com/newrelic/infra-integrations-sdk/v3 v3.9.1
