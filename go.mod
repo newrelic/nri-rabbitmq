@@ -3,7 +3,7 @@ module github.com/newrelic/nri-rabbitmq
 go 1.25.9
 
 require (
-	github.com/newrelic/infra-integrations-sdk/v3 v3.9.1
+	github.com/newrelic/infra-integrations-sdk/v4 v4.2.1
 	github.com/stretchr/testify v1.11.1
 	github.com/xeipuuv/gojsonschema v1.2.0
 )
