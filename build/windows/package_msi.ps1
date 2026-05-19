@@ -3,9 +3,9 @@
         This script creates the win .MSI
 #>
 param (
-    # Target architecture: amd64 (default)
+    # Target architecture: amd64 (default) or 386
     [string]$integration="none",
-    [ValidateSet("amd64")]
+    [ValidateSet("amd64", "386")]
     [string]$arch="amd64",
     [string]$tag="v0.0.0",
     [string]$pfx_passphrase="none",
