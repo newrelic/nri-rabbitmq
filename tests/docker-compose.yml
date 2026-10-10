@@ -2,7 +2,7 @@ version: "3.2"
 
 services:
   rabbitmq-1:
-    image: rabbitmq:3-management
+    image: rabbitmq:4-management
     hostname: rabbitmq-1
     container_name: rabbitmq-1
     volumes:
@@ -15,7 +15,7 @@ services:
       - "15672:15672"
 
   rabbitmq-2:
-    image: rabbitmq:3-management
+    image: rabbitmq:4-management
     links:
       - rabbitmq-1
     hostname: rabbitmq-2
